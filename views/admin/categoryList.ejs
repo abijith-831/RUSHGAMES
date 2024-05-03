@@ -1,0 +1,186 @@
+<%-include('../layouts/adminHeader.ejs')%>
+<%-include('../layouts/adminSidebar.ejs')%>
+
+<style>
+    .purple-header-box {
+    background-color: #936dd1; /* Purple color */
+    color: #ffffff; /* White text color */
+    padding: 15px; /* Adjust padding as needed */
+    border-radius: 5px; /* Optional: Add rounded corners */
+    margin-bottom: 20px; /* Optional: Add space below the box */
+    text-align: center;
+}
+.search-bar {
+    margin-bottom: 10px; /* Adjust spacing between search bar and heading */
+}
+.purple-button {
+    background-color: #936dd1;
+    color: white; /* text color */
+    border: 1px solid black; /* black border */
+    border-radius: 5px; /* slight curve */
+    padding: 10px 20px; /* adjust padding as needed */
+    font-size: 16px; /* adjust font size as needed */
+    cursor: pointer; /* cursor style */
+    /* You can add additional styling as needed */
+}
+.search-btn {
+        width: 100px; /* Adjust the width of the button as needed */
+        height: 40px; /* Adjust the height of the button as needed */
+        border: 2px solid #000; /* Black border */
+        border-radius: 2px; /* Make it round */
+        background-color: #936dd1; /* Black background */
+        color: #050404; /* White text color */
+        font-size: 14px; /* Adjust font size */
+        padding: 0; /* Remove padding */
+    }
+
+.search-btn::after {
+    
+    display: inline-block;
+    margin-left: 0.3rem; /* Adjust spacing between button and text */
+}
+.search-bar {
+    width: calc(100% - 80px); /* Adjust the width of the search bar */
+    margin-right: 10px; /* Adjust spacing between search bar and button */
+}
+.custom-table-header {
+    background-color: grey;
+    color: black;
+    width: 100%;
+}
+
+</style>
+
+<div class="page-wrapper">
+    <!-- ============================================================== -->
+    <!-- Container fluid  -->
+    <!-- ============================================================== -->
+    <div class="container-fluid">
+        <!-- ============================================================== -->
+        <!-- Start Page Content -->
+        <!-- ============================================================== -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body" >
+                       
+                        <div class="purple-header-box"> <!-- Added div with custom class -->
+                            <h4 class="card-title">CATEGORY LIST</h4>
+                        </div>
+                        <% if (success) { %> 
+                            <div class="alert  text-center" role="alert" style="color:green; background: white;">
+                                <%= success %>
+                            </div>
+                        <% } %>
+                        
+
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr style="width: 100%;">
+                                        <th scope="col">NO.</th>
+                                        <th scope="col">CATEGORY</th>
+                                        <th scope="col" class="text-right">ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (categories.length > 0) { %>
+                                        <% categories.forEach((category, index) => { %>
+                                            <tr>
+                                                <td><%= index + 1 %></td> <!-- Index starts from 0, so adding 1 for display -->
+                                                <td><%= category.name %></td>
+                                                <td class="text-right align-middle">
+                                                    <a href="/admin/editCategory?categoryId=<%= category._id %>" class="btn-status-toggle" data-categoryid="<%= category._id %>">
+                                                    
+                                                        <span class="btn btn-info ml-2">EDIT</span>                                                                                                         
+                                                    </a>
+                                                    <% if (category.is_listed) { %>
+                                                        <a>
+                                                            <button id="unlisted-<%= category._id %>" onclick="confirmAction('<%= category._id %>')"  class="btn btn-danger ml-5">Unlist</button>
+                                                        </a>
+                                                    <% } else { %>
+                                                        <a >
+                                                            <button id="listed-<%= category._id%> " onclick="confirmAction('<%= category._id%>')"  class="btn btn-success ml-5">List</button>
+                                                        </a>
+                                                    <% } %>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="3">No categories found</td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+
+                            <div class="text-center mt-4">
+                                <a href="/admin/addCategory" class="purple-button">+ Add Category</a>
+                            </div>
+                            <% if (errmsg) { %> 
+                                <div class="alert  text-center" role="alert" style="color: blueviolet; background: white;">
+                                    <%= errmsg %>
+                                </div>
+                            <% } %>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Page wrapper  -->
+        <!-- ============================================================== -->
+    </div>
+</div>
+
+
+<script>
+    function confirmAction(categoryId) {  
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You are about to Unlist this Category.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Unlist it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        
+        if (result.isConfirmed) {
+            console.log('1');
+            fetch(`/admin/categoryStatus?categoryId=${categoryId}`)
+            
+                .then(response => response.json())
+                .then(data => {
+                    
+                    if (data.success) {
+                        
+                       let action = data.newStatus ? 'Listed':'Unlisted';
+                       let res = data.is_listed?'Listed':'Unlisted';
+                        Swal.fire({
+                            title: `${action}!`,
+                            text: `The Category has been ${action}  `,
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1500,
+                            timerProgressBar: true
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.log('vghvgv');
+                    console.error('Fetch error:', error);
+                });
+        }
+    });
+}
+</script>
+     
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
+<%-include('../layouts/adminFooter.ejs')%>

@@ -1,0 +1,228 @@
+<style>
+    /* Style for the circular count */
+    .cart-count,
+    .wishlist-count {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background-color: #cc9966; /* Background color of the circle */
+        border-radius: 50%; /* Make it a circle */
+        color: #fff; /* Text color */
+        font-size: 12px; /* Font size of the count */
+        text-align: center; /* Center the count horizontally */
+        line-height: 20px; /* Center the count vertically */
+        position: absolute;
+        top: 0;
+        right: -10px;
+        padding: 2px;
+    }
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo img:first-child {
+    margin-right: 10px; /* Adjust the margin as needed */
+}
+    
+
+    /* Adjustment for the position of the cart count */
+    .cart-count {
+        right: -10px;
+    }
+
+    /* Adjustment for the position of the wishlist count */
+    .wishlist-count {
+        right: -10px;
+    }
+    .main-nav .menu > li {
+    position: relative;
+}
+.main-nav .menu > li > a {
+    color: #ffffff; /* White color */
+}
+.header-right .header-dropdown-link {
+    display: flex;
+    align-items: center;
+}
+
+.header-right .header-dropdown-link > .cart,
+.header-right .header-dropdown-link > .wishlist {
+    margin-right: 10px; /* Adjust spacing between icons */
+}
+.left-align {
+        float: left;
+    }
+    nav a {
+            color: white; /* Set text color */
+            text-decoration: none; /* Remove underline */
+            padding: 0 10px; /* Add padding to the links */
+            margin: 0 5px; /* Add margin for spacing */
+        }
+
+        /* Style for active link */
+        nav a.active {
+            font-weight: bold; /* Make the active link bold */
+        }
+        .account {
+    text-align: center;
+}
+
+.icon-container {
+    border: 1px solid white;
+    border-radius: 50%; /* To make the border round */
+    width: 50px; /* Adjust the width and height as needed */
+    height: 50px;
+    line-height: 50px; /* Center the icon vertically */
+    margin: 0 auto; /* Center the container horizontally */
+}
+
+.icon-container i {
+    color: white; /* Icon color */
+    font-size: 24px; /* Adjust the icon size as needed */
+}
+
+</style>
+
+
+<div class="page-wrapper">
+    <div class="wrap-container">
+        <header class="header header-intro-clearance header-3">
+            
+            <div class="header-middle" style="height: 110px;">
+                <div class="container">
+                    <div class="header-left">
+                        <button class="mobile-menu-toggler">
+                            <span class="sr-only">Toggle mobile menu</span>
+                            <i class="icon-bars"></i>
+                        </button>
+                        
+                        <a href="index.html" class="logo">
+                            <img src="assets/images/demos/demo-3/logo.png" alt="Rush Games logo" width="80" height="30">
+                        </a>
+                    </div><!-- End .header-left -->
+
+                    <div class="header-center">
+                        <div class="header-search header-search-extended header-search-visible d-none d-lg-block">
+                            <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
+                            <form action="#" method="get">
+                                <div class="header-search-wrapper search-wrapper-wide">
+                                    <label for="q" class="sr-only">Search</label>
+                                    <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
+                                    <input type="search" class="form-control" name="q" id="q" placeholder="Search product ..." required>
+                                </div><!-- End .header-search-wrapper -->
+                            </form>
+                        </div><!-- End .header-search -->
+                    </div>
+
+                    <div class="header-right">
+                        <div class="header-dropdown-link">
+                           
+                            <% if (locals.user) { %>
+                                
+                                <div class="account">
+                                    <a href="/userProfile" title="User-Profile">
+                                        <div class="icon">
+                                            <i class="far fa-user" style="color: lightgray;"></i> 
+                                        </div>
+                                        <p id="userProfile"><%= locals.user.name %></p> 
+                                    </a>
+                                </div>
+                                
+                                <div class="account">
+                                    <a href="/logout" id="logoutButton" title="Logout">
+                                        <div class="icon">
+                                            <i class="fas fa-sign-out-alt" style="color: lightgray;"></i>
+                                        </div>
+                                        <p>Logout</p>
+                                    </a>
+                                </div>
+                                
+                            <% } else { %>
+                                <div class="account">
+                                    <a href="/login" title="My account">
+                                        <div class="icon">
+                                            <i class="fas fa-user" style="color: lightgray;"></i> 
+                                        </div>
+                                        <p>Login/Sign In</p>
+                                    </a>
+                                </div>
+                            <% } %>
+
+                            <div class="wishlist">
+                                <a href="/wishlist" title="Wishlist">
+                                    <div class="icon">
+                                        <i class="icon-heart-o"></i>
+                                        <span class="wishlist-count badge">3</span>
+                                    </div>
+                                    <p>Wishlist</p>
+                                </a>
+                            </div><!-- End .compare-dropdown -->
+
+                            <div class="dropdown cart-dropdown">
+                                <a href="/cart" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
+                                    <div class="icon">
+                                        <i class="icon-shopping-cart"></i>
+                                        <span class="cart-count">2</span>
+                                    </div>
+                                    <p>Cart</p>
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <div class="dropdown-cart-products">
+                                        <div class="product">
+                                            <div class="product-cart-details">
+                                                <h4 class="product-title">
+                                                    
+                                                </h4>
+                                            </div><!-- End .product-cart-details --> 
+                                        </div><!-- End .product -->
+                                    </div><!-- End .cart-product -->
+
+                                   
+                                    <div class="dropdown-cart-action">
+                                        <a href="/cart" class="btn btn-primary">View Cart</a>
+                                        
+                                    </div><!-- End .dropdown-cart-total -->
+                                </div><!-- End .dropdown-menu -->
+                            </div><!-- End .cart-dropdown -->
+                        </div>
+                    </div><!-- End .header-right -->
+                </div><!-- End .container -->
+            </div><!-- End .header-middle -->
+
+            <div class="header-middle" style="background-color: rgb(56, 54, 54); padding-top: 5px; padding-bottom: 5px;"> 
+               
+                <nav>
+                    <a href="/" class="active">Home</a>
+                    <a href="/allGames">All Games</a>
+                    <a href="#">Trending</a>
+                    <a href="#">Coming Soon</a>
+                    <a href="/aboutUs">About Us</a>
+                    <a href="/contactUs">Contact Us</a>
+                </nav>
+                
+            </div><!-- End .header-middle -->
+        </header><!-- End .header -->
+    </div>
+ 
+    <script>
+       document.addEventListener('DOMContentLoaded',function(){
+            const logoutButton = document.getElementById('logoutButton')
+            if(logoutButton){
+                logoutButton.addEventListener('click',function(event){
+                    event.preventDefault()
+                    const confirmMsg = confirm('Are you sure you want to logout ?')
+                    if (confirmMsg){
+                        window.location.href = '/logout'
+                    }
+                })
+            }
+       })
+    </script>

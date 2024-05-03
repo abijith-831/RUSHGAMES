@@ -1,0 +1,208 @@
+<%-include('../layouts/adminHeader.ejs')%>
+<%-include('../layouts/adminSidebar.ejs')%>
+<style>
+    .purple-header-box {
+    background-color: #936dd1; /* Purple color */
+    color: #ffffff; /* White text color */
+    padding: 15px; /* Adjust padding as needed */
+    border-radius: 5px; /* Optional: Add rounded corners */
+    margin-bottom: 20px; /* Optional: Add space below the box */
+    text-align: center;
+}
+.purple-button {
+    background-color: #936dd1;
+    color: white; /* text color */
+    border: 1px solid black; /* black border */
+    border-radius: 5px; /* slight curve */
+    padding: 10px 20px; /* adjust padding as needed */
+    font-size: 16px; /* adjust font size as needed */
+    cursor: pointer; /* cursor style */
+    /* You can add additional styling as needed */
+}
+.button-group {
+    margin-top: 2cm; /* Adjust the margin-top to create a 2cm gap */
+}
+.purple-button {
+    background-color: #936dd1;
+    color: white; /* text color */
+    border: 1px solid black; /* black border */
+    border-radius: 5px; /* slight curve */
+    padding: 10px 20px; /* adjust padding as needed */
+    font-size: 16px; /* adjust font size as needed */
+    cursor: pointer; /* cursor style */
+    /* You can add additional styling as needed */
+}
+.form-actions {
+    display: flex; /* Use flexbox for layout */
+    justify-content: center; /* Center align items horizontally */
+    margin-top: 20px; /* Add margin to separate from form */
+}
+.form-actions button {
+    margin-right: 3cm; /* Add a 3cm gap between buttons */
+}
+.btn-submit {
+    background-color: #007bff; /* Change background color of Submit button */
+    color: #fff; /* Change text color of Submit button */
+    border-color: #007bff; /* Change border color of Submit button */
+}
+
+.btn-reset {
+    background-color: #dc3545; /* Change background color of Reset button */
+    color: #fff; /* Change text color of Reset button */
+    border-color: #dc3545; /* Change border color of Reset button */
+}
+.form-control {
+    border: 1px solid #000; /* Black border */
+    border-radius: 5px; /* Slight curve */
+}
+#category {
+        border: 1px solid #000;
+        border-radius: 5px;
+    }
+
+</style>
+
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="purple-header-box"> <!-- Added div with custom class -->
+                             
+                            <h4 class="card-title">EDIT GAME DETAILS</h4>
+                        </div>
+                        
+                        <% if (errmsg) { %> 
+                            <div class="alert text-center" role="alert" style="color: red;" >
+                                <%= errmsg %>
+                            </div>
+                        <% } %>
+                        <form action="/admin/editGamesSubmit?gameId=<%=gameId%>" method="POST"  >
+                           <input type="hidden" id="gameId" name="gameId" value="<%=gameId%>">
+                            <div class="form-body">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="name">GAME NAME</label>
+                                            <input type="text" class="form-control" id="name" name="name" placeholder="Enter Product Name" value="<%= gameDetails && gameDetails.name ? gameDetails.name : '' %>">
+
+                                            
+                                            <div id="nameContainer" class="text-danger"></div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="price">PRICE</label>
+                                            <input type="text" class="form-control" id="price" name="price" placeholder="Enter Product Price" value="<%= gameDetails && gameDetails.price ? gameDetails.price : '' %>">
+                                            <div id="priceContainer" class="text-danger"></div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="quantity">QUANTITY</label>
+                                            <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Enter Quantity" value="<%= gameDetails && gameDetails.quantity ? gameDetails.quantity : '' %>">
+                                            <div id="quantityContainer" class="text-danger"></div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="category">CATEGORY</label>
+                                            <select class="custom-select mr-sm-2" id="category" name="category">
+                                                <% categories.forEach(category => { %>
+                                                    <option value="<%=category._id%>"><%=category.name%></option>
+                                                <%    }) %>
+                                                
+                                            </select>
+                                            <div id="categoryContainer" class="text-danger"></div>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="description">SYSTEM REQUIREMENTS</label>
+                                            <textarea class="form-control" rows="3" id="description" name="description" placeholder="Text Here..." value=""><%= gameDetails && gameDetails.systemReq ? gameDetails.systemReq : '' %></textarea>
+                                            <div id="descriptionContainer" class="text-danger"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <input type="file" class="form-control-file" id="mainImage" multiple="multiple"  accept="image/*" name="mainImage">
+                                        <div id="imagePreview" class="d-flex flex-wrap mt-2">
+                                            <% if (gameDetails && gameDetails.mainImage) { %>
+                                                    <% for (let i = 0; i < gameDetails.mainImage.length; i++) { %>
+                                                        <div class="image-wrapper mr-3 mb-3">
+                                                            <img style="height: 100px; max-width: 100px;" src="/uploads/<%= gameDetails.mainImage[i].filename %>" alt="Product Image">
+                                                        </div>
+                                                    <% } %>
+                                             <% } %>  
+                                            
+                                        </div> 
+                                        <br><br>
+                                        <input type="file" class="form-control-file" id="screenshotImages" multiple="multiple"  accept="image/*" name="screenshotImages">
+                                        <div id="screenshotPreview" class="d-flex flex-wrap mt-2">
+                                           <% if (gameDetails && gameDetails.screenshotImages) { %>
+                                                <% for (let i = 0; i < gameDetails.screenshotImages.length; i++) { %>
+                                                    <div class="image-wrapper mr-3 mb-3">
+                                                        <img style="height: 100px; max-width: 100px;" src="/uploads/<%= gameDetails.screenshotImages[i].filename %>" alt="Product Image">
+                                                    </div>
+                                                <% } %>
+                                            <% } %>  
+                                            
+                                        </div> 
+                                       
+
+                                    </div>
+                                </div>                              
+                            </div>
+
+                            <div class="form-actions text-right">
+                                <button type="submit" class="purple-button">Save Changes</button>
+                                <!-- <button type="button" class="btn purple-button btn-reset" onclick="resetForm()">Reset</button> -->
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>   
+</div>
+
+<script>
+
+    // ********** IMAGE PREVIEW FOR ADD GAMES IMAGES AND SCREENSHOTS **********
+    function previewImage (input , previewElement) {
+        const preview = document.getElementById(previewElement);
+        preview.innerHTML = '';
+
+        if(input.files){
+            Array.from(input.files).forEach(file=>{
+                const reader = new FileReader();
+                reader.onload = function(e){
+                    const img = document.createElement('img')
+                    img.src = e.target.result;
+                    img.style.maxWidth = '100px';
+                    img.style.maxHeight = '100px';
+                    preview.appendChild(img)
+                }
+                reader.readAsDataURL(file)
+            })
+        }
+    }
+
+    document.getElementById('mainImage').addEventListener('change',function(){
+        previewImage(this,'imagePreview')
+    })
+
+    document.getElementById('screenshotImages').addEventListener('change',function(){
+        previewImage(this,'screenshotPreview')
+    })  
+</script>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameId = urlParams.get('gameId');
+
+    fetchGameDetails(gameId)
+    .then(game => {
+        document.getElementById('gameId').value = game._id;
+    })
+    .catch(error => {
+        console.error("Error while fetching game details", error);
+    });
+</script>
+
+
+<%-include('../layouts/adminFooter.ejs')%>

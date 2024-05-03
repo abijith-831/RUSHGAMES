@@ -1,0 +1,599 @@
+<%-include('../layouts/header.ejs')%>
+<%-include('../layouts/navbar.ejs')%>
+
+<style>
+    .content-container {
+    border: 2px solid black;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.rounded-box {
+    border-radius: 10px;
+    background-color: #ddd8d8;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); 
+}
+.checkout-discount {
+    text-align: center;
+    margin-top: 20px; 
+    justify-content: center;
+}
+.checkout-discount form {
+    padding-left: 400px;
+}
+
+.edit-btn , .change-btn , .save-btn{
+    background-color: white;
+        color: black;
+        border: 1px solid;
+   }
+   .change-btn:hover{
+        background-color: #797474;
+    }
+	/* Hide default radio button */
+input[type="radio"] {
+    display: none;
+}
+
+/* Create custom radio button */
+input[type="radio"] + label:before {
+    content: "";
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    border: 2px solid #007bff; /* Change color as needed */
+    border-radius: 50%;
+}
+
+/* Style checked state */
+input[type="radio"]:checked + label:before {
+    background-color: #007bff; /* Change color as needed */
+}
+label {
+    font-size: 16px; /* Adjust based on your preference */
+    color: #333; /* Adjust color as needed */
+    cursor: pointer; /* Change cursor to pointer when hovering over labels */
+    padding: 5px 0; /* Add some vertical padding */
+}
+#addAddressBtn {
+    background-color: #616264; /* Primary color */
+    color: white; /* Text color */
+    border: none;
+    padding: 10px 20px; /* Padding for larger click area */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition-duration: 0.4s; /* Smooth transition effect */
+}
+
+#addAddressBtn:hover {
+    background-color: white; /* Change background color on hover */
+    color: black; /* Change text color on hover */
+    border: 2px solid #007bff; /* Add border on hover */
+}
+.address-selection-box {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    max-width: 1000px;
+    margin: 20px auto;
+}
+
+.address-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.address-option h4 {
+    font-size: 16px;
+    color: #333;
+}
+
+input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #007bff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+input[type="radio"]:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+input[type="radio"] + label {
+    cursor: pointer;
+    color: #007bff;
+}
+
+input[type="radio"]:checked + label {
+    color: white;
+}
+.address-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc; /* Optional: adds a bottom border for separation */
+}
+
+.button-container {
+    display: flex;
+    gap: 10px; /* Optional: adds some space between the buttons */
+}
+
+</style>
+
+
+<body>
+    <div class="page-wrapper">
+
+
+        <main class="main">
+        	<div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.png')">
+        		<div class="container">
+        			<h1 class="page-title" style="color: white;">Checkout></h1>
+        		</div><!-- End .container -->
+        	</div><!-- End .page-header -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">Shop</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+
+            <div class="page-content">
+            	<div class="checkout">
+	                <div class="container-fluid">
+            			
+            			<form action="/placeOrder" method = 'POST'>
+		                	<div class="row">
+                                <aside class="col-lg-8 content-container ">
+                                    <div class="address-selection-box">
+										<h3 style="text-align: center;">Choose Your Address</h3>
+									
+										<% addresses.forEach((item) => { %>
+											<% item.addresses.forEach((address, index) => { %>
+												<div class="address-option">
+													<input type="radio" name="address" id="address<%= index + 1 %>">
+													<label for="address<%= index + 1 %>">
+														<h4> Address <%= index + 1 %> </h4>
+														<p><%= address.name %>, <%= address.city %>, <%= address.state %></p>
+														
+
+													</label>
+													<div class="button-container">
+														<a id="editAddressBtn" class="btn change-btn" data-toggle="modal" data-target="#editAddressModal"
+														   data-name="<%= address.name %>"
+														   data-mobile="<%= address.mobile %>"
+														   data-pincode="<%= address.pincode %>"
+														   data-district="<%= address.district %>"
+														   data-state="<%= address.state %>"
+														   data-city="<%= address.city %>"
+														   data-area="<%= address.area %>"
+														   data-house-no="<%= address.houseNo %>">Edit</a>
+														<a id="showAddressBtn" class="btn change-btn" style="background-color: lightskyblue" data-toggle="modal" data-target="#showAddressModal"
+														   data-name="<%= address.name %>"
+														   data-mobile="<%= address.mobile %>"
+														   data-pincode="<%= address.pincode %>"
+														   data-district="<%= address.district %>"
+														   data-state="<%= address.state %>"
+														   data-city="<%= address.city %>"
+														   data-area="<%= address.area %>"
+														   data-house-no="<%= address.houseNo %>">View</a>
+													</div>
+													
+												</div>
+												
+											<% }) %>
+										<% }) %>
+									</div>
+									
+									
+									<div style="color: black;  " class="col-sm-12 d-flex justify-content-center">
+                                
+										<a id="addAddressBtn" class="btn change-btn " data-toggle="modal" data-target="#addAddressModal">+ Add Address</a>
+									</div>
+                                    <div class="checkout-discount ">
+                                        <form action="#">
+                                            <input type="text" class="form-control" required id="checkout-discount-input">
+                                            <label for="checkout-discount-input" class="text-truncate">Have a coupon? <span>Click here to enter your code</span></label>
+                                        </form>
+                                    </div>
+                                </aside>
+                                
+		 
+		                		<aside class="col-lg-3  ml-5">
+		                			<div class="summary content-container">
+		                				<h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
+
+		                				<table class="table table-summary">
+		                					<thead>
+		                						<tr>
+		                							<th>Product</th>
+		                							<th>Total</th>
+		                						</tr>
+		                					</thead>
+
+		                					<tbody>
+											<%= console.log('data'+ cartData) %>
+												<% cartData.games.forEach ( item => { %>
+															<tr>
+																<td><a href="#"><%= item.gameId.name %></a></td>
+																<td><%= (item.gameId.price * item.quantity).toFixed(2) %> Rs</td>
+															</tr>
+														<%   })  %>
+
+		                						
+
+		                						
+		                						<tr class="summary-subtotal">
+		                							<td>Subtotal:</td>
+		                							<td><%= cartData.totalCartPrice.toFixed(2) %>Rs</td>
+		                						</tr><!-- End .summary-subtotal -->
+		                						<tr>
+		                							<td>Shipping:</td>
+		                							<td>Free shipping</td>
+		                						</tr>
+		                						<tr class="summary-total">
+		                							<td>Total:</td>
+		                							<td>$<%= cartData.totalCartPrice.toFixed(2) %></td>
+		                						</tr><!-- End .summary-total -->
+		                					</tbody>
+		                				</table><!-- End .table table-summary -->
+
+		                				<div class="accordion-summary" id="accordion-payment">
+										    <div class="card">
+										        <div class="card-header" id="heading-1">
+										            <h2 class="card-title">
+										                <a role="button" data-toggle="collapse" href="#collapse-1" aria-expanded="true" aria-controls="collapse-1">
+										                    Direct bank transfer
+										                </a>
+										            </h2>
+										        </div><!-- End .card-header -->
+										        <div id="collapse-1" class="collapse show" aria-labelledby="heading-1" data-parent="#accordion-payment">
+										            <div class="card-body">
+										                Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account.
+										            </div><!-- End .card-body -->
+										        </div><!-- End .collapse -->
+										    </div><!-- End .card -->
+
+										    <div class="card">
+										        <div class="card-header" id="heading-2">
+										            <h2 class="card-title">
+										                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-2" aria-expanded="false" aria-controls="collapse-2">
+										                    Check payments
+										                </a>
+										            </h2>
+										        </div><!-- End .card-header -->
+										        <div id="collapse-2" class="collapse" aria-labelledby="heading-2" data-parent="#accordion-payment">
+										            <div class="card-body">
+										                Ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. 
+										            </div><!-- End .card-body -->
+										        </div><!-- End .collapse -->
+										    </div><!-- End .card -->
+
+										    <div class="card">
+										        <div class="card-header" id="heading-3">
+										            <h2 class="card-title">
+										                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-3" aria-expanded="false" aria-controls="collapse-3">
+										                    Cash on delivery
+										                </a>
+										            </h2>
+										        </div><!-- End .card-header -->
+										        <div id="collapse-3" class="collapse" aria-labelledby="heading-3" data-parent="#accordion-payment">
+										            <div class="card-body">Quisque volutpat mattis eros. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. 
+										            </div><!-- End .card-body -->
+										        </div><!-- End .collapse -->
+										    </div><!-- End .card -->
+
+										    <div class="card">
+										        <div class="card-header" id="heading-4">
+										            <h2 class="card-title">
+										                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-4" aria-expanded="false" aria-controls="collapse-4">
+										                    PayPal <small class="float-right paypal-link">What is PayPal?</small>
+										                </a>
+										            </h2>
+										        </div><!-- End .card-header -->
+										        <div id="collapse-4" class="collapse" aria-labelledby="heading-4" data-parent="#accordion-payment">
+										            <div class="card-body">
+										                Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum.
+										            </div><!-- End .card-body -->
+										        </div><!-- End .collapse -->
+										    </div><!-- End .card -->
+
+										    <div class="card">
+										        <div class="card-header" id="heading-5">
+										            <h2 class="card-title">
+										                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-5" aria-expanded="false" aria-controls="collapse-5">
+										                    Credit Card (Stripe)
+										                    <img src="assets/images/payments-summary.png" alt="payments cards">
+										                </a>
+										            </h2>
+										        </div><!-- End .card-header -->
+										        <div id="collapse-5" class="collapse" aria-labelledby="heading-5" data-parent="#accordion-payment">
+										            <div class="card-body"> Donec nec justo eget felis facilisis fermentum.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Lorem ipsum dolor sit ame.
+										            </div><!-- End .card-body -->
+										        </div><!-- End .collapse -->
+										    </div><!-- End .card -->
+										</div><!-- End .accordion -->
+		                				<button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
+		                					<span >Place Order</span>
+		                				</button>
+		                			</div><!-- End .summary -->
+		                		</aside><!-- End .col-lg-3 -->
+		                	</div><!-- End .row -->
+            			</form>
+	                </div><!-- End .container -->
+                </div><!-- End .checkout -->
+            </div><!-- End .page-content -->
+        </main><!-- End .main -->
+
+
+
+<!-- add address modal-->
+<div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-sm" role="document">
+	  <div class="modal-content bg-black text-red px-5 mt-4 mb-4">
+		<br>
+		<div class="modal-header border-bottom-red">
+			
+		  <h5 class="modal-title text-center" id="addAddressModalLabel">Add New Address</h5>
+		  <button type="button" class="close text-red" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+		<div class="modal-body">
+		  <!-- Address form -->
+		  <form id="addressForm">
+			<div class="row">
+			  <div class="col-md-6">
+				<div class="form-group">
+				  <label for="name" class="text-red">Name</label>
+				  <input type="text" class="form-control" id="name" placeholder="Enter Name" required>
+				</div>
+			  </div>
+			  <div class="col-md-6">
+				<div class="form-group">
+				  <label for="mobile" class="text-red">Mobile</label>
+				  <input type="tel" class="form-control" id="mobile" placeholder="Enter Mobile Number" required>
+				</div>
+			  </div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="pincode" class="text-red">Pincode</label>
+						<input type="text" class="form-control" id="pincode" placeholder="Enter Pincode" required>
+					  </div>
+				</div>
+				<div class="col-md-6">
+				  <div class="form-group">
+					<label for="district" class="text-red">District</label>
+					<input type="tel" class="form-control" id="district" placeholder="Enter District" required>
+				  </div>
+				</div>
+			  </div>
+			  <div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="state" class="text-red">State</label>
+						<input type="text" class="form-control" id="state" placeholder="Enter State" required>
+					  </div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="city" class="text-red">City</label>
+						<input type="text" class="form-control" id="city" placeholder="Enter City" required>
+					  </div>
+				</div>
+			  </div>
+			  <div class="form-group">
+				<label for="area" class="text-red">Area</label>
+				<input type="text" class="form-control" id="area" placeholder="Enter Area" required>
+			  </div>
+			  <div class="form-group">
+				<label for="houseNo" class="text-red">House No</label>
+				<input type="text" class="form-control" id="houseNo" placeholder="Enter House Number" required>
+			  </div>
+			
+			<button type="submit" class="btn btn-success btn-block" id="saveAddressBtn">Save Address</button>
+			<br><br>
+		  </form>
+		</div>
+	  </div>
+	</div>
+</div>		
+		
+<!-- Add Address functionality -->
+<script>
+    document.getElementById('saveAddressBtn').addEventListener('click',function(event){
+        event.preventDefault();
+        
+            name = document.getElementById('name').value.trim(),
+            mobile = document.getElementById('mobile').value.trim(),
+            pincode = document.getElementById('pincode').value.trim(),
+            district= document.getElementById('district').value.trim(),
+            state= document.getElementById('state').value.trim(),
+            city= document.getElementById('city').value.trim(),
+            area= document.getElementById('area').value.trim(),
+            houseNo= document.getElementById('houseNo').value.trim()
+
+        let formData = {
+            name:name,
+            mobile:mobile,
+            pincode:pincode,
+            district:district,
+            state:state,
+            city:city,
+            area:area,
+            houseNo:houseNo
+        }
+        
+        if(!/^[A-Za-z]+$/.test(name)){
+                Swal.fire({
+                    icon:'error',
+                    title:'Error',
+                    text:'Name Can Only Contain Alphabets'
+                })
+                return false;
+        }
+        if(!/^\d{10}$/.test(mobile)){
+                Swal.fire({
+                    icon:'error',
+                    title:'error',
+                    text:'Mobile Number should contain 10 Digits'
+                })
+                return false;
+        }
+        if(!/^\d{6}$/.test(pincode)){
+                Swal.fire({
+                    icon:'error',
+                    title:'error',
+                    text:'Pincode Should contain 6 digits only'
+                })
+                return false;
+        }if(!/^[A-Za-z]+$/.test(district)){
+                Swal.fire({
+                    icon:'error',
+                    title:'error',
+                    text:'District should contain only Alphabets'
+                })
+                return false;
+        }
+        if(!/^[A-Za-z]+$/.test(state)){
+                Swal.fire({
+                    icon:'error',
+                    title:'error',
+                    text:'State should contain only Alphabets'
+                })
+                return false;
+        }if(!/^[A-Za-z]+$/.test(city)){
+                Swal.fire({
+                    icon:'error',
+                    title:'error',
+                    text:'City should contain only Alphabets'
+                })
+                return false;
+        }
+       
+        fetch('/addNewAddress',{
+            method : 'POST',
+            headers :{
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify(formData)
+        })
+        .then(response=>response.json())
+        .then(data=>{
+            if(data.success){
+                Swal.fire({
+                    icon:'success',
+                    title:'Success',
+                    text: data.message
+                })
+            }
+            $('#addAddressModal').modal('hide')
+        })
+        .catch(error=>console.error('Error',error))
+    })
+</script>
+
+
+<!-- view Address Modal----------------------------------- -->
+<div class="modal fade " id="showAddressModal" tabindex="-1" role="dialog" aria-labelledby="showAddressModalLabel" aria-hidden="true" >
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="showAddressModalLabel">Address Details</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body p-4">
+				<div id="addressDetails"></div>
+			</div>
+		</div>
+	</div>
+  </div>
+  
+
+<!-- view Address functionality -->
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+	  var modal = document.getElementById('showAddressModal');
+	  var addressDetails = document.getElementById('addressDetails');
+  
+	  document.querySelectorAll('#showAddressBtn').forEach(function (button) {
+		  button.addEventListener('click', function () {
+  
+			  addressDetails.innerHTML = '';
+  
+			  var name = this.getAttribute('data-name');
+			  var mobile = this.getAttribute('data-mobile');
+			  var pincode = this.getAttribute('data-pincode');
+			  var district = this.getAttribute('data-district');
+			  var state = this.getAttribute('data-state');
+			  var city = this.getAttribute('data-city');
+			  var area = this.getAttribute('data-area');
+			  var houseNo = this.getAttribute('data-house-no');
+  
+			  var addressHTML = '<p>Name: ' + name + '</p>' +
+				  '<p>Mobile: ' + mobile + '</p>' +
+				  '<p>Pincode: ' + pincode + '</p>' +
+				  '<p>District: ' + district + '</p>' +
+				  '<p>State: ' + state + '</p>' +
+				  '<p>City: ' + city + '</p>' +
+				  '<p>Area: ' + area + '</p>' +
+				  '<p>House No: ' + houseNo + '</p>';
+  
+			  addressDetails.innerHTML = addressHTML;
+  
+			  $('#showAddressModal').modal('show');
+		  });
+	  });
+  });
+  
+</script>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+    const gamesData = JSON.parse(sessionStorage.getItem('gamesData'));
+    const totalPrice = sessionStorage.getItem('totalPrice');
+
+    // Now you have the gamesData and totalPrice, you can use them as needed in your checkout page
+});
+
+</script>
+
+<!-- Plugins JS File -->
+<script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/jquery.hoverIntent.min.js"></script>
+    <script src="assets/js/jquery.waypoints.min.js"></script>
+    <script src="assets/js/superfish.min.js"></script>
+    <script src="assets/js/owl.carousel.min.js"></script>
+    <!-- Main JS File -->
+    <script src="assets/js/main.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+</body>
+
+
+
+<%-include('../layouts/footbar.ejs')%>
+<%-include('../layouts/footer.ejs')%>

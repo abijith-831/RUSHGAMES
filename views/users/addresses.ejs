@@ -1,0 +1,659 @@
+<%-include('../layouts/header.ejs')%>
+<%-include('../layouts/navbar.ejs')%>
+
+<style>
+    body {
+        
+        color: #1a202c;
+        text-align: left;
+       
+    }
+
+    
+    .card {
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
+    }
+
+    .card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 2 solid rgba(0, 0, 0, .125);
+        border-radius: .25rem;
+        
+    }
+
+    .card-body {
+        flex: 1 1 auto;
+        min-height: 1px;
+        padding: 1rem;
+    }
+
+    .gutters-sm {
+        margin-right: -8px;
+        margin-left: -8px;
+    }
+
+    .gutters-sm>.col,
+    .gutters-sm>[class*=col-] {
+        padding-right: 8px;
+        padding-left: 8px;
+    }
+
+    .mb-3,
+    .my-3 {
+        margin-bottom: 1rem !important;
+    }
+
+    .bg-gray-300 {
+        background-color: #e2e8f0;
+    }
+
+    .h-100 {
+        height: 100% !important;
+    }
+
+    .shadow-none {
+        box-shadow: none !important;
+    }
+
+    .buttons {
+        width: 100%;
+        height: 40px;
+        border: none;
+        background-color: white;
+        color: black;
+        border: 2px;
+        border-radius: 5px;
+        margin-top: 10px;
+        text-align: left;
+    }
+    .buttons:hover {
+    background-color: rgb(240, 104, 104);
+}
+    /* breadcrums */
+
+    .breadcrumbs {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .breadcrumbs ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .breadcrumbs li {
+        display: inline;
+    }
+
+    .breadcrumbs li:not(:last-child):after {
+        content: ' / ';
+        margin: 0 5px;
+    }
+
+    .breadcrumbs a {
+        text-decoration: none;
+        color: #007bff;
+    }
+
+    .breadcrumbs a:hover {
+        text-decoration: underline;
+        color: #0056b3;
+    }
+    .custom-border {
+    border: 1px solid #e3e3e3;
+    border-radius: 10px;
+}
+.card-body {
+    border: 1px solid;
+}
+.custom-btn {
+        background-color: white;
+        color: black;
+        border: 1px solid;
+    }
+    .custom-btn:hover {
+        background-color: rgb(240, 104, 104);
+        
+    }
+   .edit-btn , .change-btn , .save-btn{
+    background-color: white;
+        color: black;
+        border: 1px solid;
+   }
+   .save-btn:hover{
+    background-color: rgb(99, 175, 97);
+   }
+   .edit-btn:hover {
+        background-color: rgb(99, 175, 97);
+        
+    }
+    .change-btn:hover{
+        background-color: #797474;
+    }
+</style>
+
+<div class="page-header  text-center" style="background-image: url('assets/images/page-header-bg.png'); width: 100%;">
+    <div class="container">
+        <h1 class="page-title text-white">Addresses</h1>
+    </div><!-- End .container -->
+</div>
+
+
+<!-- view adress list -->
+<div class="container">
+    
+    <div class="main-body">
+
+        <div class="row gutters-sm" style="margin-top: 50px;">
+            <div class="col-md-4 mb-3 ">
+                <div class="cardborder">
+                    <div class="card-body">
+                        <div class="d-flex flex-column align-items-center text-center">
+                            <img src="/assets/images/profile.jpg" >
+                            <div class="mt-1">
+                            
+                               
+                                <button class="buttons " onclick="location.href='/userProfile'" >My Account <i class="fas fa-user" style="margin-right: 5px; "></i></button>
+                                <a href=""><button class="buttons">Order History <i style="margin-right: 5px;"class="fas fa-cart-plus"></i></button></a>
+                                <button class="buttons" style="background-color: rgb(240, 104, 104);" onclick="location.href='/addresses'">Addresses <i class="fas fa-address-book" style="margin-right: 5px;"></i></button>
+                                <button class="buttons">Wallet <i class="fas fa-wallet" style="margin-right: 5px;"></i></button>
+                                <button class="buttons">Offers <i class="fas fa-tag" style="margin-right: 5px;"></i></button>
+                                <a href="/logout"><button class="buttons">Logout <i class="fas fa-sign-out-alt" style="margin-right: 5px;"></i></button></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-7 ml-5">
+                <div class="card mb-3">
+                    
+                    <div class="card-body">
+                       
+                         
+                        
+                        
+                        <div class="row">
+                            <div class="col-sm-12">                               
+                                       
+                                        <% addresses.forEach((item ) => { %> 
+                                            <% item.addresses.forEach( (address , index) =>  { %>
+                                                <div class="card mb-2">
+                                                    <div class="card-body">
+                                                <h4>Address <%= index + 1 %></h4>
+                                                <p><%=address.name %> , <%=address.city %> , <%=address.state %></p>
+                                                <div class="text-right">
+                                                    
+                                                    <a id="showAddressBtn" class="btn change-btn" style="background-color: lightskyblue" data-toggle="modal" data-target="#showAddressModal"
+                                                    data-name="<%= address.name %>"
+                                                    data-mobile="<%= address.mobile %>"
+                                                    data-pincode="<%= address.pincode %>"
+                                                    data-district="<%= address.district %>"
+                                                    data-state="<%= address.state %>"
+                                                    data-city="<%= address.city %>"
+                                                    data-area="<%= address.area %>"
+                                                    data-house-no="<%= address.houseNo %>">View</a>
+                                                    
+                                                  
+    
+                                                    <a id="editAddressBtn" class="btn change-btn"  data-toggle="modal" data-target="#editAddressModal"
+                                                data-name="<%= address.name %>"
+                                                data-mobile="<%= address.mobile %>"
+                                                data-pincode="<%= address.pincode %>"
+                                                data-district="<%= address.district %>"
+                                                data-state="<%= address.state %>"
+                                                data-city="<%= address.city %>"
+                                                data-area="<%= address.area %>"
+                                                data-house-no="<%= address.houseNo %>">Edit</a>
+    
+                                                    <a data-id="<%= address._id%>" class="btn change-btn delete-address-btn" style="background-color: rgb(240, 104, 104)" data-toggle="modal" data-target="#">Delete</a>
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <%  }) %>
+                                            
+                                        <%  })  %>
+                                            
+                                         
+                                    
+                            </div>
+                           
+                        </div>
+                            <div style="color: black;  " class="col-sm-12 d-flex justify-content-center">
+                                
+                                <a id="addAddressBtn" class="btn change-btn " data-toggle="modal" data-target="#addAddressModal">+ Add Address</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+<!-- Add Address Modal ------------------------------------ -->
+<div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content bg-black text-red px-5 mt-4 mb-4">
+        <br>
+        <div class="modal-header border-bottom-red">
+            
+          <h5 class="modal-title text-center" id="addAddressModalLabel">Add New Address</h5>
+          <button type="button" class="close text-red" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Address form -->
+          <form id="addressForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="name" class="text-red">Name</label>
+                  <input type="text" class="form-control" id="name" placeholder="Enter Name" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="mobile" class="text-red">Mobile</label>
+                  <input type="tel" class="form-control" id="mobile" placeholder="Enter Mobile Number" required>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="pincode" class="text-red">Pincode</label>
+                        <input type="text" class="form-control" id="pincode" placeholder="Enter Pincode" required>
+                      </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="district" class="text-red">District</label>
+                    <input type="tel" class="form-control" id="district" placeholder="Enter District" required>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="state" class="text-red">State</label>
+                        <input type="text" class="form-control" id="state" placeholder="Enter State" required>
+                      </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="city" class="text-red">City</label>
+                        <input type="text" class="form-control" id="city" placeholder="Enter City" required>
+                      </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="area" class="text-red">Area</label>
+                <input type="text" class="form-control" id="area" placeholder="Enter Area" required>
+              </div>
+              <div class="form-group">
+                <label for="houseNo" class="text-red">House No</label>
+                <input type="text" class="form-control" id="houseNo" placeholder="Enter House Number" required>
+              </div>
+            
+            <button type="submit" class="btn btn-success btn-block" id="saveAddressBtn">Save Address</button>
+            <br><br>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+
+<!-- view Address Modal----------------------------------- -->
+<div class="modal fade " id="showAddressModal" tabindex="-1" role="dialog" aria-labelledby="showAddressModalLabel" aria-hidden="true" >
+  <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="showAddressModalLabel">Address Details</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body p-4">
+              <div id="addressDetails"></div>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+
+
+
+<!-- edit address Modal----------------------------------- -->
+<div class="modal fade" id="editAddressModal" tabindex="-1" role="dialog" aria-labelledby="editAddressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content bg-black text-red px-5 mt-4 mb-4">
+        <br>
+        <div class="modal-header border-bottom-red">
+            
+          <h5 class="modal-title text-center" id="editAddressModalLabel">Edit Address</h5>
+          <button type="button" class="close text-red" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Address form -->
+          <form id="addressForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="name" class="text-red">Name</label>
+                  <input type="text" class="form-control" id="name" placeholder="Enter Name" required >
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="mobile" class="text-red">Mobile</label>
+                  <input type="tel" class="form-control" id="mobile" placeholder="Enter Mobile Number" required>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="pincode" class="text-red">Pincode</label>
+                        <input type="text" class="form-control" id="pincode" placeholder="Enter Pincode" required>
+                      </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="district" class="text-red">District</label>
+                    <input type="tel" class="form-control" id="district" placeholder="Enter District" required>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="state" class="text-red">State</label>
+                        <input type="text" class="form-control" id="state" placeholder="Enter State" required>
+                      </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="city" class="text-red">City</label>
+                        <input type="text" class="form-control" id="city" placeholder="Enter City" required>
+                      </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="area" class="text-red">Area</label>
+                <input type="text" class="form-control" id="area" placeholder="Enter Area" required>
+              </div>
+              <div class="form-group">
+                <label for="houseNo" class="text-red">House No</label>
+                <input type="text" class="form-control" id="houseNo" placeholder="Enter House Number" required>
+              </div>
+            
+            <button type="submit" class="btn btn-success btn-block" id="saveAddressBtn">Save Changes</button>
+            <br><br>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+
+<!-- Add Address functionality -->
+<script>
+    document.getElementById('saveAddressBtn').addEventListener('click',function(event){
+        event.preventDefault();
+        
+            name = document.getElementById('name').value.trim(),
+            mobile = document.getElementById('mobile').value.trim(),
+            pincode = document.getElementById('pincode').value.trim(),
+            district= document.getElementById('district').value.trim(),
+            state= document.getElementById('state').value.trim(),
+            city= document.getElementById('city').value.trim(),
+            area= document.getElementById('area').value.trim(),
+            houseNo= document.getElementById('houseNo').value.trim()
+
+        let formData = {
+            name:name,
+            mobile:mobile,
+            pincode:pincode,
+            district:district,
+            state:state,
+            city:city,
+            area:area,
+            houseNo:houseNo
+        }
+        
+        if(!/^[A-Za-z]+$/.test(name)){
+                Swal.fire({
+                    icon:'error',
+                    title:'Error',
+                    text:'Name Can Only Contain Alphabets'
+                })
+                return false;
+        }
+        if(!/^\d{10}$/.test(mobile)){
+                Swal.fire({
+                    icon:'error',
+                    title:'error',
+                    text:'Mobile Number should contain 10 Digits'
+                })
+                return false;
+        }
+        if(!/^\d{6}$/.test(pincode)){
+                Swal.fire({
+                    icon:'error',
+                    title:'error',
+                    text:'Pincode Should contain 6 digits only'
+                })
+                return false;
+        }if(!/^[A-Za-z]+$/.test(district)){
+                Swal.fire({
+                    icon:'error',
+                    title:'error',
+                    text:'District should contain only Alphabets'
+                })
+                return false;
+        }
+        if(!/^[A-Za-z]+$/.test(state)){
+                Swal.fire({
+                    icon:'error',
+                    title:'error',
+                    text:'State should contain only Alphabets'
+                })
+                return false;
+        }if(!/^[A-Za-z]+$/.test(city)){
+                Swal.fire({
+                    icon:'error',
+                    title:'error',
+                    text:'City should contain only Alphabets'
+                })
+                return false;
+        }
+       
+        fetch('/addNewAddress',{
+            method : 'POST',
+            headers :{
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify(formData)
+        })
+        .then(response=>response.json())
+        .then(data=>{
+            if(data.success){
+                Swal.fire({
+                    icon:'success',
+                    title:'Success',
+                    text: data.message
+                })
+            }
+            $('#addAddressModal').modal('hide')
+        })
+        .catch(error=>console.error('Error',error))
+    })
+</script>
+
+
+
+<!-- view Address functionality -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var modal = document.getElementById('showAddressModal');
+    var addressDetails = document.getElementById('addressDetails');
+
+    document.querySelectorAll('#showAddressBtn').forEach(function (button) {
+        button.addEventListener('click', function () {
+
+            addressDetails.innerHTML = '';
+
+            var name = this.getAttribute('data-name');
+            var mobile = this.getAttribute('data-mobile');
+            var pincode = this.getAttribute('data-pincode');
+            var district = this.getAttribute('data-district');
+            var state = this.getAttribute('data-state');
+            var city = this.getAttribute('data-city');
+            var area = this.getAttribute('data-area');
+            var houseNo = this.getAttribute('data-house-no');
+
+            var addressHTML = '<p>Name: ' + name + '</p>' +
+                '<p>Mobile: ' + mobile + '</p>' +
+                '<p>Pincode: ' + pincode + '</p>' +
+                '<p>District: ' + district + '</p>' +
+                '<p>State: ' + state + '</p>' +
+                '<p>City: ' + city + '</p>' +
+                '<p>Area: ' + area + '</p>' +
+                '<p>House No: ' + houseNo + '</p>';
+
+            addressDetails.innerHTML = addressHTML;
+
+            $('#showAddressModal').modal('show');
+        });
+    });
+});
+
+</script>
+
+
+
+<!-- deleting Address functionality -->
+<script>
+    document.addEventListener('DOMContentLoaded',function(){
+      document.querySelectorAll('.delete-address-btn').forEach(function(button){
+        button.addEventListener('click',function(){
+          let addressId = this.getAttribute('data-id')
+          Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You won\'t be able to revert this!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('/deleteAddress', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                addressId: addressId
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                         
+                            if (data.success) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your address has been deleted.',
+                                    'success',
+                                    
+                                ).then(() => {
+                                    
+                                    window.location.reload();
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                           
+                        });
+                    }
+                });
+        })
+      })
+    })
+</script>
+
+
+<!-- edit Address functionality -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get all edit buttons
+        var editButtons = document.querySelectorAll('[id="editAddressBtn"]');
+    
+        // Loop through each edit button
+        editButtons.forEach(function(button) {
+            // Add click event listener to each button
+            button.addEventListener('click', function(e) {
+                // Prevent the default action
+                e.preventDefault();
+    
+                // Get the data attributes from the clicked button
+                var name = this.getAttribute('data-name');
+                var mobile = this.getAttribute('data-mobile');
+                var pincode = this.getAttribute('data-pincode');
+                var district = this.getAttribute('data-district');
+                var state = this.getAttribute('data-state');
+                var city = this.getAttribute('data-city');
+                var area = this.getAttribute('data-area');
+                var houseNo = this.getAttribute('data-house-no');
+    
+                // Populate the modal form fields with the data attributes
+                document.getElementById('name').value = name;
+                document.getElementById('mobile').value = mobile;
+                document.getElementById('pincode').value = pincode;
+                document.getElementById('district').value = district;
+                document.getElementById('state').value = state;
+                document.getElementById('city').value = city;
+                document.getElementById('area').value = area;
+                document.getElementById('houseNo').value = houseNo;
+            });
+        });
+    });
+</script>
+    
+
+
+
+<script src='https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<%-include('../layouts/footbar.ejs')%>
+<%-include('../layouts/footer.ejs')%>   

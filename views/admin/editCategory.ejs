@@ -1,0 +1,136 @@
+<%-include('../layouts/adminHeader.ejs')%>
+<%-include('../layouts/adminSidebar.ejs')%>
+
+<style>
+    
+    .purple-header-box {
+    background-color: #936dd1; /* Purple color */
+    color: #ffffff; /* White text color */
+    padding: 15px; /* Adjust padding as needed */
+    border-radius: 5px; /* Optional: Add rounded corners */
+    margin-bottom: 20px; /* Optional: Add space below the box */
+    text-align: center;
+}
+.purple-button {
+    background-color: #936dd1;
+    color: white; /* text color */
+    border: 1px solid black; /* black border */
+    border-radius: 5px; /* slight curve */
+    padding: 10px 20px; /* adjust padding as needed */
+    font-size: 16px; /* adjust font size as needed */
+    cursor: pointer; /* cursor style */
+    /* You can add additional styling as needed */
+}
+.button-group {
+    margin-top: 2cm; /* Adjust the margin-top to create a 2cm gap */
+}
+.purple-button {
+    background-color: #936dd1;
+    color: white; /* text color */
+    border: 1px solid black; /* black border */
+    border-radius: 5px; /* slight curve */
+    padding: 10px 20px; /* adjust padding as needed */
+    font-size: 16px; /* adjust font size as needed */
+    cursor: pointer; /* cursor style */
+    /* You can add additional styling as needed */
+}
+.form-actions {
+    display: flex; /* Use flexbox for layout */
+    justify-content: center; /* Center align items horizontally */
+    margin-top: 20px; /* Add margin to separate from form */
+}
+.form-actions button {
+    margin-right: 3cm; /* Add a 3cm gap between buttons */
+}
+.btn-submit {
+    background-color: #007bff; /* Change background color of Submit button */
+    color: #fff; /* Change text color of Submit button */
+    border-color: #007bff; /* Change border color of Submit button */
+}
+
+.btn-reset {
+    background-color: #dc3545; /* Change background color of Reset button */
+    color: #fff; /* Change text color of Reset button */
+    border-color: #dc3545; /* Change border color of Reset button */
+}
+.form-control {
+    border: 1px solid #000; /* Black border */
+    border-radius: 5px; /* Slight curve */
+}
+#category {
+        border: 1px solid #000;
+        border-radius: 5px;
+    }
+    #changes {
+        border: 1px solid #000;
+        border-radius: 5px;
+    }
+</style>
+
+<div class="container">
+    <div class="page-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="purple-header-box">
+                                <h4 class="card-title">EDIT CATEGORIES</h4>
+                            </div>
+                            <form action="/admin/modifyCategory" method="POST" >
+                                <input type="hidden" id="categoryId" name="categoryId" value="<%= categoryId %>">
+                                <div class="form-body">
+                                    <div class="row">
+                                        <% if (errmsg) { %> 
+                                            <div class="alert  text-center" role="alert" style="color: red; background: white;">
+                                                <%= errmsg %>
+                                            </div>
+                                        <% } %>
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label for="category">CATEGORY NAME</label>
+                                                
+                                                    <input type="text" class="custom-select mr-sm-2" id="category"  name="categoryName" placeholder="Enter new Category Name">
+                                               
+                                                    <input type="text" name="categoryId" id="" value="<%= categoryId %>" hidden>
+                                                <div id="categoryContainer" class="text-danger"></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="changes">CHANGES</label>
+                                                <select class="custom-select mr-sm-2" id="changes" name="changes">
+                                                    <option value="listed">LISTED</option>
+                                                    <option value="unlisted">UNLISTED</option>
+                                                </select>
+                                                <div id="changesContainer" class="text-danger"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-4">
+                                    <button type="submit" class="purple-button">UPDATE</button>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search)
+    const categoryId = urlParams.get('categoryId');
+
+    fetchCategoryDetails (categoryId)
+    .then(category=>{
+        document.getElementById('category').value = category.name;
+
+    })
+    .catch(error=>{
+        console.error("error fetching category details",error)
+    })
+</script>
+
+<%-include('../layouts/adminFooter.ejs')%>

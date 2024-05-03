@@ -1,0 +1,51 @@
+<%-include('../layouts/header.ejs')%>
+<%-include('../layouts/navbar.ejs')%>
+
+<style>
+    .full-image {
+        position: relative;
+        width: 100%;
+        height: 600px; /* Adjust height as needed */
+        overflow: hidden;
+    }
+    
+    .image-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white; /* Text color */
+        font-size: 24px; /* Text size */
+        font-weight: bold;
+        text-align: center;
+        z-index: 1; /* Ensure text is above image */
+    }
+</style>
+
+
+<div class="full-image">
+    <img src="assets/images/backgrounds/login-bg.jpg" alt="Full Image" style="width: 100%; height: 100%; object-fit: cover;">
+    <div class="image-text">
+        About Us
+<br><br>
+
+
+RUSH GAMES is a leading specialist retailer for video games in India. We have our presence in
+
+ online and offline retail in India. We aim to deliver the best products in gaming with video
+ 
+games, game accessories, merchandise, and special products such as limited-edition 
+
+
+
+ our passion for all things gaming,.Happy Gaming!!!!!
+ <br>
+REGISTERED ADDRESS RUSH GAMES Retail Pvt. Ltd401, Western Edge - IWestern Express HighwayBorivali (East), Mumbai - 40006
+
+
+
+    </div>
+</div>
+
+<%-include('../layouts/footbar.ejs')%>
+<%-include('../layouts/footer.ejs')%>

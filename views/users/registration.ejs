@@ -1,0 +1,227 @@
+<%-include('../layouts/header.ejs')%>
+<%-include('../layouts/navbar.ejs')%>
+
+<style>
+    .text-red {
+        color: red;
+    }
+    .small-text {
+        font-size: 12px; /* Adjust the font size as needed */
+    }
+
+    .password-wrapper {
+        position: relative;
+    }
+    .btn-outline-primary-2 {
+    border: 1px solid black; /* Black border */
+    color: black; /* Black text */
+    background-color: transparent; /* Transparent background */
+}
+.form-control {
+    border: 1px solid #000;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+    .password-icon {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        cursor: pointer;
+    }
+
+    .password-rules {
+        display: none;
+        margin-top: 5px;
+        font-size: 12px;
+        color: #999;
+    }
+    .text-center {
+        text-align: center;
+    }
+    
+    .font-weight-bold {
+        font-weight: bold;
+        color: black; /* Set text color to black */
+    }
+</style>
+
+<div class="page-wrapper">
+    <main class="main">
+
+        <div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17" style="background-image: url('assets/images/backgrounds/login-bg.jpg')">
+            <div class="container">
+                <div class="form-box">
+                    <div class="form-tab">
+                        <div class="text-center">
+                            <img src="/assets/images/logo.png" alt="WoodStreet Logo" width="150px" height="150px" style="display: block; margin: 0 auto;">
+                        </div>
+                        <ul class="nav nav-pills nav-fill" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="register-tab-2" data-toggle="tab" href="#register-2" role="tab" aria-controls="register-2" aria-selected="true">Register</a>
+                            </li>
+                        </ul>
+                        <% if (errmsg) { %> 
+                            <div class="alert  text-center" role="alert" style="color: red; background: white;">
+                                <%= errmsg %>
+                            </div>
+                        <% } %>
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
+                                <form method="post" action="/register" onsubmit="return validation()">
+                                    <div class="form-group">
+                                        <label for="register-name">Name *</label>
+                                        <input type="text" class="form-control" id="register-name" name="name">
+                                        <p id="errorName" style="color: coral;"></p>
+                                    </div>                                
+                                    <div class="form-group">
+                                        <label for="register-email">Your email address *</label>
+                                        <input type="text" class="form-control" id="register-email" name="email" >
+                                        <p id="errorEmail" style="color: coral;"></p>
+                                    </div>
+                                
+                                    <div class="form-group">
+                                        <label for="register-mobile">Your Mobile Number *</label>
+                                        <input type="text" class="form-control" id="register-mobile" name="mobile" >
+                                        <p id="errorMobile" style="color: coral;"></p>
+                                    </div>
+                                
+                                    <div class="form-group">
+                                        <label for="register-password">Password *</label>
+                                        <div class="password-wrapper">
+                                            <input type="password" class="form-control" id="register-password" name="password" >
+                                            <p id="errorPassword" style="color: coral;"></p>
+                                            <div class="password-icon" onmouseover="showPasswordRules()" onmouseout="hidePasswordRules()">ℹ️</div>
+                                        </div>
+                                        <div class="password-rules" id="passwordRules">
+                                            Password Rules: <br>
+                                            * Must be at least 5 characters <br>
+                                        </div>
+                                    </div>
+                                
+                                    <div class="form-group">
+                                        <label for="register-confirmPassword">Confirm Password *</label>
+                                        <input type="password" class="form-control" id="register-confirmPassword" name="confirmPassword" >
+                                        <p id="errorConfirmPassword" style="color: coral;"></p>
+                                    </div>
+                                
+                                    <div class="form-footer">
+                                        <div id="validation-message"></div>
+                                        <button type="submit" class="btn btn-outline-primary-2">
+                                            <span>SIGN UP</span>
+                                            <i class="icon-long-arrow-right"></i>
+                                        </button>
+                                
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="register-policy-2" required>
+                                            <label class="custom-control-label" for="register-policy-2">I agree to the <a href="#">privacy policy</a> *</label>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="text-center font-weight-bold">
+                                    <p>
+                                        <span>Already a Member ?</span>
+                                        <a href="/login" class=" font-weight-bold">Login</a>
+                                    </p>
+                                </div>
+                                
+                            </div><!-- .End .tab-pane -->
+                        </div><!-- End .tab-content -->
+                    </div><!-- End .form-tab -->
+                </div><!-- End .form-box -->
+            </div><!-- End .container -->
+        </div><!-- End .login-page section-bg -->
+    </main><!-- End .main -->
+</div><!-- End .page-wrapper -->
+
+<button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+<script>
+    function validation() {
+        
+       let name = document.getElementById("register-name").value.trim();
+       let email = document.getElementById("register-email").value.trim();
+       let mobile = document.getElementById("register-mobile").value.trim();
+       let password = document.getElementById("register-password").value.trim();
+       let confirmPassword = document.getElementById("register-confirmPassword").value.trim();
+
+        // let nameRegex = /^(?!\s)[a-zA-Z]+(?: [a-zA-Z]+)*$/;
+        // let emailRegex = /^(?!\s)[^\s@]+@[^\s@]+\.(?:com)$/i;
+        // let mobileRegex = /^(?:(?!0{10})\d{10})$/;
+        // let passwordRegex = /^.{5,}$/;
+        
+        let nameRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)*$/; // Removed the leading space check
+        let emailRegex = /^(?!\s)[^\s@]+@[^\s@]+\.(?:com)$/i;
+        let mobileRegex = /^(?:(?!0{10})\d{10})$/;
+        let passwordRegex = /^.{5,}$/;
+
+        
+       let errorName = document.getElementById("errorName");
+       let errorEmail = document.getElementById("errorEmail");
+       let errorMobile = document.getElementById("errorMobile");
+       let errorPassword = document.getElementById("errorPassword");
+       let errorConfirmPassword = document.getElementById("errorConfirmPassword");
+
+        
+        errorName.innerText = "";
+        errorEmail.innerText = "";
+        errorMobile.innerText = "";
+        errorPassword.innerText = "";
+        errorConfirmPassword.innerText = "";
+
+        // ****** VALIDATE NAME ******
+        if (name === "") {
+            errorName.innerText = "Name cannot be empty";
+            return false;
+        }else if (!nameRegex.test(name)) {
+             errorName.innerText = 'Name can only contain letters and spaces';
+            return false;
+        }else if(name.charAt(0)===' '){
+            errorName.innerText = "Please Remove the Space"
+            return false
+        }
+
+        // ****** VALIDATE EMAIL ******
+        if (email === "") {
+            errorEmail.innerText = "Email cannot be empty";
+            return false;
+        } else if (!emailRegex.test(email)) {
+            errorEmail.innerText = "Please enter a valid email address ending with .com";
+            return false;
+        }
+
+        // ****** VALIDATE MOBILE NUMBER ******
+        if (mobile === "") {
+            errorMobile.innerText = "Mobile number cannot be empty";
+            return false;
+        } else if (!mobileRegex.test(mobile)) {
+            errorMobile.innerText = "Please enter a valid 10-digit mobile number";
+            return false;
+        }
+
+        // ****** VALIDATE PASSWORD ******
+        if (password === "") {
+            errorPassword.innerText = "Password cannot be empty";
+            return false;
+        } else if (!passwordRegex.test(password)) {
+            errorPassword.innerText = "Password must be at least 5 characters long";
+            return false;
+        }
+
+        // ****** VALIDATE CONFIRM PASSWORD ******
+        if (confirmPassword === "") {
+            errorConfirmPassword.innerText = "Confirm Password cannot be empty";
+            return false;
+        } else if (password !== confirmPassword) {
+            errorConfirmPassword.innerText = "Passwords do not match";
+            return false;
+        }
+
+        return true;
+    }
+</script>
+
+
+
+<%-include('../layouts/footbar.ejs')%>
+<%-include('../layouts/footer.ejs')%>   
