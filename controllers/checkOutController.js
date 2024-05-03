@@ -61,6 +61,11 @@ const addNewAddress = async (req,res)=>{
 const placeOrder = async (req,res)=>{
   try {
     console.log('oreder');
+    console.log('oreder');
+    console.log('oreder');
+    console.log('oreder');
+    console.log('oreder');
+    console.log('oreder');
   } catch (error) {
     console.log(error);
   }
