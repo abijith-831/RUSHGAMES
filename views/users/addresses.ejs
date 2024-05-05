@@ -84,7 +84,21 @@
         border-radius: 5px;
         font-size: 16px;
     }
-
+    .btn {
+        display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: .85rem 1.5rem;
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 1.5;
+    letter-spacing: -.01em;
+    min-width: 137px;
+    border-radius: 0;
+    white-space: normal;
+    transition: all 0.3s;
+    }
     .breadcrumbs ul {
         list-style-type: none;
         padding: 0;
@@ -205,7 +219,6 @@
                                                     data-house-no="<%= address.houseNo %>">View</a>
                                                     
                                                   
-    
                                                     <a id="editAddressBtn" class="btn change-btn"  data-toggle="modal" data-target="#editAddressModal"
                                                 data-name="<%= address.name %>"
                                                 data-mobile="<%= address.mobile %>"

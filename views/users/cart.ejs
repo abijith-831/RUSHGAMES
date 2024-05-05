@@ -49,14 +49,17 @@
 									</thead>
 
 									<tbody> 
-										<% cartData.forEach(item => { %>
-											<% item.games.forEach(gameItem => { %>
+										
+									<% if (cartData && cartData.gameId && cartData.length > 0) { %>  	
+										<% cartData.forEach(gameItem => { %>
+											
 												<tr>
 													<td class="product-col">
 														<div class="product">
 															<figure class="product-media">
+
 																<a href="#">
-																	<img src="<%= gameItem.gameId.mainImage[0].path %>" alt="<%= gameItem.gameId.name %>">
+																	<img src="" alt="<%= gameItem.game.name %>">
 																</a>
 															</figure>
 
@@ -84,8 +87,13 @@
 													
 												</tr>
 												
-											<%	}) %>
+											
 										<%	}) %>
+										<% } else { %>
+											<tr>
+												<td colspan="5">Your cart is empty.</td>
+											</tr>
+										<% } %>
 												
 										
 									</tbody>

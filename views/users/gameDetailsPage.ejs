@@ -123,7 +123,7 @@
                                         <div class="details-action-wrapper">
                                             <a href="#" class="btn-product btn-wishlist btn btn-outline-primary-2" onclick="addToWishlist('<%= gameItem.gameId.id %>')" title="Wishlist"><span>Add to Wishlist</span></a>
                                             <span style="margin-left: 2cm;"></span>
-                                            <a href="#" class="btn-product btn-cart  btn btn-outline-primary-2" onclick="addToCart('<%= gameItem.gameId.id %>')" title="Cart"><span>ADD TO CART</span></a>
+                                            <a href="#" class="btn-product btn-cart  btn btn-outline-primary-2" onclick="addToCart('<%= gameItem.gameId.id %> ', document.getElementById('qty').value) " title="Cart"><span>ADD TO CART</span></a>
                                         </div><!-- End .details-action-wrapper -->
                                     </div><!-- End .product-details-action -->              
                                 </div><!-- End .product-details -->
@@ -533,8 +533,9 @@
 
 <!-- ADDING TO CART -->
 <script>
-    function addToCart(gameId) {
-        fetch(`/addToCart?gameId=${gameId}`, { method: 'POST' })
+   
+    function addToCart(gameId , quantity) {
+        fetch(`/addToCart?gameId=${gameId}&quantity=${quantity}`, { method: 'POST' })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {

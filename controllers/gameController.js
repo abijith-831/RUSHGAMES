@@ -97,7 +97,7 @@ const addGames = async (req, res) => {
         name,
         category: req.body.category,
         price: req.body.price,
-        quantity: req.body.quantity,
+        stock: req.body.quantity,
         systemReq: req.body.systemReq,
         mainImage,
         screenshotImages,
@@ -151,30 +151,11 @@ const editGames = async(req,res)=>{
         req.flash('errmsg',"Game Already Exists...")
         res.redirect('/admin/editGames')
     }
-    //           let mainImage = currentGame.mainImage ? { ...currentGame.mainImage } : null;
-         
-    //       if(req.files['mainImage']&&req.files['mainImage'][0]){
-    //         const mainImageFile = req.files['mainImage'][0];
-    //         mainImage = {
-    //           filename : mainImageFile.filename,
-    //           path : '/uploads/'+mainImageFile.filename
-    //         }
-    //       }else if(!mainImage){
-    //         mainImage=currentGame.mainImage;
-    //       }
-
-    //       let screenshotImages = currentGame.screenshotImages;
-    //       if(req.files['screenshotImages']&&req.files['screenshotImages'].length===4){
-    //         screenshotImages = req.files['screenshotImages'].map(file=>({
-    //           filename : file.filename,
-    //           path : '/uploads/'+file.filename
-    //         }))
-    //       } 
         await Games.findByIdAndUpdate(gameId,{
           name : newName,
           category : categoryId,
           price : req.body.price,
-          quantity : req.body.quantity,
+          stock : req.body.quantity,
           systemReq : req.body.systemReq,
          
         })

@@ -142,7 +142,7 @@
 														</div><!-- End .product-action-vertical -->
 						
 														<div class="product-action">
-															<a   onclick="addToCart('<%= game._id %>')" class="btn-product btn-cart" style="background-color:rgb(92, 90, 88); color: white; font-weight: bold;"><span>add to cart</span></a>
+															<a   onclick="addToCart('<%= game._id %>' )" class="btn-product btn-cart" style="background-color:rgb(92, 90, 88); color: white; font-weight: bold;"><span>add to cart</span></a>
 														</div><!-- End .product-action -->
 														<div class="product-action-vertical">
 														   
@@ -302,7 +302,8 @@
 <!-- add to cart sweetalert message -->
 <script>
     function addToCart(gameId) {
-        fetch(`/addToCart?gameId=${gameId}`, { method: 'POST' })
+		const quantity = 1;
+        fetch(`/addToCart?gameId=${gameId}&quantity=${quantity}`, { method: 'POST' })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -342,6 +343,7 @@
 <!-- add to wishlist sweetalert message -->
 <script>
 	function addToWishlist(gameId){
+		
 		fetch(`/addToWishlist?gameId=${gameId}`,{method : 'POST'})
 		.then(response=> response.json())
 		.then(data=>{
@@ -349,7 +351,7 @@
 				Swal.fire({
                         icon: 'success',
                         title: 'Success!',
-                        text: 'Game added to Wishlist successfully.',
+                        text: "Game Added to Cart Successfully",
                         showConfirmButton: false,
                         timer: 1500
                     }).then(() => {

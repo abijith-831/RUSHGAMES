@@ -60,12 +60,12 @@ const addNewAddress = async (req,res)=>{
 
 const placeOrder = async (req,res)=>{
   try {
-    console.log('oreder');
-    console.log('oreder');
-    console.log('oreder');
-    console.log('oreder');
-    console.log('oreder');
-    console.log('oreder');
+    console.log('order');
+    console.log('order');
+    console.log('order');
+    console.log('order');
+    console.log('order');
+    console.log('order');
   } catch (error) {
     console.log(error);
   }

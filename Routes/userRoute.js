@@ -55,7 +55,7 @@ user_route.put('/removeFromWishlist' , userAuth.isLogin , wishlistController.rem
 user_route.post('/addToCartAndRemove',wishlistController.addToCartAndRemove)
 
 
-//******   CCHECKOUT SECTION ******  
+//******   CHECKOUT SECTION ******  
 user_route.get('/checkOut' , userAuth.isLogin , checkOutController.loadCheckOut)
 user_route.post('/addNewAddress' , checkOutController.addNewAddress)
 user_route.post('/placeOrder',checkOutController.placeOrder)
@@ -77,7 +77,8 @@ user_route.post('/sortGamesAlphabetically',userController.sortGamesAlphabeticall
 user_route.get('/gameDetails',userController.loadGameDetails)
 
 
-user_route.get('*', (req, res) => {
+
+user_route.get('/aa', (req, res) => {
     console.log('Caught by catch-all route');
     res.render('404');
 });

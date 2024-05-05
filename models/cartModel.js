@@ -9,7 +9,7 @@ const cartSchema = new mongoose.Schema ({
     games : [{
         gameId : {
             type : mongoose.Schema.Types.ObjectId,
-            ref:'Games',
+            ref:'Game',
             required : true
         },
         quantity : {
@@ -17,6 +17,10 @@ const cartSchema = new mongoose.Schema ({
             default :1
         },
         price : {
+            type : Number,
+            required : true
+        },
+        totalAmount : {
             type : Number,
             required : true
         }
