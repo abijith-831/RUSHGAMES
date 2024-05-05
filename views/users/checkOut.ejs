@@ -211,7 +211,7 @@ input[type="radio"]:checked + label {
 									</div>
                                     <div class="checkout-discount ">
                                         <form action="#">
-                                            <input type="text" class="form-control" required id="checkout-discount-input">
+                                            <input type="text" class="form-control"  id="checkout-discount-input">
                                             <label for="checkout-discount-input" class="text-truncate">Have a coupon? <span>Click here to enter your code</span></label>
                                         </form>
                                     </div>
@@ -231,11 +231,11 @@ input[type="radio"]:checked + label {
 		                					</thead>
 
 		                					<tbody>
-											<%= console.log('data'+ cartData) %>
-												<% cartData.games.forEach ( item => { %>
+											
+												<% cartData.games.forEach (( item , index) => { %>
 															<tr>
-																<td><a href="#"><%= item.gameId.name %></a></td>
-																<td><%= (item.gameId.price * item.quantity).toFixed(2) %> Rs</td>
+																<td><a href="#"><%= gameDetails[index].name %></a></td>
+																<td><%= (item.price * item.quantity).toFixed(2) %> Rs</td>
 															</tr>
 														<%   })  %>
 
@@ -255,7 +255,7 @@ input[type="radio"]:checked + label {
 		                							<td>$<%= cartData.totalCartPrice.toFixed(2) %></td>
 		                						</tr><!-- End .summary-total -->
 		                					</tbody>
-		                				</table><!-- End .table table-summary -->
+		                				</table>
 
 		                				<div class="accordion-summary" id="accordion-payment">
 										    <div class="card">
@@ -506,7 +506,16 @@ input[type="radio"]:checked + label {
                     icon:'success',
                     title:'Success',
                     text: data.message
-                })
+                }).then(() => {
+                        location.reload();
+                });
+				
+            } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message
+                    });
             }
             $('#addAddressModal').modal('hide')
         })

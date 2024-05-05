@@ -8,12 +8,15 @@ const Address = require('../models/addressModel')
 // ********** FOR RENDERING CHECKOUT PAGE **********
 const loadCheckOut = async (req,res)=>{
     try {
-      let user = req.session.user_id;
-      const userData = await User.findOne({ _id : user})
-      const addresses = await Address.find({userId : user})
-      const cartData = await Cart.findOne({userId:user}).populate('games.gameId')
-      console.log('sgedg'+cartData);
-      res.render('checkOut',{user : userData , addresses , cartData})
+      let userId = req.session.user_id;
+      const userData = await User.findOne({_id: userId})
+      const addresses = await Address.find({userId : userId})
+      const cartData = await Cart.findOne({userId : userId})
+      const gameIds = cartData.games.map(game => game.gameId);
+      const gameDetailsPromises = gameIds.map(gameId => Games.findOne({_id: gameId}));
+      const gameDetails = await Promise.all(gameDetailsPromises);
+
+      res.render('checkOut',{user : userData , addresses , cartData , gameDetails})
     } catch (error) {
       console.log(error);
     }

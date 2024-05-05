@@ -45,7 +45,7 @@ user_route.post('/editUserPassword',profileController.editUserPassword)
 user_route.get('/cart' , userAuth.isLogin , cartController.loadCart)
 user_route.post('/addToCart' ,  userAuth.isLogin , cartController.addGameToCart)
 user_route.put('/removeFromCart' , userAuth.isLogin , cartController.removeFromCart)
-user_route.post('/updateCartQuantity' , cartController.updateCartQuantity)
+user_route.put('/update-cart' , cartController.updateCartQuantity)
 
 
 //******   WISHLIST SECTION ******

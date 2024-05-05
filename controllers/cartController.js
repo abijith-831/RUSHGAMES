@@ -8,20 +8,30 @@ const Cart = require("../models/cartModel");
 const loadCart = async (req, res) => {
   try {
     const userId = req.session.user_id;
-    const cart = await Cart.findOne({ userId : userId}).populate({
+    const userData = await User.findOne({_id: userId})
+    const cart = await Cart.findOne({ userId: userId }).populate({
       path: 'games.gameId',
       model: 'Games'
     }).exec();
     
-    const totalCartPrice = cart.totalCartPrice;
-    console.log('cartdata'+cart);
+    const cartData = cart.games.map(item => ({
+      gameId: item.gameId,
+      name: item.gameId.name,
+      price: item.price,
+      quantity: item.quantity,
+      totalAmount : item.totalAmount,
 
-    res.render('cart',{cartData : cart.games,totalCartPrice,cartId:cart._id})
-    
+      mainImage: item.gameId.mainImage[0]
+    }));
+
+    const totalCartPrice = cart.totalCartPrice;
+    res.render('cart', {user : userData, cartData, totalCartPrice, cartId: cart._id });
   } catch (error) {
     console.log(error);
+    res.status(500).send('Internal Server Error');
   } 
 };
+
 
 
 // ********** FOR INSERTING GAME TO THE CART **********
@@ -111,14 +121,41 @@ const removeFromCart = async (req, res) => {
 
 const updateCartQuantity = async (req, res) => {
   try {
-    const { quantity, itemId, cartId } = req.body;
-    // console.log(quantity+'q');
-    // console.log(itemId+'item');
-    // console.log(cartId + 'asfa') ;
+    const userId = req.session.user_id;
+    const { quantity, gameId, cartId } = req.body;
+    const game = await Games.findById(gameId)
+    const gamePrice = game.price;
+    const exists = await Cart.findById(cartId)
+
+    if(!exists){
+      return res.status(404).json({ success: false, message: "Cart not found" });
+    }
+
+    const gameUpdate = exists.games.find(item=>item.gameId.equals(gameId))
+    if (!gameUpdate) {
+      return res.status(404).json({ success: false, message: "Product not found in the cart" });
+    }
+    
+    gameUpdate.quantity = quantity;
+    gameUpdate.totalAmount = quantity * gamePrice;
+
+    exists.totalCartPrice = exists.games.reduce((acc , curr)=>{
+      return acc + curr.totalAmount
+    },0)
+
+    const cartUpdated = await exists.save()
+    res.json({
+      succes:true,
+      updatedTotalAmount:gameUpdate.totalAmount,
+      updatedTotalCartPrice:exists.totalCartPrice
+    });
+    
   } catch (err) {
     console.log(err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 
 module.exports = {
