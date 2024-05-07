@@ -59,7 +59,7 @@
 															<figure class="product-media">
 
 																<a href="#">
-																	<img src="<%= gameItem.mainImage.path %>" alt="<%= gameItem.name %>">
+																	<img src="<%= gameItem.mainImage.path %>" alt="<%= gameItem.name %>" style="max-width: 100px; max-height: 100px;">>
 																</a>
 															</figure>
 
@@ -86,13 +86,13 @@
 
 													</td>
 													<td class="total-col" style="color: black; font-weight: bold;" ><%= gameItem.totalAmount%></td>
-													
-													
 													<td class="remove-col">
-														<button class="btn-remove" style="color: black;" onclick="confirmDelete('<%= gameItem.name %>', '<%= gameItem.gameId %>')">
+														<button class="btn-remove" onclick="confirmDelete('<%= gameItem.name %>' , '<%= gameItem.gameId._id %> ')">
 															<i class="icon-close"></i>
 														</button>
 													</td>
+													
+													
 													
 												</tr>
 												
@@ -196,12 +196,11 @@
 
 <!--  Ask for confirmation for deleting  using SweetAlert -->
 <script>
-	function confirmDelete(gameName , gameId){
-	// console.log(gameName);
 	
+	function confirmDelete(gameName , gameId){
     Swal.fire({
         title: "Are you sure?",
-        text: 'You Sure you want to remove this from cart ? ',
+        text: `You Sure you want to remove ${gameName} from cart ? `,
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",

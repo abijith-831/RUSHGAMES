@@ -30,49 +30,30 @@ const orderSchema = new mongoose.Schema({
             price:{
                 type:Number
             },
+            totalAmount:{
+                type:Number,
+                required:true,
+            },
            
         },
     ],
-
-    totalAmount:{
-        type:Number,
-        required:true,
+    totalCartPrice : {
+        type : Number,
+        required : true
     },
+   
     
-    addresses : [{
-        name : {
-            type : String,
-            required : true
-        },
-        mobile : {
-            type : Number,
-            required :true
-        },
-        pincode : {
-            type : Number,
-            required : true
-        },
-        district : {
-            type : String,
-            required : true
-        },
-        state : {
-            type : String,
-            required : true
-        },
-        city : {
-            type : String,
-            required : true
-        },
-        area : {
-            type : String,
-            required : true
-        },
-        houseNo : {
-            type : String,
-            required : true
-        }
-    }] ,
+    addresses : {
+        name : String,
+        mobile : Number,
+        pincode : Number,
+        district : String,
+        state : String,
+        city : String,
+        area : String ,
+        houseNo :Number
+
+    } ,
 
     paymentMethod:{
         type:String,
@@ -86,11 +67,11 @@ const orderSchema = new mongoose.Schema({
     },
 
     orderId:{
-        type:String,
+        type: Number,
         required:true
     },
 
-    currendDate:{
+    orderDate:{
         type:Date,
         default: ()=> Date.now(),
     },

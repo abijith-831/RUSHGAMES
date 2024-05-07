@@ -138,6 +138,13 @@ const deleteAddress = async (req,res)=>{
 }
 
 
+const loadOrderHistory = async (req,res)=>{
+  try {
+    res.render('orderHistory')
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 module.exports = {
     loadUserProfile,
@@ -146,5 +153,7 @@ module.exports = {
 
     loadAddresses,
     addNewAddress,
-    deleteAddress
+    deleteAddress,
+
+    loadOrderHistory
 }

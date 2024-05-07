@@ -161,7 +161,7 @@ input[type="radio"]:checked + label {
             	<div class="checkout">
 	                <div class="container-fluid">
             			
-            			<form action="/placeOrder" method = 'POST'>
+            			<form action="/placeOrder" method = 'POST' id="orderForm">
 		                	<div class="row">
                                 <aside class="col-lg-8 content-container ">
                                     <div class="address-selection-box">
@@ -170,7 +170,7 @@ input[type="radio"]:checked + label {
 										<% addresses.forEach((item) => { %>
 											<% item.addresses.forEach((address, index) => { %>
 												<div class="address-option">
-													<input type="radio" name="address" id="address<%= index + 1 %>">
+													<input type="radio" name="address" id="address<%= index + 1 %>" value="<%= address %>">
 													<label for="address<%= index + 1 %>">
 														<h4> Address <%= index + 1 %> </h4>
 														<p><%= address.name %>, <%= address.city %>, <%= address.state %></p>
@@ -269,24 +269,24 @@ input[type="radio"]:checked + label {
 										        <div id="collapse-1" class="collapse show" aria-labelledby="heading-1" data-parent="#accordion-payment">
 										            <div class="card-body">
 										                Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account.
-										            </div><!-- End .card-body -->
-										        </div><!-- End .collapse -->
-										    </div><!-- End .card -->
+										            </div>
+										        </div>
+										    </div>
 
-										    <div class="card">
+											<!--    <div class="card">
 										        <div class="card-header" id="heading-2">
 										            <h2 class="card-title">
 										                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-2" aria-expanded="false" aria-controls="collapse-2">
 										                    Check payments
 										                </a>
 										            </h2>
-										        </div><!-- End .card-header -->
+										        </div>
 										        <div id="collapse-2" class="collapse" aria-labelledby="heading-2" data-parent="#accordion-payment">
 										            <div class="card-body">
 										                Ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. 
-										            </div><!-- End .card-body -->
-										        </div><!-- End .collapse -->
-										    </div><!-- End .card -->
+										            </div>
+										        </div>
+										    </div> -->
 
 										    <div class="card">
 										        <div class="card-header" id="heading-3">
@@ -302,22 +302,22 @@ input[type="radio"]:checked + label {
 										        </div><!-- End .collapse -->
 										    </div><!-- End .card -->
 
-										    <div class="card">
+										<!--    <div class="card">
 										        <div class="card-header" id="heading-4">
 										            <h2 class="card-title">
 										                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-4" aria-expanded="false" aria-controls="collapse-4">
 										                    PayPal <small class="float-right paypal-link">What is PayPal?</small>
 										                </a>
 										            </h2>
-										        </div><!-- End .card-header -->
+										        </div>  
 										        <div id="collapse-4" class="collapse" aria-labelledby="heading-4" data-parent="#accordion-payment">
 										            <div class="card-body">
 										                Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum.
-										            </div><!-- End .card-body -->
-										        </div><!-- End .collapse -->
-										    </div><!-- End .card -->
+										            </div>
+										        </div>
+										    </div>-->
 
-										    <div class="card">
+										<!--    <div class="card">
 										        <div class="card-header" id="heading-5">
 										            <h2 class="card-title">
 										                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-5" aria-expanded="false" aria-controls="collapse-5">
@@ -325,12 +325,12 @@ input[type="radio"]:checked + label {
 										                    <img src="assets/images/payments-summary.png" alt="payments cards">
 										                </a>
 										            </h2>
-										        </div><!-- End .card-header -->
+										        </div>
 										        <div id="collapse-5" class="collapse" aria-labelledby="heading-5" data-parent="#accordion-payment">
 										            <div class="card-body"> Donec nec justo eget felis facilisis fermentum.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Lorem ipsum dolor sit ame.
-										            </div><!-- End .card-body -->
-										        </div><!-- End .collapse -->
-										    </div><!-- End .card -->
+										            </div>
+										        </div>
+										    </div>-->
 										</div><!-- End .accordion -->
 		                				<button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
 		                					<span >Place Order</span>
@@ -343,6 +343,8 @@ input[type="radio"]:checked + label {
                 </div><!-- End .checkout -->
             </div><!-- End .page-content -->
         </main><!-- End .main -->
+
+
 
 
 
@@ -419,7 +421,8 @@ input[type="radio"]:checked + label {
 	  </div>
 	</div>
 </div>		
-		
+	
+
 <!-- Add Address functionality -->
 <script>
     document.getElementById('saveAddressBtn').addEventListener('click',function(event){
@@ -580,15 +583,55 @@ input[type="radio"]:checked + label {
   
 </script>
 
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script>
-	document.addEventListener('DOMContentLoaded', function() {
-    const gamesData = JSON.parse(sessionStorage.getItem('gamesData'));
-    const totalPrice = sessionStorage.getItem('totalPrice');
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('orderForm');
+        if (form) {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const selectedAddress = document.querySelector('input[name="address"]:checked');
+                const selectedPaymentMethod = document.querySelector('.card-title a[aria-expanded="true"]');
+                if (selectedAddress && selectedPaymentMethod) {
+                    const addressValue = selectedAddress.value;
+                    const paymentMethod = selectedPaymentMethod.textContent.trim();
+                    sendDataToBackend(addressValue, paymentMethod);
+                } else {
+                    console.error('No address or payment method selected');
+                }
+            });
+        }
+    });
 
-    // Now you have the gamesData and totalPrice, you can use them as needed in your checkout page
-});
-
+    function sendDataToBackend(address, paymentMethod) {
+        fetch('/placeOrder', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ selectedAddress: address, selectedPaymentMethod: paymentMethod }),
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Failed to place order');
+            }
+        })
+        .then(data => {
+            // Display success message
+            swal("Success!", "Your order has been placed successfully!", "success");
+            console.log(data); // You can handle the response data here if needed
+        })
+        .catch((error) => {
+            // Display error message
+            swal("Error!", "Failed to place your order. Please try again later.", "error");
+            console.error('Error:', error);
+        });
+    }
 </script>
+
 
 <!-- Plugins JS File -->
 <script src="assets/js/jquery.min.js"></script>

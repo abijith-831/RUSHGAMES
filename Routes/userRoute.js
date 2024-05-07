@@ -39,7 +39,7 @@ user_route.get('/logout', userAuth.isLogin , userController.userLogout)
 user_route.get('/userProfile' , userAuth.isLogin , profileController.loadUserProfile)
 user_route.post('/editUserProfile',profileController.editUserProfile)
 user_route.post('/editUserPassword',profileController.editUserPassword)
-
+user_route.get('/orderHistory',profileController.loadOrderHistory)
 
 //******   USER CART SECTIONS ******
 user_route.get('/cart' , userAuth.isLogin , cartController.loadCart)
@@ -58,7 +58,7 @@ user_route.post('/addToCartAndRemove',wishlistController.addToCartAndRemove)
 //******   CHECKOUT SECTION ******  
 user_route.get('/checkOut' , userAuth.isLogin , checkOutController.loadCheckOut)
 user_route.post('/addNewAddress' , checkOutController.addNewAddress)
-user_route.post('/placeOrder',checkOutController.placeOrder)
+user_route.post('/placeOrder' , checkOutController.placeOrder)
 
 
 //******   USER ADDRESS SECTIONS ******
@@ -73,12 +73,11 @@ user_route.get('/contactUs',userController.loadContactUs)
 
 
 user_route.get('/allGames',userController.loadAllGames)
-user_route.post('/sortGamesAlphabetically',userController.sortGamesAlphabetically)
 user_route.get('/gameDetails',userController.loadGameDetails)
+user_route.get('/sort/:criteria',userController.sortGames);
+user_route.get('/search',userController.searchName)
 
-
-
-user_route.get('/aa', (req, res) => {
+user_route.get('*', (req, res) => {
     console.log('Caught by catch-all route');
     res.render('404');
 });

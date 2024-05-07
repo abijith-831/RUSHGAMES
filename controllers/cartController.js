@@ -8,26 +8,31 @@ const Cart = require("../models/cartModel");
 const loadCart = async (req, res) => {
   try {
     const userId = req.session.user_id;
-    const userData = await User.findOne({_id: userId})
+    const userData = await User.findOne({ _id: userId });
     const cart = await Cart.findOne({ userId: userId }).populate({
       path: 'games.gameId',
       model: 'Games'
     }).exec();
-    
-    const cartData = cart.games.map(item => ({
-      gameId: item.gameId,
-      name: item.gameId.name,
-      price: item.price,
-      quantity: item.quantity,
-      totalAmount : item.totalAmount,
-
-      mainImage: item.gameId.mainImage[0]
-    }));
-
-    const totalCartPrice = cart.totalCartPrice;
-    res.render('cart', {user : userData, cartData, totalCartPrice, cartId: cart._id });
+   
+    if (!cart || cart.games.length === 0) {
+      // If cart is empty, render the cart page with a message
+      const totalCartPrice = 0;
+      res.render('cart', { user: userData, cartData: [], totalCartPrice, cartId: null, isEmpty: true });
+    } else {
+      const cartData = cart.games.map(item => ({
+        gameId: item.gameId,
+        name: item.gameId.name,
+        price: item.price,
+        quantity: item.quantity,
+        totalAmount: item.totalAmount,
+        mainImage: item.gameId.mainImage[0]
+      }));
+  
+      const totalCartPrice = cart.totalCartPrice;
+      res.render('cart', { user: userData, cartData, totalCartPrice, cartId: cart._id, isEmpty: false });
+    }
   } catch (error) {
-    console.log(error);
+    console.error('Error fetching cart:', error);
     res.status(500).send('Internal Server Error');
   } 
 };
@@ -66,9 +71,7 @@ const addGameToCart = async (req, res) => {
         await cart.save();
         res.json({ success: true });
       }
-      const exists = userCart.games.find(
-        (games) => String(games.gameId) === gameId
-      );
+      const exists = userCart.games.find((games) => String(games.gameId) === gameId);
       if (exists) {
         exists.quantity += parseInt(quantity);
         exists.totalAmount = exists.quantity * game.price;
@@ -100,7 +103,7 @@ const removeFromCart = async (req, res) => {
   try {
     const gameId = req.query.gameId;
     const userId = req.session.user_id;
-
+    
     if (
       await Cart.updateOne({ userId }, { $pull: { games: { gameId: gameId } } })
     ) {
@@ -119,6 +122,7 @@ const removeFromCart = async (req, res) => {
 };
 
 
+// ********** FOR UPDATING PRICES ACCORDING TO QUANTITY **********
 const updateCartQuantity = async (req, res) => {
   try {
     const userId = req.session.user_id;

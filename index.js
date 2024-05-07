@@ -10,7 +10,8 @@ const flash=require('express-flash')
 const session = require('express-session')
 const googleAuth = require('./googleAuth')
 // const crypto = require('crypto')
-
+const cors = require('cors');
+app.use(cors());
 
 
 const bodyParser = require('body-parser')

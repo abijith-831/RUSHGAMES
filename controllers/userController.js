@@ -317,16 +317,7 @@ const loadAllGames = async (req, res) => {
 };
 
 
-const sortGamesAlphabetically = async(req,res)=>{
-  try {
-    const games = await Games.find({})
-    const sort = games.sort((a,b)=>a.name.localeCompare(b.name))
-    res.json(sort)
-  } catch (error) {
-    console.log(error);
-  }
-}
-
+// ********** FOR RENDERING GAME DETAILS PAGE **********
 const loadGameDetails = async (req,res)=>{
   try {
     let user = req.session.user_id;
@@ -342,13 +333,75 @@ const loadGameDetails = async (req,res)=>{
 }
 
 
+// ********** FOR SORTING GAMES BY CRITERIAS **********
+const sortGames = async(req,res)=>{
+  try {
+    console.log('working');
+    const { criteria } = req.params;
+    console.log('awfsd'+criteria);
+    let gameData;
+    switch (criteria) {
+      case 'priceLow-High':
+        gameData = await Games.find().sort({ price: 1 });
+        break;
+      case 'priceHigh-Low':
+        gameData = await Games.find().sort({ price: -1 });
+        break;
+      case 'nameA-Z':
+        gameData = await Games.find().collation({ locale: "en" }).sort({ name: 1 });
+        break;
+      case 'nameZ-A':
+        gameData = await Games.find().collation({ locale: "en" }).sort({ name: -1 });
+        break;
+      case 'newArrivals':
+        gameData = await Games.find().sort({ createdAt: -1 });
+        break;
+      
+      
+      default:
+        res.status(400).json({ error: 'Invalid sorting criteria' });
+        return;
+    }
+    console.log('game'+gameData);
+    
+      
+
+
+    res.json({ gameData });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+
+// ********** FOR SEARCHING GAMES BY NAME **********\
+const searchName = async (req,res)=>{
+  const input = req.query.q;
+  if(!input){
+    return res.status(400).send('Search Name is Required...!')
+  }
+
+  try {
+    const gamesFound = await Games.find({ name : {$regex : input , $options:'i'}})
+   if(gamesFound === 0){
+    return res.status(200).json({ message : "No games found matching your Search query"})
+   }
+    res.json(gamesFound)
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
 
 
 module.exports = {
 
   loadHome,
   loadAllGames,
-  sortGamesAlphabetically,
+  sortGames,
+  searchName,
   loadGameDetails,
   loadLogin,
   loadRegister,
