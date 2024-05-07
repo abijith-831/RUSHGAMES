@@ -248,7 +248,6 @@
 
 <!-- fucntion to  increase the amount when quantity changes -->
 <script>
-
 document.querySelectorAll('.quantity-input').forEach(input => {
     input.addEventListener('change', async function() {
         const gameId = this.id;
@@ -278,34 +277,9 @@ document.querySelectorAll('.quantity-input').forEach(input => {
 			
         } catch (error) {
             console.error(error);
-            // Handle error
         }
     });
 });
-
-//         console.log("Inside the update quantity fn");
-//         try {
-//             const response = await fetch('/updateQuantity', {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json'
-//                 },
-//                 body: JSON.stringify({ cartId, gameId, quantity })
-//             });
-//             if (!response.ok) {
-//                 throw new Error('Failed to update quantity');
-//             }
-			
-// 			document.getElementById('ubtotals').innerText = data.cart.totalCartPrice;
-//         	document.getElementById('totalPrice').innerText = data.cart.totalCartPrice;
-
-        
-//             location.reload();
-//             return await response.json();
-//         } catch (error) {
-//             console.error(error);
-//         }
-//     }
 
 	</script>
 	

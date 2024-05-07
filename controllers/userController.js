@@ -377,13 +377,15 @@ const sortGames = async(req,res)=>{
 
 // ********** FOR SEARCHING GAMES BY NAME **********\
 const searchName = async (req,res)=>{
-  const input = req.query.q;
+  const input = req.body.q;
+  console.log('sdgs'+input);
   if(!input){
     return res.status(400).send('Search Name is Required...!')
   }
 
   try {
     const gamesFound = await Games.find({ name : {$regex : input , $options:'i'}})
+    console.log('afsdfsf'+gamesFound);
    if(gamesFound === 0){
     return res.status(200).json({ message : "No games found matching your Search query"})
    }

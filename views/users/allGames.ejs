@@ -385,8 +385,7 @@
 </script>
 
 
-
-
+<!-- sorting by criterias fucntionality -->
 <script>
 	document.addEventListener('DOMContentLoaded', function () {
         var dropdown = document.getElementById('sortby');
@@ -410,7 +409,6 @@
 			var gameList = document.getElementById('gameList');
             gameList.innerHTML = '';
 
-            // Iterate over the sorted game data and render each product
             data.forEach(game => {
                 const gameItem = `
 				<div class="col-md-4">
@@ -461,6 +459,84 @@
 </script>
 
 
+<!-- searching games by names -->
+<script>
+	document.getElementById('searchForm').addEventListener('submit', function(event) {
+		event.preventDefault(); 
+		const query = document.getElementById('q').value; 
+		searchGames(query); 
+	});
+	
+	function searchGames(query) {
+		fetch('/search', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ q: query }),
+		})
+	   .then(response => response.json()) 
+	   .then(data => {
+			if (data.message === "No games found matching your Search query") {
+				console.log("No games found");
+			} else {
+				console.log('jhghgygh');
+				searchGameList(data);
+				console.log('datas'+data); 
+			}
+		})
+	   .catch(error => console.error('Error:', error));
+	}
+	
+	function searchGameList(data){
+		var searchList = document.getElementById('gameList');
+		searchList.innerHTML = '';
+		data.forEach(game => {
+			const gameItem = `
+			<div class="col-md-4">
+				<div class="product product-7 text-center">
+					<figure class="product-media">                                        
+						<input type="hidden" class="system-req" value="">
+						
+						<input type="hidden" id="mainImage" name="mainImage" value="${JSON.stringify(game.image)}">
+						<input type="hidden" id="screenshotImages" name="screenshotImages" value="${JSON.stringify(game.screenshotImages)}">
+						<a href="/gameDetails?id=${game._id}">
+							<img src="${game.mainImage[0].path}" alt="${game.name}" class="product-image with-border" width="200" height="200">
+						</a>
+						<div class="product-action-vertical">
+							<a onclick="addToWishlist('${game._id}')" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
+							<a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
+							<a href="#" class="btn-product-icon btn-compare" title="Compare"><span>Compare</span></a>
+						</div><!-- End.product-action-vertical -->
+	
+						<div class="product-action">
+							<a onclick="addToCart('${game._id}')" class="btn-product btn-cart" style="background-color:rgb(92, 90, 88); color: white; font-weight: bold;"><span>add to cart</span></a>
+						</div><!-- End.product-action -->
+						<div class="product-action-vertical">
+						   
+						</div>
+						<div class="product-action">
+							
+						</div>
+					</figure>
+					<div class="product-body">
+						<div class="product-cat">
+							<a href="/gameDetails?id=${game._id}">${game.categoryName}</a>
+						</div>
+						<h3 class="product-title"><a href="/gameDetails?id=${game._id}">${game.name}</a></h3><!-- End.product-title -->
+						<div class="product-price">
+							${game.price}
+							<p style="font-weight: bold;">   -Rs</p>
+						</div><!-- End.product-price -->
+					</div><!-- End.product-body -->
+				</div><!-- End.product -->
+			</div>
+			`;
+			searchList.insertAdjacentHTML('beforeend', gameItem);
+		});
+	}
+	</script>
+	
 
 <%-include('../layouts/footbar.ejs')%>
 <%-include('../layouts/footer.ejs')%>

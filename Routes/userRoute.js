@@ -75,7 +75,7 @@ user_route.get('/contactUs',userController.loadContactUs)
 user_route.get('/allGames',userController.loadAllGames)
 user_route.get('/gameDetails',userController.loadGameDetails)
 user_route.get('/sort/:criteria',userController.sortGames);
-user_route.get('/search',userController.searchName)
+user_route.post('/search',userController.searchName)
 
 user_route.get('*', (req, res) => {
     console.log('Caught by catch-all route');
