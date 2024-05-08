@@ -103,23 +103,23 @@ input[type="radio"] {
     -moz-appearance: none;
     width: 20px;
     height: 20px;
-    border: 2px solid #007bff;
+    border: 2px solid rgb(3, 3, 3);
     border-radius: 50%;
     cursor: pointer;
 }
 
 input[type="radio"]:checked {
-    background-color: #007bff;
-    border-color: #007bff;
+    background-color: rgb(14, 13, 13);
+    border-color: rgb(5, 5, 5);
 }
 
 input[type="radio"] + label {
     cursor: pointer;
-    color: #007bff;
+    color: #0b0c0c;
 }
 
 input[type="radio"]:checked + label {
-    color: white;
+    color: rgb(2, 2, 2);
 }
 .address-option {
     display: flex;
@@ -170,7 +170,7 @@ input[type="radio"]:checked + label {
 										<% addresses.forEach((item) => { %>
 											<% item.addresses.forEach((address, index) => { %>
 												<div class="address-option">
-													<input type="radio" name="address" id="address<%= index + 1 %>" value="<%= address %>">
+													<input type="radio" name="address" id="address<%= index + 1 %>" value="<%= address._id %>">
 													<label for="address<%= index + 1 %>">
 														<h4> Address <%= index + 1 %> </h4>
 														<p><%= address.name %>, <%= address.city %>, <%= address.state %></p>
@@ -258,80 +258,42 @@ input[type="radio"]:checked + label {
 		                				</table>
 
 		                				<div class="accordion-summary" id="accordion-payment">
-										    <div class="card">
-										        <div class="card-header" id="heading-1">
-										            <h2 class="card-title">
-										                <a role="button" data-toggle="collapse" href="#collapse-1" aria-expanded="true" aria-controls="collapse-1">
-										                    Direct bank transfer
-										                </a>
-										            </h2>
-										        </div><!-- End .card-header -->
-										        <div id="collapse-1" class="collapse show" aria-labelledby="heading-1" data-parent="#accordion-payment">
-										            <div class="card-body">
-										                Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account.
-										            </div>
-										        </div>
-										    </div>
-
-											<!--    <div class="card">
-										        <div class="card-header" id="heading-2">
-										            <h2 class="card-title">
-										                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-2" aria-expanded="false" aria-controls="collapse-2">
-										                    Check payments
-										                </a>
-										            </h2>
-										        </div>
-										        <div id="collapse-2" class="collapse" aria-labelledby="heading-2" data-parent="#accordion-payment">
-										            <div class="card-body">
-										                Ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. 
-										            </div>
-										        </div>
-										    </div> -->
-
-										    <div class="card">
-										        <div class="card-header" id="heading-3">
-										            <h2 class="card-title">
-										                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-3" aria-expanded="false" aria-controls="collapse-3">
-										                    Cash on delivery
-										                </a>
-										            </h2>
-										        </div><!-- End .card-header -->
-										        <div id="collapse-3" class="collapse" aria-labelledby="heading-3" data-parent="#accordion-payment">
-										            <div class="card-body">Quisque volutpat mattis eros. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. 
-										            </div><!-- End .card-body -->
-										        </div><!-- End .collapse -->
-										    </div><!-- End .card -->
-
-										<!--    <div class="card">
-										        <div class="card-header" id="heading-4">
-										            <h2 class="card-title">
-										                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-4" aria-expanded="false" aria-controls="collapse-4">
-										                    PayPal <small class="float-right paypal-link">What is PayPal?</small>
-										                </a>
-										            </h2>
-										        </div>  
-										        <div id="collapse-4" class="collapse" aria-labelledby="heading-4" data-parent="#accordion-payment">
-										            <div class="card-body">
-										                Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum.
-										            </div>
-										        </div>
-										    </div>-->
-
-										<!--    <div class="card">
-										        <div class="card-header" id="heading-5">
-										            <h2 class="card-title">
-										                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-5" aria-expanded="false" aria-controls="collapse-5">
-										                    Credit Card (Stripe)
-										                    <img src="assets/images/payments-summary.png" alt="payments cards">
-										                </a>
-										            </h2>
-										        </div>
-										        <div id="collapse-5" class="collapse" aria-labelledby="heading-5" data-parent="#accordion-payment">
-										            <div class="card-body"> Donec nec justo eget felis facilisis fermentum.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Lorem ipsum dolor sit ame.
-										            </div>
-										        </div>
-										    </div>-->
-										</div><!-- End .accordion -->
+											<div class="card">
+												<div class="card-header" id="heading-1">
+													<h2 class="card-title">
+														<input type="radio" name="paymentMethod" value="directBankTransfer" id="paymentMethod1">
+														<label for="paymentMethod1" data-toggle="collapse" data-target="#collapse-1" aria-expanded="true" aria-controls="collapse-1">
+															Direct bank transfer
+														</label>
+													</h2>
+												</div>
+												<div id="collapse-1" class="collapse show" aria-labelledby="heading-1" data-parent="#accordion-payment">
+													<div class="card-body">
+														Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account.
+													</div>
+												</div>
+											</div>
+										
+											<div class="card">
+												<div class="card-header" id="heading-2">
+													<h2 class="card-title">
+														<input type="radio" name="paymentMethod" value="cashOnDelivery" id="paymentMethod2">
+														<label for="paymentMethod2" data-toggle="collapse" data-target="#collapse-2" aria-expanded="true" aria-controls="collapse-2">
+															Cash on delivery
+														</label>
+													</h2>
+												</div>
+												<div id="collapse-2" class="collapse" aria-labelledby="heading-2" data-parent="#accordion-payment">
+													<div class="card-body">
+														Quisque volutpat mattis eros. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros.
+													</div>
+												</div>
+											</div>
+										
+											<!-- Add more accordion items as needed -->
+										
+										</div>
+										<!-- End .accordion -->
 		                				<button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
 		                					<span >Place Order</span>
 		                				</button>
@@ -343,9 +305,6 @@ input[type="radio"]:checked + label {
                 </div><!-- End .checkout -->
             </div><!-- End .page-content -->
         </main><!-- End .main -->
-
-
-
 
 
 <!-- add address modal-->
@@ -584,54 +543,47 @@ input[type="radio"]:checked + label {
 </script>
 
 
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<!-- fetching address and payment method and passing it to backend -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('orderForm');
-        if (form) {
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const selectedAddress = document.querySelector('input[name="address"]:checked');
-                const selectedPaymentMethod = document.querySelector('.card-title a[aria-expanded="true"]');
-                if (selectedAddress && selectedPaymentMethod) {
-                    const addressValue = selectedAddress.value;
-                    const paymentMethod = selectedPaymentMethod.textContent.trim();
-                    sendDataToBackend(addressValue, paymentMethod);
-                } else {
-                    console.error('No address or payment method selected');
-                }
-            });
-        }
+	 document.addEventListener('DOMContentLoaded', () => {
+		function proceedToCheckout(paymentMethod, addressId) {
+			fetch('/placeOrder', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ paymentMethod : paymentMethod, addressId : addressId })
+			})
+				.then(response => response.json())
+				.then(data => {
+					if (data.success) {			
+						Swal.fire({
+							icon: 'success',
+							title: 'Success!',
+							text: 'Order Placed Successfully .! ',
+							showConfirmButton: false,
+							timer: 1500
+							})
+					} else {
+						
+					}
+				})
+				.catch(error => {
+					console.error('Fetch error:', error);
+				});
+		}
+		document.querySelector('#orderForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+        console.log('Selected Payment Method:', paymentMethod);
+        const selectedAddress = document.querySelector('input[name="address"]:checked').value;
+        proceedToCheckout(paymentMethod, selectedAddress);
     });
-
-    function sendDataToBackend(address, paymentMethod) {
-        fetch('/placeOrder', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ selectedAddress: address, selectedPaymentMethod: paymentMethod }),
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('Failed to place order');
-            }
-        })
-        .then(data => {
-            // Display success message
-            swal("Success!", "Your order has been placed successfully!", "success");
-            console.log(data); // You can handle the response data here if needed
-        })
-        .catch((error) => {
-            // Display error message
-            swal("Error!", "Failed to place your order. Please try again later.", "error");
-            console.error('Error:', error);
-        });
-    }
+});
 </script>
 
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 <!-- Plugins JS File -->
 <script src="assets/js/jquery.min.js"></script>

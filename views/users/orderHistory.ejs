@@ -1,343 +1,272 @@
-<%-include('../layouts/header.ejs')%>
-<%-include('../layouts/navbar.ejs')%>
-
-
+<%-include('../layouts/header.ejs')%> <%-include('../layouts/navbar.ejs')%>
 
 <style>
-    .gradient-custom {
-        background-image: url('/assets/images/backgrounds/login-bg.jp'); 
-        
-    }
-    body {
-        
-        color: #1a202c;
-        text-align: left;
-       
-    }
+  .gradient-custom {
+    background-image: url("/assets/images/backgrounds/login-bg.jp");
+  }
+  body {
+    color: #1a202c;
+    text-align: left;
+  }
 
-    
-    .card {
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
-    }
+  .card {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  }
 
-    .card {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-        word-wrap: break-word;
-        background-color: #fff;
-        background-clip: border-box;
-        border: 2 solid rgba(0, 0, 0, .125);
-        border-radius: .25rem;
-        
-    }
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 2 solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25rem;
+  }
 
-    .card-body {
-        flex: 1 1 auto;
-        min-height: 1px;
-        padding: 1rem;
-    }
+  .card-body {
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 1rem;
+  }
 
-    .gutters-sm {
-        margin-right: -8px;
-        margin-left: -8px;
-    }
+  .gutters-sm {
+    margin-right: -8px;
+    margin-left: -8px;
+  }
 
-    .gutters-sm>.col,
-    .gutters-sm>[class*=col-] {
-        padding-right: 8px;
-        padding-left: 8px;
-    }
+  .gutters-sm > .col,
+  .gutters-sm > [class*="col-"] {
+    padding-right: 8px;
+    padding-left: 8px;
+  }
 
-    .mb-3,
-    .my-3 {
-        margin-bottom: 1rem !important;
-    }
+  .mb-3,
+  .my-3 {
+    margin-bottom: 1rem !important;
+  }
 
-    .bg-gray-300 {
-        background-color: #e2e8f0;
-    }
+  .bg-gray-300 {
+    background-color: #e2e8f0;
+  }
 
-    .h-100 {
-        height: 100% !important;
-    }
+  .h-100 {
+    height: 100% !important;
+  }
 
-    .shadow-none {
-        box-shadow: none !important;
-    }
+  .shadow-none {
+    box-shadow: none !important;
+  }
 
-    .buttons {
-        width: 100%;
-        height: 40px;
-        border: none;
-        background-color: white;
-        color: black;
-        border: 2px;
-        border-radius: 5px;
-        margin-top: 10px;
-        text-align: left;
-    }
-    .buttons:hover {
+  .buttons {
+    width: 100%;
+    height: 40px;
+    border: none;
+    background-color: white;
+    color: black;
+    border: 2px;
+    border-radius: 5px;
+    margin-top: 10px;
+    text-align: left;
+  }
+  .buttons:hover {
     background-color: rgb(240, 104, 104);
-}
-    /* breadcrums */
+  }
+  /* breadcrums */
 
-    .breadcrumbs {
-        margin-top: 20px;
-        padding: 10px;
-        background-color: #f8f9fa;
-        border-radius: 5px;
-        font-size: 16px;
-    }
-    .btn {
-        display: inline-flex;
+  .breadcrumbs {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  .btn {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: .85rem 1.5rem;
+    padding: 0.85rem 1.5rem;
     font-weight: 400;
     font-size: 1.4rem;
     line-height: 1.5;
-    letter-spacing: -.01em;
+    letter-spacing: -0.01em;
     min-width: 137px;
     border-radius: 0;
     white-space: normal;
     transition: all 0.3s;
-    }
-    .breadcrumbs ul {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-    }
+  }
+  .breadcrumbs ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
 
-    .breadcrumbs li {
-        display: inline;
-    }
+  .breadcrumbs li {
+    display: inline;
+  }
 
-    .breadcrumbs li:not(:last-child):after {
-        content: ' / ';
-        margin: 0 5px;
-    }
+  .breadcrumbs li:not(:last-child):after {
+    content: " / ";
+    margin: 0 5px;
+  }
 
-    .breadcrumbs a {
-        text-decoration: none;
-        color: #007bff;
-    }
+  .breadcrumbs a {
+    text-decoration: none;
+    color: #007bff;
+  }
 
-    .breadcrumbs a:hover {
-        text-decoration: underline;
-        color: #0056b3;
-    }
-    .custom-border {
+  .breadcrumbs a:hover {
+    text-decoration: underline;
+    color: #0056b3;
+  }
+  .custom-border {
     border: 1px solid #e3e3e3;
     border-radius: 10px;
-}
-.card-body {
+  }
+  .card-body {
     border: 1px solid;
-}
-.custom-btn {
-        background-color: white;
-        color: black;
-        border: 1px solid;
-    }
-    .custom-btn:hover {
-        background-color: rgb(240, 104, 104);
-        
-    }
-   .edit-btn , .change-btn , .save-btn{
+  }
+  .custom-btn {
     background-color: white;
-        color: black;
-        border: 1px solid;
-   }
-   .save-btn:hover{
+    color: black;
+    border: 1px solid;
+  }
+  .custom-btn:hover {
+    background-color: rgb(240, 104, 104);
+  }
+  .edit-btn,
+  .change-btn,
+  .save-btn {
+    background-color: white;
+    color: black;
+    border: 1px solid;
+  }
+  .save-btn:hover {
     background-color: rgb(99, 175, 97);
-   }
-   .edit-btn:hover {
-        background-color: rgb(99, 175, 97);
-        
-    }
-    .change-btn:hover{
-        background-color: #797474;
-    }
+  }
+  .edit-btn:hover {
+    background-color: rgb(99, 175, 97);
+  }
+  .change-btn:hover {
+    background-color: #797474;
+  }
 </style>
 
-
-<div class="page-header  text-center" style="background-image: url('assets/images/page-header-bg.png'); width: 100%;">
+<div
+  class="page-header text-center"
+  style="background-image: url('assets/images/page-header-bg.png'); width: 100%"
+>
   <div class="container">
-      <h1 class="page-title text-white">Order History</h1>
-  </div><!-- End .container -->
+    <h1 class="page-title text-white">Order History</h1>
+  </div>
+  <!-- End .container -->
 </div>
 
-
-
-<div class="container">
-    
+<div class="container-fluid">
   <div class="main-body">
-
-      <div class="row gutters-sm" style="margin-top: 50px;">
-          <div class="col-md-4 mb-3 ">
-              <div class="cardborder">
-                  <div class="card-body">
-                      <div class="d-flex flex-column align-items-center text-center">
-                          <img src="/assets/images/profile.jpg" >
-                          <div class="mt-1">
-                          
-                             
-                              <button class="buttons " onclick="location.href='/userProfile'" >My Account <i class="fas fa-user" style="margin-right: 5px; "></i></button>
-                              <a href="/orderHistory"><button class="buttons" style="background-color: rgb(240, 104, 104);">Order History <i style="margin-right: 5px;"class="fas fa-cart-plus"></i></button></a>
-                              <button class="buttons"  onclick="location.href='/addresses'">Addresses <i class="fas fa-address-book" style="margin-right: 5px;"></i></button>
-                              <button class="buttons">Wallet <i class="fas fa-wallet" style="margin-right: 5px;"></i></button>
-                              <button class="buttons">Offers <i class="fas fa-tag" style="margin-right: 5px;"></i></button>
-                              <a href="/logout"><button class="buttons">Logout <i class="fas fa-sign-out-alt" style="margin-right: 5px;"></i></button></a>
-                          </div>
-                      </div>
-                  </div>
+    <div class="row gutters-sm" style="margin-top: 50px">
+      <div class="col-md-3 mb-3">
+        <div class="cardborder">
+          <div class="card-body">
+            <div class="d-flex flex-column align-items-center text-center">
+              <img src="/assets/images/profile.jpg" />
+              <div class="mt-1">
+                <button class="buttons" onclick="location.href='/userProfile'">
+                  My Account
+                  <i class="fas fa-user" style="margin-right: 5px"></i>
+                </button>
+                <a href="/orderHistory"
+                  ><button
+                    class="buttons"
+                    style="background-color: rgb(240, 104, 104)"
+                  >
+                    Order History
+                    <i
+                      style="margin-right: 5px"
+                      class="fas fa-cart-plus"
+                    ></i></button
+                ></a>
+                <button class="buttons" onclick="location.href='/addresses'">
+                  Addresses
+                  <i class="fas fa-address-book" style="margin-right: 5px"></i>
+                </button>
+                <button class="buttons">
+                  Wallet <i class="fas fa-wallet" style="margin-right: 5px"></i>
+                </button>
+                <button class="buttons">
+                  Offers <i class="fas fa-tag" style="margin-right: 5px"></i>
+                </button>
+                <a href="/logout"
+                  ><button class="buttons">
+                    Logout
+                    <i
+                      class="fas fa-sign-out-alt"
+                      style="margin-right: 5px"
+                    ></i></button
+                ></a>
               </div>
-
-          </div>
-          <div class="col-md-7 ml-5">
-             
-                      <div class="row d-flex justify-content-center align-items-center ">
-        <div class="col-lg-12 col-xl-12">
-          <div class="card" style="border-radius: 10px;">
-            
-            <div class="card-body p-4">
-             
-                
-                <div class="card shadow-0 border mb-4">
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col-md-2">
-                        <img src=""
-                          class="" alt="">
-                      </div>
-                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                        <p class="text-muted mb-0">Samsung Galaxy</p>
-                      </div>
-                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                        <p class="text-muted mb-0 small">White</p>
-                      </div>
-                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                        <p class="text-muted mb-0 small">Capacity: 64GB</p>
-                      </div>
-                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                        <p class="text-muted mb-0 small">Qty: 1</p>
-                      </div>
-                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                        <p class="text-muted mb-0 small">$499</p>
-                      </div>
-                    </div>
-                    <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
-                    <div class="row d-flex align-items-center">
-                      <div class="col-md-2">
-                        <p class="text-muted mb-0 small">Track Order</p>
-                      </div>
-                      <div class="col-md-10">
-                        <div class="progress" style="height: 6px; border-radius: 16px;">
-                          <div class="progress-bar" role="progressbar"
-                            style="width: 65%; border-radius: 16px; background-color: #a8729a;" aria-valuenow="65"
-                            aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <div class="d-flex justify-content-around mb-1">
-                          <p class="text-muted mt-1 mb-0 small ms-xl-5">Out for delivary</p>
-                          <p class="text-muted mt-1 mb-0 small ms-xl-5">Delivered</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              
-           
-
-              
-              <div class="card shadow-0 border mb-4">
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-md-2">
-                      <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/1.webp"
-                        class="img-fluid" alt="Phone">
-                    </div>
-                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                      <p class="text-muted mb-0">iPad</p>
-                    </div>
-                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                      <p class="text-muted mb-0 small">Pink rose</p>
-                    </div>
-                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                      <p class="text-muted mb-0 small">Capacity: 32GB</p>
-                    </div>
-                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                      <p class="text-muted mb-0 small">Qty: 1</p>
-                    </div>
-                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                      <p class="text-muted mb-0 small">$399</p>
-                    </div>
-                  </div>
-                  <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
-                  <div class="row d-flex align-items-center">
-                    <div class="col-md-2">
-                      <p class="text-muted mb-0 small">Track Order</p>
-                    </div>
-                    <div class="col-md-10">
-                      <div class="progress" style="height: 6px; border-radius: 16px;">
-                        <div class="progress-bar" role="progressbar"
-                          style="width: 20%; border-radius: 16px; background-color: #a8729a;" aria-valuenow="20"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                      <div class="d-flex justify-content-around mb-1">
-                        <p class="text-muted mt-1 mb-0 small ms-xl-5">Out for delivary</p>
-                        <p class="text-muted mt-1 mb-0 small ms-xl-5">Delivered</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-  
-              <div class="d-flex justify-content-between pt-2">
-                <p class="fw-bold mb-0">Order Details</p>
-                <p class="text-muted mb-0"><span class="fw-bold me-4">Total</span> $898.00</p>
-              </div>
-  
-              <div class="d-flex justify-content-between pt-2">
-                <p class="text-muted mb-0">Invoice Number : 788152</p>
-                <p class="text-muted mb-0"><span class="fw-bold me-4">Discount</span> $19.00</p>
-              </div>
-  
-              <div class="d-flex justify-content-between">
-                <p class="text-muted mb-0">Invoice Date : 22 Dec,2019</p>
-                <p class="text-muted mb-0"><span class="fw-bold me-4">GST 18%</span> 123</p>
-              </div>
-  
-              <div class="d-flex justify-content-between mb-5">
-                <p class="text-muted mb-0">Recepits Voucher : 18KU-62IIK</p>
-                <p class="text-muted mb-0"><span class="fw-bold me-4">Delivery Charges</span> Free</p>
-              </div>
-            </div>
-            <div class="card-footer border-0 px-4 py-5"
-              style="background-color: #46e081; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
-              <h5 class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0">Total
-                paid: <span class="h2 mb-0 ms-2">$1040</span></h5>
             </div>
           </div>
         </div>
       </div>
-          </div>
-      </div>
 
+      <div class="col-md-8 ml-5">
+        <div class="row d-flex justify-content-center align-items-center">
+          <div class="col-lg-12 col-xl-12">
+            <div class="card" style="border-radius: 10px">
+              <div class="card-body p-4">
+                <% if (order.length===0) { %> 
+                    <h4 class="text-center">You haven't Ordered Anything yet !</h4>
+                <%  } else {  %>
+                  <% order.forEach((orderItem) => { %>
+                    <div class="card shadow-0 border mb-4">
+                      <div class="card-body">
+                        <div class="row">
+                          <% orderItem.games.forEach((game, index) => { %>
+                            <div class="col-md-3 mt-1">
+                              <img src="<%= gameDetails[index].mainImage[0].path %>" class=" " style="height: 75px; width: 75px" alt="<%= gameDetails[index].name %>" />
+                            </div>
+                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                              <p class="text-muted mb-0"><%= gameDetails[index].name %></p>
+                            </div>
+                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                              <p class="text-muted mb-0 small">Qty: <%= game.quantity %></p>
+                            </div>
+                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                              <p class="text-muted mb-0 small"><%= game.totalAmount %></p>
+                            </div>
+                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                              <p class="text-muted mb-0" style="font-weight: bold;"><%= orderItem.paymentMethod %></p>
+                            </div>
+                          <% }) %>
+                        </div>
+                        <div class="row mt-3" style="font-weight: bold;">
+                          <div class="col-md-4">
+                            <p class="text-muted mb-0" style="font-weight: bold;">Total Price: <%= orderItem.totalCartPrice %></p>
+                          </div>
+                          <div class="col-md-4">
+                            <p class="text-muted mb-0" style="font-weight: bold;">Ordered Date: <%= orderItem.orderDate %></p>
+                          </div>
+                          <div class="col-md-4">
+                            <button class="btn btn-primary" onclick="location.href='/orderDetails/<%= orderItem.orderId %>'">Order Details</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  <% }) %>
+
+                <%  }  %>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
   </div>
 </div>
 
-
-<section class=" gradient-custom">
-    <div class="container-fluid py-5 ">
-      
-    </div>
-  </section>
-
-
-
-
-
-  <%-include('../layouts/footbar.ejs')%>
-  <%-include('../layouts/footer.ejs')%>
+<%-include('../layouts/footbar.ejs')%> <%-include('../layouts/footer.ejs')%>

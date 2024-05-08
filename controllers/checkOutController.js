@@ -5,6 +5,8 @@ const Cart = require('../models/cartModel');
 const Address = require('../models/addressModel')
 const Order = require('../models/orderModel') 
 
+
+
 // ********** FOR RENDERING CHECKOUT PAGE **********
 const loadCheckOut = async (req,res)=>{
     try {
@@ -64,15 +66,21 @@ const addNewAddress = async (req,res)=>{
 // ********** FOR ORDER PLACEMENT  **********
 const placeOrder = async (req,res)=>{
   try {
-
+ 
     const userId = req.session.user_id;
-    const selectedAddress = req.body.selectedAddress;
-    if (!selectedAddress) {
-      return res.status(400).json({ message: "Please choose an address." });
+    const selectedPayment = req.body.paymentMethod;
+    const addressId = req.body.addressId;
+    const abc= await Address.findOne({ 'addresses._id':addressId})
+    const addressData = abc.addresses.find(address => address._id.equals(addressId))
+    
+    if (!addressData) {
+      return res.status(400).json({ message: "Address not found." });
+    }
+    const cart = await Cart.findOne({ userId: userId });
+    if (!cart) {
+      return res.status(400).json({ message: "Cart not found for this user." });
     }
 
-    const cart = await Cart.findOne({ userId : userId})
-    const selectedPayment = req.body.selectedPaymentMethod
     const orderId = generateOrderId()
   
     const newOrder = new Order ({
@@ -86,13 +94,22 @@ const placeOrder = async (req,res)=>{
         totalAmount : item.totalAmount
       })), 
       totalCartPrice : cart.totalCartPrice,
-     
+      addresses: {
+        name : addressData.name,
+        mobile : addressData.mobile,
+        pincode : addressData.pincode,
+        district : addressData.district,
+        state : addressData.state,
+        city : addressData.city,
+        area : addressData.area,
+        houseNo : addressData.houseNo,
+      },
       paymentMethod : selectedPayment,
       paymentStatus : 'Pending' , 
       orderId : orderId,
       orderDate : new Date()
     })
-    
+     
     await newOrder.save()
     await Cart.findOneAndDelete({userId : userId})
     for (const item of cart.games){
@@ -101,14 +118,18 @@ const placeOrder = async (req,res)=>{
         {$inc : {stock : - item.quantity}}
       )
     }
-    res.status(201).json({message : "Order Placed Successfully!" , orderId : orderId})
+    
+    res.json({success: true})
+    
+    
+
 
   } catch (error) {
     console.log(error);
   }
 }
 
-
+ 
 // ********** FOR GENERATE RANDOM 8 DIGIT NUMBER FOR ORDER-ID  **********
 function generateOrderId() {
   const min = 10000000; // Minimum 8-digit number
@@ -122,4 +143,5 @@ module.exports = {
     placeOrder
 }
 
-  
+
+

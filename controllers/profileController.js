@@ -1,7 +1,8 @@
 const User = require('../models/userModel')
 const Address = require('../models/addressModel')
+const Order = require('../models/orderModel')
 const bcrypt = require('bcrypt')
-
+const Games = require('../models/gameModel')
 
 // ********** FOR LOADING USER PROFILE PAGE  **********
 const loadUserProfile = async (req,res)=>{
@@ -116,8 +117,6 @@ const addNewAddress = async (req,res)=>{
 } 
 
 
-
-
 // ********** FOR DELETING  ADDRESS  **********
 const deleteAddress = async (req,res)=>{
   try {
@@ -138,9 +137,17 @@ const deleteAddress = async (req,res)=>{
 }
 
 
+// ********** FOR RENDERING ORDER HISTORY PAGE **********
 const loadOrderHistory = async (req,res)=>{
   try {
-    res.render('orderHistory')
+    const userId = req.session.user_id;
+    const userData = await User.findOne({_id:userId})
+    const orders = await Order.find({userId : userId})
+    console.log('order'+orders);
+     const gamesDetails = await Promise.all(orders.flatMap(order => 
+      Array.isArray(order.games)? order.games.map(game => Games.findById(game.gameId)) : []
+    ));
+    res.render('orderHistory',{user:userData , order:orders , gameDetails : gamesDetails})
   } catch (error) {
     console.log(error);
   }

@@ -43,17 +43,40 @@ const orderSchema = new mongoose.Schema({
     },
    
     
-    addresses : {
-        name : String,
-        mobile : Number,
-        pincode : Number,
-        district : String,
-        state : String,
-        city : String,
-        area : String ,
-        houseNo :Number
-
-    } ,
+    addresses: {
+        name: {
+            type: String,
+            required: true
+        },
+        mobile: {
+            type: Number,
+            required: true
+        },
+        pincode: {
+            type: Number,
+            required: true
+        },
+        district: {
+            type: String,
+            required: true
+        },
+        state: {
+            type: String,
+            required: true
+        },
+        city: {
+            type: String,
+            required: true
+        },
+        area: {
+            type: String,
+            required: true
+        },
+        houseNo: {
+            type: String,
+            required: true
+        }
+    },
 
     paymentMethod:{
         type:String,

@@ -336,9 +336,9 @@ const loadGameDetails = async (req,res)=>{
 // ********** FOR SORTING GAMES BY CRITERIAS **********
 const sortGames = async(req,res)=>{
   try {
-    console.log('working');
+    // console.log('working');
     const { criteria } = req.params;
-    console.log('awfsd'+criteria);
+    // console.log('awfsd'+criteria);
     let gameData;
     switch (criteria) {
       case 'priceLow-High':
@@ -362,11 +362,8 @@ const sortGames = async(req,res)=>{
         res.status(400).json({ error: 'Invalid sorting criteria' });
         return;
     }
-    console.log('game'+gameData);
+    // console.log('game'+gameData);
     
-      
-
-
     res.json({ gameData });
   } catch (error) {
     console.error(error);
@@ -378,14 +375,13 @@ const sortGames = async(req,res)=>{
 // ********** FOR SEARCHING GAMES BY NAME **********\
 const searchName = async (req,res)=>{
   const input = req.body.q;
-  console.log('sdgs'+input);
+  
   if(!input){
     return res.status(400).send('Search Name is Required...!')
   }
-
   try {
     const gamesFound = await Games.find({ name : {$regex : input , $options:'i'}})
-    console.log('afsdfsf'+gamesFound);
+    // console.log('afsdfsf'+gamesFound);
    if(gamesFound === 0){
     return res.status(200).json({ message : "No games found matching your Search query"})
    }
