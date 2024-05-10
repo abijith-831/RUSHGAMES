@@ -142,16 +142,32 @@ const loadOrderHistory = async (req,res)=>{
   try {
     const userId = req.session.user_id;
     const userData = await User.findOne({_id:userId})
-    const orders = await Order.find({userId : userId})
-    console.log('order'+orders);
-     const gamesDetails = await Promise.all(orders.flatMap(order => 
-      Array.isArray(order.games)? order.games.map(game => Games.findById(game.gameId)) : []
-    ));
-    res.render('orderHistory',{user:userData , order:orders , gameDetails : gamesDetails})
+    const orders = await Order.find({userId : userId}).populate('games.gameId');
+   
+    res.render('orderHistory',{user:userData , order:orders})
   } catch (error) {
     console.log(error);
   }
 }
+
+
+// ********** FOR RENDERING ORDER DETAILS PAGE **********
+const loadOrderDetailsPage = async (req,res)=>{
+  try {
+
+    const userId = req.session.user_id;
+    const {orderId} = req.query;
+    const userData = await User.findOne({_id:userId})
+    
+    const order = await Order.findOne({orderId:orderId}).populate('games.gameId')
+   
+    res.render('orderDetailsPage',{user:userData , order : order})
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
 
 module.exports = {
     loadUserProfile,
@@ -162,5 +178,6 @@ module.exports = {
     addNewAddress,
     deleteAddress,
 
-    loadOrderHistory
+    loadOrderHistory,
+    loadOrderDetailsPage
 }

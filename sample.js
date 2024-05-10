@@ -452,169 +452,263 @@
 
 // </script>
 
-const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
-                let paymentMethod = null;
+// const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
+//                 let paymentMethod = null;
 
-                paymentRadios.forEach((radio) => {
-                    radio.addEventListener('click', (event) => {
-                        paymentMethod = event.target.value;
-                        console.log('Selected Payment Method:', paymentMethod);
-                    });
-                });
-
-
-
-
-                // Address selection
-                const checkboxes = document.querySelectorAll('.select-address');
-                let addressId = null;
-
-                checkboxes.forEach((checkbox) => {
-                    checkbox.addEventListener('change', (event) => {
-                        if (event.target.checked) {
-                            addressId = event.target.value;
-                            console.log('Selected Address ID:', addressId);
-                            console.log(totalAmount, 'ajg');
-                        }
-                    });
-                });
+//                 paymentRadios.forEach((radio) => {
+//                     radio.addEventListener('click', (event) => {
+//                         paymentMethod = event.target.value;
+//                         console.log('Selected Payment Method:', paymentMethod);
+//                     });
+//                 });
 
 
 
-                document.addEventListener('DOMContentLoaded', () => {
 
-                    var amountSpan = document.querySelector('#amount span');
-                    var totalAmountText = amountSpan.textContent.trim();
-                    var totalAmount = parseFloat(totalAmountText.replace('₹', ''));
+//                 // Address selection
+//                 const checkboxes = document.querySelectorAll('.select-address');
+//                 let addressId = null;
+
+//                 checkboxes.forEach((checkbox) => {
+//                     checkbox.addEventListener('change', (event) => {
+//                         if (event.target.checked) {
+//                             addressId = event.target.value;
+//                             console.log('Selected Address ID:', addressId);
+//                             console.log(totalAmount, 'ajg');
+//                         }
+//                     });
+//                 });
+
+
+
+//                 document.addEventListener('DOMContentLoaded', () => {
+
+//                     var amountSpan = document.querySelector('#amount span');
+//                     var totalAmountText = amountSpan.textContent.trim();
+//                     var totalAmount = parseFloat(totalAmountText.replace('₹', ''));
     
-                    function proceedToCheckout(paymentMethod, addressId) {
-                        fetch('/orderproduct', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ paymentMethod, addressId,totalAmount })
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
+//                     function proceedToCheckout(paymentMethod, addressId) {
+//                         fetch('/orderproduct', {
+//                             method: 'POST',
+//                             headers: {
+//                                 'Content-Type': 'application/json'
+//                             },
+//                             body: JSON.stringify({ paymentMethod, addressId,totalAmount })
+//                         })
+//                             .then(response => response.json())
+//                             .then(data => {
+//                                 if (data.success) {
     
-                                    window.location.href = '/order'
+//                                     window.location.href = '/order'
     
-                                } else {
+//                                 } else {
     
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: 'Products is out of Stock, please remove product',
-                                        showConfirmButton: false, // Disable the confirm button
-                                        timer: 2000, // Display the alert for 3 seconds
-                                        timerProgressBar: true
+//                                     Swal.fire({
+//                                         icon: 'error',
+//                                         title: 'Error',
+//                                         text: 'Products is out of Stock, please remove product',
+//                                         showConfirmButton: false, // Disable the confirm button
+//                                         timer: 2000, // Display the alert for 3 seconds
+//                                         timerProgressBar: true
     
-                                    })
-                                }
-                            })
+//                                     })
+//                                 }
+//                             })
     
-                            .catch(error => {
-                                console.error('Fetch error:', error);
-                                // Handle fetch error
-                            });
-                    }
+//                             .catch(error => {
+//                                 console.error('Fetch error:', error);
+//                                 // Handle fetch error
+//                             });
+//                     }
     
-                    function razorPay(paymentMethod, addressId, totalAmount) {
-                        console.log(totalAmount,'dhas');
-                        let totalAmountInPaise = totalAmount * 100;
-    
-    
-                        fetch('/razor', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ totalAmountInPaise })
-                        })
-                            .then(res => res.json())
-                            .then(data => {
-                                console.log('Data from server:', data);
-                                if (data.succes) {
-                                    console.log('resopnse reached');
-                                    let options = {
-                                        "key": ${data.key_id},
-                                        "amount": ${data.amount},
-                                        "currency": "INR",
-                                        "name": "Zakio",
-                                        "order_id": ${data.orderid},
-                                        "handler": function (response) {
-    
-                                            proceedToCheckout(paymentMethod, addressId);
-                                        },
-                                        "profile": {
-                                            "name": ${data.name},
-                                            "email": ${data.email}
-                                        }
-                                    }
-    
-                                    let razorpayObject = new Razorpay(options);
-                                    razorpayObject.on('payment.failed', (response) => {
-                                        alert('payment failed');
-                                    })
-                                    razorpayObject.open();
-    
-                                }
-                            })
-                    }
-    
-                    //document.addEventListener('DOMContentLoaded', () => {
-                    // Payment method
-                    const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
-                    let paymentMethod = null;
-    
-                    paymentRadios.forEach((radio) => {
-                        radio.addEventListener('click', (event) => {
-                            paymentMethod = event.target.value;
-                            console.log('Selected Payment Method:', paymentMethod);
-                        });
-                    });
+//                     function razorPay(paymentMethod, addressId, totalAmount) {
+//                         console.log(totalAmount,'dhas');
+//                         let totalAmountInPaise = totalAmount * 100;
     
     
+//                         fetch('/razor', {
+//                             method: 'POST',
+//                             headers: {
+//                                 'Content-Type': 'application/json'
+//                             },
+//                             body: JSON.stringify({ totalAmountInPaise })
+//                         })
+//                             .then(res => res.json())
+//                             .then(data => {
+//                                 console.log('Data from server:', data);
+//                                 if (data.succes) {
+//                                     console.log('resopnse reached');
+//                                     let options = {
+//                                         "key": ${data.key_id},
+//                                         "amount": ${data.amount},
+//                                         "currency": "INR",
+//                                         "name": "Zakio",
+//                                         "order_id": ${data.orderid},
+//                                         "handler": function (response) {
+    
+//                                             proceedToCheckout(paymentMethod, addressId);
+//                                         },
+//                                         "profile": {
+//                                             "name": ${data.name},
+//                                             "email": ${data.email}
+//                                         }
+//                                     }
+    
+//                                     let razorpayObject = new Razorpay(options);
+//                                     razorpayObject.on('payment.failed', (response) => {
+//                                         alert('payment failed');
+//                                     })
+//                                     razorpayObject.open();
+    
+//                                 }
+//                             })
+//                     }
+    
+//                     //document.addEventListener('DOMContentLoaded', () => {
+//                     // Payment method
+//                     const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
+//                     let paymentMethod = null;
+    
+//                     paymentRadios.forEach((radio) => {
+//                         radio.addEventListener('click', (event) => {
+//                             paymentMethod = event.target.value;
+//                             console.log('Selected Payment Method:', paymentMethod);
+//                         });
+//                     });
     
     
-                    // Address selection
-                    const checkboxes = document.querySelectorAll('.select-address');
-                    let addressId = null;
-    
-                    checkboxes.forEach((checkbox) => {
-                        checkbox.addEventListener('change', (event) => {
-                            if (event.target.checked) {
-                                addressId = event.target.value;
-                                console.log('Selected Address ID:', addressId);
-                                console.log(totalAmount, 'ajg');
-                            }
-                        });
-                    });
     
     
+//                     // Address selection
+//                     const checkboxes = document.querySelectorAll('.select-address');
+//                     let addressId = null;
+    
+//                     checkboxes.forEach((checkbox) => {
+//                         checkbox.addEventListener('change', (event) => {
+//                             if (event.target.checked) {
+//                                 addressId = event.target.value;
+//                                 console.log('Selected Address ID:', addressId);
+//                                 console.log(totalAmount, 'ajg');
+//                             }
+//                         });
+//                     });
     
     
-                    // Proceed to Paypal button click handler
-                    const orderButton = document.querySelector('.btn_3');
-                    orderButton.addEventListener('click', () => {
-                        if (paymentMethod && addressId) {
-                            console.log('Proceeding to Paypal with:');
-                            console.log('Selected Payment Method:', paymentMethod);
-                            console.log('Selected Address ID:', addressId);
     
-                            // Call the proceedToCheckout function with paymentMethod and addressId
-                            if (paymentMethod == 'razorPay') {
     
-                                razorPay(paymentMethod, addressId, totalAmount)
+//                     // Proceed to Paypal button click handler
+//                     const orderButton = document.querySelector('.btn_3');
+//                     orderButton.addEventListener('click', () => {
+//                         if (paymentMethod && addressId) {
+//                             console.log('Proceeding to Paypal with:');
+//                             console.log('Selected Payment Method:', paymentMethod);
+//                             console.log('Selected Address ID:', addressId);
     
-                            } else {
-                                proceedToCheckout(paymentMethod, addressId);
-                            }
+//                             // Call the proceedToCheckout function with paymentMethod and addressId
+//                             if (paymentMethod == 'razorPay') {
     
-                        } else {
-                            console.log('Please select both Payment Method and Address');
-                        }
-                    });
-                });
+//                                 razorPay(paymentMethod, addressId, totalAmount)
+    
+//                             } else {
+//                                 proceedToCheckout(paymentMethod, addressId);
+//                             }
+    
+//                         } else {
+//                             console.log('Please select both Payment Method and Address');
+//                         }
+//                     });
+//                 });
+
+const LoadOrderDatails = async(req,res)=> {
+
+    try {
+
+        const userid = req.session.user_id;
+        const userdata = await User.findOne({_id:userid})
+
+        const orderdata = await Order.find({userId:userid}).populate('items.productId')
+
+        res.render('userOrderDetailsPage',{userdata:userdata,orderDatas:orderdata})
+        
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
+
+<div class="col-md-8 order-det">
+                    <div class="card">
+                        <h5 class="h5hed">Your Orders</h5>
+                        <hr>
+
+                        <div class="card-body">
+                            <% if(orderDatas.length> 0){ %>
+
+
+                                <% orderDatas.forEach(i=> { %>
+
+
+                                    <div class="col-md-12"
+                                        style="margin-top: -15px; display: flex; align-items: center; justify-content: space-between;">
+                                        <p style=" margin: 0;">#Order ID: <span style="color: red;">
+                                                <%= i.orderId %>
+                                            </span> | Order On <%= i.currendDate.toLocaleDateString('en-US', {
+                                                day: 'numeric' , month: 'short' , year: 'numeric' }) %>
+                                        </p>
+                                        <a href="/singleOrderDetails?id=<%= i.orderId %>"><button style="height: 35px;"
+                                                class="btn btn-success p-1">View Order Details</button></a>
+                                    </div>
+
+                                    <hr>
+                                    <% if(i.items.length> 0){ %>
+                                        <% i.items.forEach(product=> { %>
+
+                                            <div class="col-md-12">
+
+                                                <div class="row">
+                                                    <div style="width: 80px;  ">
+                                                        <img src="<%= product.productId.image[0] %>" alt="fsdfdff"
+                                                            style="width: 80px; height: 80px;">
+                                                    </div>
+                                                    <div style="margin-left: 30px; width: 170px;">
+                                                        <br>
+                                                        <p style="font-size: 20px; font-weight: 500;">
+                                                            <%= product.productId.pname %>
+                                                        </p>
+                                                    </div>
+                                                    <div style="margin-left: 25px;">
+                                                        <p>Price</p>
+                                                        <p style="font-size: 16px; font-weight: 500;">₹<%= product.price
+                                                                %>
+                                                        </p>
+                                                    </div>
+
+                                                    <div style="margin-left: 90px;">
+                                                        <p>QTY</p>
+                                                        <p style="font-size: 16px; font-weight: 500;">
+                                                            <%= product.quantity %>
+                                                        </p>
+                                                    </div>
+                                                    <div style="margin-left: 70px;">
+
+                                                        <p>Status</p>
+                                                        <p
+                                                            style="font-size: 16px; font-weight: 500; color: rgb(9, 117, 9);">
+                                                            <%= product.Status %>
+                                                        </p>
+                                                    </div>
+                                                   
+
+                                                </div>
+                                                <hr>
+                                            </div>
+                                            <br>
+                                            <% }) %>
+                                                <% } %>
+
+
+                                                    <% }); %>
+                                                        <% } %>
+                        </div>
+                    </div>
+                </div>

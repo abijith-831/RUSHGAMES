@@ -120,7 +120,7 @@
 			            				</form>
 			            			</div><!-- End .cart-discount -->
 
-			            			<a href="#" class="btn btn-outline-dark-2"><span>UPDATE CART</span><i class="icon-refresh"></i></a>
+			            			
 		            			</div><!-- End .cart-bottom -->
 	                		</div><!-- End .col-lg-9 -->
 	                		<aside class="col-lg-2.9 ml-5  content-container">
@@ -192,8 +192,6 @@
 </main><!-- End .main -->
 
 
-	
-
 <!--  Ask for confirmation for deleting  using SweetAlert -->
 <script>
 	
@@ -245,7 +243,6 @@
 </script>
 
 
-
 <!-- fucntion to  increase the amount when quantity changes -->
 <script>
 document.querySelectorAll('.quantity-input').forEach(input => {
@@ -281,6 +278,25 @@ document.querySelectorAll('.quantity-input').forEach(input => {
     });
 });
 
+</script>
+	
+
+<!-- sweetalert message for cart is empty while pressing proceed to checkout -->
+<script>
+	// function proceedToCheckOut() {
+	// 	fetch('/checkOut')
+	// 	   .then(response => response.json())
+	// 	   .then(data => {
+	// 			if (data.message === "There is Nothing in Cart to Purchase") {
+	// 				Swal.fire({
+	// 					title: 'Info',
+	// 					text: data.message,
+	// 					icon: 'info',
+	// 					confirmButtonText: 'OK'
+	// 				});
+	// 			} 
+	// 		})
+	// 	}
 </script>
 	
 

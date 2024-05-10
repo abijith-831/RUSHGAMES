@@ -14,10 +14,13 @@ const loadCheckOut = async (req,res)=>{
       const userData = await User.findOne({_id: userId})
       const addresses = await Address.find({userId : userId})
       const cartData = await Cart.findOne({userId : userId})
+      if(!cartData || cartData.games.length === 0){
+        return res.json({message:"There is Nothing in Cart to Purchase"})
+      }
       const gameIds = cartData.games.map(game => game.gameId);
       const gameDetailsPromises = gameIds.map(gameId => Games.findOne({_id: gameId}));
       const gameDetails = await Promise.all(gameDetailsPromises);
-
+      
       res.render('checkOut',{user : userData , addresses , cartData , gameDetails})
     } catch (error) {
       console.log(error);
@@ -121,9 +124,6 @@ const placeOrder = async (req,res)=>{
     
     res.json({success: true})
     
-    
-
-
   } catch (error) {
     console.log(error);
   }

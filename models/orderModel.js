@@ -12,7 +12,7 @@ const orderSchema = new mongoose.Schema({
         {
             gameId:{
                 type:mongoose.Schema.Types.ObjectId,
-                ref:'Game',
+                ref:'Games',
                 required:true
             },
             quantity:{
@@ -77,28 +77,23 @@ const orderSchema = new mongoose.Schema({
             required: true
         }
     },
-
     paymentMethod:{
         type:String,
         required:true
     },
-
     paymentStatus:{
         type:String,
         enum:["Pending", "Success", "Failed"],
         default:"Pending",
     },
-
     orderId:{
         type: Number,
         required:true
     },
-
     orderDate:{
         type:Date,
         default: ()=> Date.now(),
     },
-
 })
 
 module.exports = mongoose.model('Order',orderSchema);

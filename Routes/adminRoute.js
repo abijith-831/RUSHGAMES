@@ -6,9 +6,11 @@ const upload = require('../config/multer-config')
 
 // ****** CONTROLLERS ******
 const adminController = require('../controllers/adminController')
-const gameController = require('../controllers/gameController')
 const categoryController = require('../controllers/categoryController')
+const gameController = require('../controllers/gameController')
 const adminDashboardController = require('../controllers/adminDashboardController')
+const orderController = require('../controllers/orderController')
+
 const adminAuth = require('../middleware/adminAuth')
 
 admin_route.set('view engine','ejs')
@@ -55,5 +57,9 @@ admin_route.get('/editCategory',categoryController.loadEditCategory)
 admin_route.post('/modifyCategory',categoryController.modifyCategory)
 admin_route.get('/categoryStatus',categoryController.categoryStatus)
 // admin_route.get('/deleteCategory',categoryController.deleteCategory)
+
+
+// ****** ORDER MANAGEMENT SECTION ******
+admin_route.get('/orderHistory',orderController.loadOrderHistory)
 
 module.exports = admin_route; 

@@ -353,11 +353,8 @@ const sortGames = async(req,res)=>{
       case 'nameZ-A':
         gameData = await Games.find().collation({ locale: "en" }).sort({ name: -1 });
         break;
-      case 'newArrivals':
-        gameData = await Games.find().sort({ createdAt: -1 });
-        break;
-      
-      
+     
+     
       default:
         res.status(400).json({ error: 'Invalid sorting criteria' });
         return;
@@ -372,13 +369,13 @@ const sortGames = async(req,res)=>{
 }
 
 
-// ********** FOR SEARCHING GAMES BY NAME **********\
+// ********** FOR SEARCHING GAMES BY NAME **********
 const searchName = async (req,res)=>{
   const input = req.body.q;
   
   if(!input){
     return res.status(400).send('Search Name is Required...!')
-  }
+  } 
   try {
     const gamesFound = await Games.find({ name : {$regex : input , $options:'i'}})
     // console.log('afsdfsf'+gamesFound);
@@ -392,15 +389,38 @@ const searchName = async (req,res)=>{
 }
 
 
+// ********** FOR FILTERING GAMES BASED ON CATEGORIES **********
+const filterGames = async (req,res)=>{
+  try {
+    const {categories} = req.body;
+    console.log('cat'+categories);
+    const gamesFound = await Games.find({
+      category : {
+        $in : categories
+      }
+    })
+    console.log('games',gamesFound);
+    if(gamesFound === 0){
+      return res.status(200).json({ message : "No games found matching this Category"})
+    } 
+    res.json(gamesFound)
+  } catch (error) {
+    console.log(error);
+  }
+}  
+ 
 
 
-module.exports = {
+module.exports = { 
 
   loadHome,
   loadAllGames,
   sortGames,
   searchName,
+  filterGames,
   loadGameDetails,
+
+
   loadLogin,
   loadRegister,
   verifyOTP,

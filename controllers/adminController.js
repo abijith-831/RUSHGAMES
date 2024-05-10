@@ -94,7 +94,8 @@ module.exports = {
     adminVerifyLogin,
     adminLogout,
     loadUserList,
-    userStatus
+    userStatus , 
+    
 }
 
 

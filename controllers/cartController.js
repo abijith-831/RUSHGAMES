@@ -13,7 +13,7 @@ const loadCart = async (req, res) => {
       path: 'games.gameId',
       model: 'Games'
     }).exec();
-   
+    
     if (!cart || cart.games.length === 0) {
       // If cart is empty, render the cart page with a message
       const totalCartPrice = 0;

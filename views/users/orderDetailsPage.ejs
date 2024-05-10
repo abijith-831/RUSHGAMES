@@ -1,0 +1,146 @@
+<%-include('../layouts/header.ejs')%>
+<%-include('../layouts/navbar.ejs')%>
+
+<style>
+    .headings{
+        color: rgb(0, 0, 0);
+    }
+    
+</style>
+<div class="container">
+    <br><br>
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="text-center headings">Order Details</h2>
+            <hr>
+        </div>
+        
+    </div>
+   
+    <div class="row" style="background-color: rgb(255, 255, 255); color: white; padding: 20px; border: 2px solid black;">
+        <div class="col-md-4 " >
+            <h4 class="text-center headings">Delivery Address  <i class="fas fa-map-marker-alt">  </i></h4>
+            
+            <p><strong>Name : <%= order.addresses.name  %></strong> <span id="deliveryAddress"></span></p>
+            <p><strong>Pincode : <%= order.addresses.pincode%></strong> <span id="deliveryAddress"></span></p>
+            <p><strong>District: <%=order.addresses.district %></strong> <span id="deliveryAddress"></span></p>
+            <p><strong>State : <%=order.addresses.state %></strong> <span id="deliveryAddress"></span></p>
+            <p><strong>City : <%=order.addresses.city %></strong> <span id="deliveryAddress"></span></p>
+            <p><strong>Area : <%= order.addresses.area%></strong> <span id="deliveryAddress"></span></p>
+            <p><strong>HouseNo : <%=order.addresses.houseNo %></strong> <span id="deliveryAddress"></span></p>
+
+        </div>
+       
+        <div class="col-md-4">
+            <h4 class="text-center headings " style="font-weight: bold;" >Order Info <i class="fas fa-info-circle"></i></h4>
+            <p> <strong>Date: <%= order.orderDate %></strong> <span id="orderDate"></span></p>
+            <p><strong>Order ID: <%= order.orderId%></strong> <span id="orderId"></span></p>
+            <p><strong>Payment Method : <%=order.paymentMethod %></strong> <span id="customerName"></span></p>
+            <p><strong>Phone: <%=    user.mobile %></strong> <span id="customerPhone"></span></p>
+            <p><strong>Email: <%=    user.email %></strong> <span id="customerEmail"></span></p>
+            <div id="orderItems">
+                <!-- Products will be dynamically populated here -->
+            </div><!-- Order items will be dynamically populated here -->
+        </div>
+        <div class="col-md-4">
+            <h4 class="text-center headings">Your Rewards</h4>
+            <div id="orderItems">
+                <!-- Products will be dynamically populated here -->
+            </div><!-- Order items will be dynamically populated here -->
+        </div>
+    </div>
+   
+    <br><br>
+    <div class="col-md-12" style="background-color: rgb(255, 255, 255); color: white; padding: 20px; border: 2px solid black;">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="text-center headings">Ordered Games</h2>
+                <hr>
+            </div>
+            
+        </div>
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-lg-12 col-xl-12">
+                <div class="card" style="border-radius: 10px">
+                    <div class="card-body p-4">
+                        <% if (order.games.length === 0) { %> 
+                            <h4 class="text-center">You haven't Ordered Anything yet!</h4>
+                        <% } else { %>
+                            <% order.games.forEach((game, index) => { %>
+                                <div class="card shadow-0 border mb-4">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-3 mt-1">
+                                                <img src="<%= game.gameId.mainImage[0].path %>" class=" " style="height: 75px; width: 75px" alt="<%= game.gameId.name %>" />
+                                            </div>
+                                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                <p class="text-muted mb-0"><%= game.gameId.name %></p>
+                                            </div>
+                                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                <p class="text-muted mb-0 ">Qty: <%= game.quantity %></p>
+                                            </div>
+                                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                <p class="text-muted mb-0 "><%= game.totalAmount %></p>
+                                            </div>                                            
+                                            <div class="col-md-2">
+                                                <button class="btn btn-danger">Cancel Item</button>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3" style="font-weight: bold;">
+                                            <div class="col-md-4">
+                                                <p class="text-muted mb-0" style="font-weight: bold;">Total Price: <%= game.totalAmount %></p>
+                                            </div>
+                                            
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        <% } %>
+                        <!-- Display the totalCartPrice in a common, single place -->
+                        <div class="row mt-3" style="font-weight: bold;">
+                            <div class="col-md-12">
+                                <p class="text-muted mb-0" style="font-weight: bold;">Total Cart Price: <%= order.totalCartPrice %></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    
+    
+</div>
+
+<script>
+    document.getElementById('cancelOrder').addEventListener('click', function() {
+        // Confirm the cancellation
+        if (confirm('Are you sure you want to cancel this order?')) {
+            // Perform the cancellation logic here
+            // For example, send a request to the server to cancel the order
+            fetch('/cancelOrder', { method: 'POST' })
+               .then(response => response.json())
+               .then(data => {
+                    if (data.success) {
+                        alert('Order cancelled successfully.');
+                        // Redirect to a different page or refresh the current page
+                        window.location.href = '/orders';
+                    } else {
+                        alert('Failed to cancel the order.');
+                    }
+                })
+               .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while cancelling the order.');
+                });
+        }
+    });
+    </script>
+    
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/6en8XCp+HHAAK5GSLf2xlYtvJ8U2Q4U+9cuEnJoa3" crossorigin="anonymous">
+
+
+<%-include('../layouts/footbar.ejs')%> 
+<%-include('../layouts/footer.ejs')%>

@@ -40,6 +40,8 @@ user_route.get('/userProfile' , userAuth.isLogin , profileController.loadUserPro
 user_route.post('/editUserProfile',profileController.editUserProfile)
 user_route.post('/editUserPassword',profileController.editUserPassword)
 user_route.get('/orderHistory',profileController.loadOrderHistory)
+user_route.get('/orderDetailsPage',profileController.loadOrderDetailsPage)
+
 
 //******   USER CART SECTIONS ******
 user_route.get('/cart' , userAuth.isLogin , cartController.loadCart)
@@ -76,9 +78,9 @@ user_route.get('/allGames',userController.loadAllGames)
 user_route.get('/gameDetails',userController.loadGameDetails)
 user_route.get('/sort/:criteria',userController.sortGames);
 user_route.post('/search',userController.searchName)
+user_route.post('/filterGames',userController.filterGames)
 
 user_route.get('*', (req, res) => {
-    console.log('Caught by catch-all route');
     res.render('404');
 });
 
