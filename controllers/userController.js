@@ -4,6 +4,7 @@ const Games = require('../models/gameModel')
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const UserOTPVerification = require("../models/userOTPVerification");
+const Coming = require('../models/comingSoonModel')
 
 
 // ********** PASSWORD HASHING FUNCTION **********
@@ -21,15 +22,27 @@ const securePassword = async (password) => {
 const loadHome = async (req, res) => {
   try {
     let user = req.session.user_id;
-    console.log(user);
-    const userData = await User.findOne({ _id: user });
     const categories = await Category.find();
-    res.render("home", { user: userData , categories});
+    const fc3 = await Games.find({_id :'663fa719bc93b7f06033477d'})
+    
+    if(user){
+      const userData = await User.findById(user);
+      if(userData.is_blocked){
+        req.session.user_id = null
+        res.redirect('/login')
+      }else{
+        res.render("home", { user: userData , categories});
+      }
+    }else{
+      res.render('home',{categories})
+    }
+      
   } catch (error) {
     console.log(error);
     res.status(500).send("Internal Server Error");
   }
 };
+
 
 
 // ********** FOR LOADING LOGIN PAGE **********
@@ -301,16 +314,30 @@ const loadAllGames = async (req, res) => {
     const userData = await User.findOne({_id:user})
     const categories = await Category.find({ is_listed: true });
     const categoryIds = categories.map(category => category._id);
+    let number = await Games.find({is_listed : true})
     
-    const games = await Games.find({ category: { $in: categoryIds }, is_listed:true});
-   
+    const page = parseInt(req.query.page)||1;
+    const limit = 6;
+    const skip = (page-1)*limit;
+
+    const games = await Games.find({ category: { $in: categoryIds }, is_listed:true})
+      .skip(skip).limit(limit)
+    
+    const totalGames = await Games.countDocuments({ category : { $in : categoryIds},is_listed:true});
+    const totalPages = Math.ceil(totalGames/limit);
+
+    let prevPage = page-1;
+    let nextPage = page+1;
+    if(prevPage < 1) prevPage = 1;
+    if(nextPage > totalPages) nextPage = totalPages
     for(let game of games){
       const gameCategory = await Category.findById(game.category);
       if(gameCategory){
         game.categoryName = gameCategory.name
       }
     }
-    res.render("allGames",{categories , games:games,user:userData,errmsg});
+    
+    res.render("allGames",{categories , games:games,user:userData,errmsg , totalPages , prevPage , nextPage , page , number});
   } catch (error) {
     console.log(error);
   }
@@ -340,18 +367,20 @@ const sortGames = async(req,res)=>{
     const { criteria } = req.params;
     // console.log('awfsd'+criteria);
     let gameData;
+    // const allGames = await Games.find({is_listed : true})
+
     switch (criteria) {
       case 'priceLow-High':
-        gameData = await Games.find().sort({ price: 1 });
+        gameData = await Games.find({is_listed : true}).sort({ price: 1 });
         break;
       case 'priceHigh-Low':
-        gameData = await Games.find().sort({ price: -1 });
+        gameData = await Games.find({is_listed : true}).sort({ price: -1 });
         break;
       case 'nameA-Z':
-        gameData = await Games.find().collation({ locale: "en" }).sort({ name: 1 });
+        gameData = await Games.find({is_listed : true}).sort({ name: 1 });
         break;
       case 'nameZ-A':
-        gameData = await Games.find().collation({ locale: "en" }).sort({ name: -1 });
+        gameData = await Games.find({is_listed : true}).sort({ name: -1 });
         break;
      
      
@@ -372,17 +401,25 @@ const sortGames = async(req,res)=>{
 // ********** FOR SEARCHING GAMES BY NAME **********
 const searchName = async (req,res)=>{
   const input = req.body.q;
+  const allGames = await Games.find({is_listed : true})
   
-  if(!input){
-    return res.status(400).send('Search Name is Required...!')
-  } 
   try {
-    const gamesFound = await Games.find({ name : {$regex : input , $options:'i'}})
-    // console.log('afsdfsf'+gamesFound);
+    if(!input){
+      return res.status(400).send('Search Name is Required...!')
+    } 
+    const gamesFound = await Games.find({
+      $and : [
+        {name : {$regex : input , $options:'i' }},
+        { is_listed :true}
+      ]
+    })
+      
    if(gamesFound === 0){
-    return res.status(200).json({ message : "No games found matching your Search query"})
-   }
+    res.json(allGames)
+   }else{
     res.json(gamesFound)
+   }
+    
   } catch (error) {
     console.log(error);
   }
@@ -392,23 +429,47 @@ const searchName = async (req,res)=>{
 // ********** FOR FILTERING GAMES BASED ON CATEGORIES **********
 const filterGames = async (req,res)=>{
   try {
-    const {categories} = req.body;
-    console.log('cat'+categories);
+    const {categories} = req.body; 
+    const allGames = await Games.find({is_listed : true})
     const gamesFound = await Games.find({
-      category : {
-        $in : categories
-      }
+      $and : [
+        {category : {$in : categories}},
+        {is_listed : true}
+      ]      
     })
-    console.log('games',gamesFound);
-    if(gamesFound === 0){
-      return res.status(200).json({ message : "No games found matching this Category"})
-    } 
-    res.json(gamesFound)
+    if(gamesFound.length === 0){
+      res.json(allGames)
+    }else{
+      res.json(gamesFound)
+    }
+    
   } catch (error) {
     console.log(error);
   }
 }  
- 
+
+
+const loadComingSoon = async (req ,res)=>{
+  try {
+    const comings = await Coming.find()
+
+    res.render('comingSoon',{comings})
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+const loadComingSoonDetails = async (req,res)=>{
+  try {
+    const gameId = req.query.id;
+    const game = await Coming.findOne({_id:gameId}).populate('category')
+    console.log('game'+game);
+    res.render('comingSoonDetails',{game})
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 
 module.exports = { 
@@ -434,6 +495,10 @@ module.exports = {
   resendOTP,
   loadAboutUs,
   loadContactUs,
+
+
+  loadComingSoon,
+  loadComingSoonDetails
 
 
 };

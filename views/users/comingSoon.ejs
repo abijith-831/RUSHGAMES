@@ -1,0 +1,124 @@
+<%-include('../layouts/header.ejs')%>
+<%-include('../layouts/navbar.ejs')%>
+
+<style>
+    /* Define a custom class for overriding the default Bootstrap grid */
+    .custom-col-lg-4 {
+        flex: 0 0 50%; /* Make each column take up 50% of the container width */
+        max-width: 50%; /* Ensure the column doesn't exceed 50% of the container width */
+    }
+    .product-action-vertical a,
+.product-action a {
+    color: black;
+}
+.product-action .btn-cart {
+    color: black;
+    border-color: black;
+}
+.product-price {
+    color: black;
+    font-weight: bold;
+}
+.product-image.with-border {
+    border: 2px solid #000;
+}
+
+
+
+</style>
+    
+
+        <main class="main">
+        	<div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.png');">
+        		<div class="container-fluid">
+        			<h1 class="page-title text-white">Coming Soon</h1>
+        		</div><!-- End .container -->
+        	</div><!-- End .page-header -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav mb-2">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">Coming Soon</a></li>
+                        
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+			
+            <div class="page-content">
+                <div class="container-fluid">
+                	<div class="row">
+                		<div class="col-lg-9">
+                			<div class="toolbox">
+                				<div class="toolbox-left">
+                					<div class="toolbox-info text-black font-weight-bold">
+                						Showing <span>6 of </span> Products
+                					</div><!-- End .toolbox-info -->
+                				</div><!-- End .toolbox-left -->
+								<%= console.log('sdfsfg'+comings) %>
+                				
+                			</div><!-- End .toolbox -->
+							
+
+                			
+							  
+                		</div><!-- End .col-lg-9 -->
+                		
+                	</div>
+					<div class="products mb-3 container">
+						<div class="row justify-content-center" id="gameList">
+							
+								<% comings.forEach(game => { %> 
+								
+									<div class="col-md-4">
+										<div class="product product-7 text-center">
+											<figure class="product-media">										
+												<input type="hidden" class="system-req" value="<%= game.systemReq %>">
+												
+												<input type="hidden" id="mainImage" name="mainImage" value="<%= JSON.stringify(game.image)%>">
+												<input type="hidden" id="screenshotImages" name="screenshotImages" value="<%= JSON.stringify(game.screenshotImages)%>">
+												<a href="/comingSoonDetails?id=<%= game._id %>">
+													<img src="<%= game.image[0].path %> " alt="<%= game.name %>" class="product-image with-border " width="200"  height="200" >
+												</a>
+												<div class="product-action-vertical">
+													<a onclick="addToWishlist('<%= game._id %>')" class="btn-product-icon btn-wishlist btn-expandable"><span>Add to wishlist</span></a>
+												<!--	<a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
+													<a href="#" class="btn-product-icon btn-compare" title="Compare"><span>Compare</span></a>-->
+												</div>
+				
+												
+												<div class="product-action-vertical">
+												   
+												</div>
+												<div class="product-action">
+													
+												</div>
+											</figure>
+											<div class="product-body">
+												<div class="product-cat">
+													<a href="/comingSoonDetails?id=<%=game._id%>"><%= game.categoryName %></a>
+												</div>
+												<h3 class="product-title"><a href="/comingSoonDetails?id=<%=game._id%>"><%= game.name %></a></h3><!-- End .product-title -->
+												<div class="product-price">
+													<%= game.price %>
+													<p style="font-weight: bold;">   -Rs</p>
+												</div><!-- End .product-price -->
+											</div><!-- End .product-body -->
+										</div><!-- End .product -->
+									</div><!-- End .col-md-4 -->
+								
+							<% }) %>
+							
+						</div><!-- End .row -->
+					</div><!-- End .products -->
+                </div><!-- End .container -->
+            </div><!-- End .page-content -->
+</main><!-- End .main -->
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
+
+
+
+<%-include('../layouts/footbar.ejs')%>
+<%-include('../layouts/footer.ejs')%>

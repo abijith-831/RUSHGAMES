@@ -224,31 +224,57 @@
                         <% if (order.length === 0) { %> 
                             <h4 class="text-center">You haven't Ordered Anything yet!</h4>
                         <% } else { %>
-                            <% order.forEach((orderItem) => { %>
+                            <% order.forEach((orderItem ,  index) => { %>
                                 <div class="card shadow-0 border mb-4">
                                     <div class="card-body">
                                         <div class="row">
                                             <% orderItem.games.forEach((game, index) => { %>
+                                              
                                                 <div class="col-md-3 mt-1">
                                                     <img src="<%= game.gameId.mainImage[0].path %>" class=" " style="height: 75px; width: 75px" alt="<%= game.gameId.name %>" />
                                                 </div>
-                                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                                    <p class="text-muted mb-0"><%= game.gameId.name %></p>
-                                                </div>
-                                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                                    <p class="text-muted mb-0 small">Qty: <%= game.quantity %></p>
-                                                </div>
-                                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                                    <p class="text-muted mb-0 small"><%= game.totalAmount %></p>
-                                                </div>
-                                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                                    <p class="text-muted mb-0" style="font-weight: bold;"><%= orderItem.paymentMethod %></p>
-                                                </div>
+                                                <% if (game.Status==='Cancelled') { %>
+                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                        <p class="text-muted mb-0" style="text-decoration: line-through;"><%= game.gameId.name %></p>
+                                                    </div>
+                                                <%  }else { %>
+                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                      <p class="text-muted mb-0"><%= game.gameId.name %></p>
+                                                    </div>
+                                                <%   }  %> 
+                                                <% if (game.Status==='Cancelled') { %> 
+                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                        <p class="text-muted mb-0 small" style="text-decoration: line-through;">Qty: <%= game.quantity %></p>
+                                                    </div>
+                                                <%  }else { %> 
+                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                      <p class="text-muted mb-0 small" >Qty: <%= game.quantity %></p>
+                                                    </div>
+                                                <%   }  %>    
+                                                <% if (game.Status==='Cancelled') { %> 
+                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                        <p class="text-muted mb-0 small" style="text-decoration: line-through;"><%= game.totalAmount %></p>
+                                                    </div>
+                                                <%  }else { %> 
+                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                      <p class="text-muted mb-0 small"><%= game.totalAmount %></p>
+                                                    </div>
+                                                <%   }  %>  
+                                                <% if (game.Status==='Cancelled') { %>    
+                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                        <p class="text-muted mb-0" style="font-weight: bold; text-decoration: line-through;" ><%= orderItem.paymentMethod %></p>
+                                                    </div>
+                                                <%  }else { %> 
+                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                      <p class="text-muted mb-0" style="font-weight: bold;"><%= orderItem.paymentMethod %></p>
+                                                    </div>
+                                                <%   }  %> 
                                             <% }) %>
                                         </div>
                                         <div class="row mt-3" style="font-weight: bold;">
+                                          
                                             <div class="col-md-4">
-                                                <p class="text-muted mb-0" style="font-weight: bold;">Total Price: <%= orderItem.totalCartPrice %></p>
+                                                <p class="text-muted mb-0" style="font-weight: bold;">Total Price: <%= totalAmountSums[index] %></p>
                                             </div>
                                             <div class="col-md-4">
                                                 <p class="text-muted mb-0" style="font-weight: bold;">Ordered Date: <%= orderItem.orderDate %></p>
@@ -270,7 +296,7 @@
       
     </div>
   </div>
-</div>
+</div> 
 
 
 <!--  pass orderId to backend / loadorderDetailsPage -->

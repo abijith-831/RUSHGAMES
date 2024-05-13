@@ -11,6 +11,7 @@ const Order = require('../models/orderModel')
 const loadCheckOut = async (req,res)=>{
     try {
       let userId = req.session.user_id;
+      let errmsg = req.flash('errmsg')
       const userData = await User.findOne({_id: userId})
       const addresses = await Address.find({userId : userId})
       const cartData = await Cart.findOne({userId : userId})
@@ -19,9 +20,8 @@ const loadCheckOut = async (req,res)=>{
       }
       const gameIds = cartData.games.map(game => game.gameId);
       const gameDetailsPromises = gameIds.map(gameId => Games.findOne({_id: gameId}));
-      const gameDetails = await Promise.all(gameDetailsPromises);
-      
-      res.render('checkOut',{user : userData , addresses , cartData , gameDetails})
+      const gameDetails = await Promise.all(gameDetailsPromises); 
+      res.render('checkOut',{user : userData , addresses , cartData , gameDetails,errmsg})
     } catch (error) {
       console.log(error);
     }
@@ -73,12 +73,15 @@ const placeOrder = async (req,res)=>{
     const userId = req.session.user_id;
     const selectedPayment = req.body.paymentMethod;
     const addressId = req.body.addressId;
+    if (!addressId) {
+      req.flash('errmsg',"Please Select an Address")
+      res.redirect('/checkOut')
+      // return res.status(400).json({ message: "Address not found." });
+    }
     const abc= await Address.findOne({ 'addresses._id':addressId})
     const addressData = abc.addresses.find(address => address._id.equals(addressId))
     
-    if (!addressData) {
-      return res.status(400).json({ message: "Address not found." });
-    }
+    
     const cart = await Cart.findOne({ userId: userId });
     if (!cart) {
       return res.status(400).json({ message: "Cart not found for this user." });
@@ -124,6 +127,7 @@ const placeOrder = async (req,res)=>{
     
     res.json({success: true})
     
+    
   } catch (error) {
     console.log(error);
   }
@@ -132,8 +136,8 @@ const placeOrder = async (req,res)=>{
  
 // ********** FOR GENERATE RANDOM 8 DIGIT NUMBER FOR ORDER-ID  **********
 function generateOrderId() {
-  const min = 10000000; // Minimum 8-digit number
-  const max = 99999999; // Maximum 8-digit number
+  const min = 10000000; 
+  const max = 99999999; 
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 

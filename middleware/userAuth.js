@@ -1,8 +1,10 @@
 const Users = require('../models/userModel')
 
+
 const isLogin = async (req,res,next)=>{
     try {
-        if(req.session.user_id){
+        const status = await Users.findOne({_id:req.session.user_id})
+        if(req.session.user_id && status.is_blocked === false){
             next()
         }else{
             res.redirect('/login')
@@ -12,9 +14,10 @@ const isLogin = async (req,res,next)=>{
     }
 }
 
+
 const isLogout = async (req,res,next)=>{
     try {
-        if(!req.session.user_id){
+        if(!req.session.user_id ){
             next();
         }else{ 
             res.redirect('/')
@@ -23,7 +26,9 @@ const isLogout = async (req,res,next)=>{
         console.log(error.message);
     }
 }
-// ********** FOR SHOWING LOGIN OR USER PROFILE OPTION IN NAVIBAR **********
+
+
+// ********** FOR SHOWING LOGIN OR USER PROFILE OPTION IN NAVIGATION BAR **********
 const isNavUser = async (req,res,next)=>{
     try {
         if(req.session && req.session.userid){

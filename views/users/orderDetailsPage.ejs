@@ -5,7 +5,10 @@
     .headings{
         color: rgb(0, 0, 0);
     }
-    
+    .custom-modal-title,.custom-modal-text,.custom-modal-label,.custom-modal-button {
+    font-size: 40px;
+}
+
 </style>
 <div class="container">
     <br><br>
@@ -44,9 +47,7 @@
         </div>
         <div class="col-md-4">
             <h4 class="text-center headings">Your Rewards</h4>
-            <div id="orderItems">
-                <!-- Products will be dynamically populated here -->
-            </div><!-- Order items will be dynamically populated here -->
+            
         </div>
     </div>
    
@@ -66,41 +67,74 @@
                         <% if (order.games.length === 0) { %> 
                             <h4 class="text-center">You haven't Ordered Anything yet!</h4>
                         <% } else { %>
-                            <% order.games.forEach((game, index) => { %>
+                            <% order.games.forEach((game , index) => { %>
+                                
                                 <div class="card shadow-0 border mb-4">
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-3 mt-1">
                                                 <img src="<%= game.gameId.mainImage[0].path %>" class=" " style="height: 75px; width: 75px" alt="<%= game.gameId.name %>" />
                                             </div>
-                                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                                <p class="text-muted mb-0"><%= game.gameId.name %></p>
-                                            </div>
-                                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                                <p class="text-muted mb-0 ">Qty: <%= game.quantity %></p>
-                                            </div>
-                                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                                <p class="text-muted mb-0 "><%= game.totalAmount %></p>
-                                            </div>                                            
-                                            <div class="col-md-2">
-                                                <button class="btn btn-danger">Cancel Item</button>
-                                            </div>
-                                        </div>
-                                        <div class="row mt-3" style="font-weight: bold;">
-                                            <div class="col-md-4">
-                                                <p class="text-muted mb-0" style="font-weight: bold;">Total Price: <%= game.totalAmount %></p>
-                                            </div>
+                                            <% if (game.Status==='Cancelled') { %>
+                                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                    <p class="text-muted mb-0" style="text-decoration: line-through;"><%= game.gameId.name %></p>
+                                                </div>
+                                            <%  }else { %>
+                                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                    <p class="text-muted mb-0"><%= game.gameId.name %></p>
+                                                </div>
+                                            <%   }  %>   
+                                            <% if (game.Status==='Cancelled') { %>
+                                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                    <p class="text-muted mb-0 " style="text-decoration: line-through;">Qty: <%= game.quantity %></p>
+                                                </div>
+                                            <%  }else { %>
+                                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                    <p class="text-muted mb-0 ">Qty: <%= game.quantity %></p>
+                                                </div>
+                                            <%   }  %>  
+                                            <% if (game.Status==='Cancelled') { %>
+                                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                    <p class="text-muted mb-0 " style="text-decoration: line-through;"><%= game.totalAmount %></p>
+                                                </div>                                            
+                                            <%  }else { %>
+                                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                    <p class="text-muted mb-0 "><%= game.totalAmount %></p>
+                                                </div> 
+                                            <%   }  %> 
+                                            <%= console.log ('order'+order._id) %>
+                                            <% if (game.Status==='Cancelled') { %>
+                                                <div class="col-md-2 " style="color: black; font-size: 50px; text-decoration: line-through;" >
+                                                    <a class="btn change-btn" style="border: 2px solid rgb(0, 0, 0); text-decoration: line-through; " >Cancelled</a>
+                                                </div>  
+                                            <%  }else { %>
+                                                <div class="col-md-2 " style="color: black; font-size: 50px; border-color: red; " >
+                                                    <a class="btn change-btn" style="border: 2px solid red;" data-toggle="modal" data-target="#cancelOrderModal" data-game-id="<%= game.gameId._id %>" data-order-id="<%= order._id %>">Cancel Order</a>
+                                                </div>  
+                                            <%   }  %>
+                                                                                   
                                             
-                                            
                                         </div>
+                                        <% if (game.Status==='Cancelled') { %>
+                                            <div class="row mt-3" style="font-weight: bold; ">
+                                                <div class="col-md-4">
+                                                    <p class="text-muted mb-0" style="font-weight: bold; text-decoration: line-through;  ">Total Price: <%= game.totalAmount %></p>
+                                                </div>                                                                                     
+                                            </div>
+                                        <%  }else { %>
+                                            <div class="row mt-3" style="font-weight: bold; ">
+                                                <div class="col-md-4">
+                                                    <p class="text-muted mb-0" style="font-weight: bold;  ">Total Price: <%= game.totalAmount %></p>
+                                                </div>                                                                                     
+                                            </div>
+                                        <%   }  %>
                                     </div>
                                 </div>
                             <% }) %>
                         <% } %>
-                        <!-- Display the totalCartPrice in a common, single place -->
                         <div class="row mt-3" style="font-weight: bold;">
                             <div class="col-md-12">
-                                <p class="text-muted mb-0" style="font-weight: bold;">Total Cart Price: <%= order.totalCartPrice %></p>
+                                <p class="text-muted mb-0" style="font-weight: bold;">Total Cart Price: <%= total %></p>
                             </div>
                         </div>
                     </div>
@@ -108,36 +142,101 @@
             </div>
         </div>
     </div>
-    <br>
-    
-    
+    <br>  
 </div>
 
+
+<!-- reason asking modal for cancel order -->
+<div class="modal fade" id="cancelOrderModal" tabindex="-1" role="dialog" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="cancelOrderModalLabel">Cancel Order</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size: 20px; color: black;"> Are you sure you want to cancel this order?</p>
+          <div class="form-group">
+            <label for="reasonSelect" style="font-size: 16px; color: black;">Reason for Cancellation</label>
+            <select class="form-control" id="reasonSelect">
+              <option style="font-size: 16px; color: black;" selected >Choose...</option>
+              <option style="font-size: 16px; color: black;" value="Order created by Mistake">Order created by Mistake</option>
+              <option style="font-size: 16px; color: black;" value="Item will not Arrive on Time">Item will not Arrive on Time</option>
+              <option style="font-size: 16px; color: black;" value="More Expensive ">More Expensive </option>
+              <option style="font-size: 16px; color: black;" value="Need to change Delivery Address">Need to change Delivery Address</option>
+              <option style="font-size: 16px; color: black;" value="Need to change Payment Method">Need to change Payment Method</option>
+              <option style="font-size: 16px; color: black;" value="Other Reasons">Other Reasons</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirmCancelOrder">Confirm</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
 <script>
-    document.getElementById('cancelOrder').addEventListener('click', function() {
-        // Confirm the cancellation
-        if (confirm('Are you sure you want to cancel this order?')) {
-            // Perform the cancellation logic here
-            // For example, send a request to the server to cancel the order
-            fetch('/cancelOrder', { method: 'POST' })
-               .then(response => response.json())
-               .then(data => {
-                    if (data.success) {
-                        alert('Order cancelled successfully.');
-                        // Redirect to a different page or refresh the current page
-                        window.location.href = '/orders';
-                    } else {
-                        alert('Failed to cancel the order.');
-                    }
-                })
-               .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while cancelling the order.');
-                });
-        }
+    let game
+    let order
+    $('.change-btn').click(function() {
+     game = $(this).data('game-id');
+     order = $(this).data('order-id');
+});
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelector('#confirmCancelOrder').addEventListener('click', function() {
+            const reason = document.getElementById('reasonSelect').value;
+            const gameId = game;
+            const orderId = order;
+      
+            fetch('/cancelOrder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ reason: reason, orderId: orderId, gameId: gameId })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); 
+            })
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Cancelled!',
+                        text: 'Successfully Cancelled your Order',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } 
+                
+                document.getElementById('cancelOrderModal').style.display = 'none'; // Close the modal
+            })
+            .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+            });
+            $('#cancelOrderModal').modal('hide');
+        });
     });
-    </script>
-    
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/6en8XCp+HHAAK5GSLf2xlYtvJ8U2Q4U+9cuEnJoa3" crossorigin="anonymous">
 

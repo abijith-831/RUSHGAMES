@@ -72,7 +72,8 @@
                                     <div class="row">
                                         <figure class="product-main-image">
                                             
-                                            <img id="product-zoom" src="<%= game.mainImage[0].path%>" data-zoom-image="<%= game.mainImage[0].path%>" alt="product image" >                                        
+                                            <img id="product-zoom" src="<%= game.mainImage[0].path%>" data-zoom-image="<%= game.mainImage[0].path%>" alt="product image"  data-action="zoom">
+                                                                                    
                                         </figure><!-- End .product-main-image -->                                       
                                     </div><!-- End .row -->
                                 </div><!-- End .product-gallery -->
@@ -82,12 +83,7 @@
                                 <div class="product-details product-details-centered">
                                     <h1 class="product-title"><%= game.name%></h1><!-- End .product-title -->
 
-                                    <div class="ratings-container">
-                                        <div class="ratings">
-                                            <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
-                                        </div><!-- End .ratings -->
-                                        <a class="ratings-text" href="#product-review-link" id="review-link">( 2 Reviews )</a>
-                                    </div><!-- End .rating-container -->
+                                    
 
                                     <div class="product-price">
                                         <%= game.price %> Rs
@@ -137,15 +133,13 @@
                                 <a class="nav-link" id="product-info-link" data-toggle="tab" href="#product-info-tab" role="tab" aria-controls="product-info-tab" aria-selected="false">System Requirements</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" id="product-desc-link" data-toggle="tab" href="#product-desc-tab" role="tab" aria-controls="product-desc-tab" aria-selected="true">Description</a>
+                                <a class="nav-link active" id="product-desc-link" data-toggle="tab" href="#product-desc-tab" role="tab" aria-controls="product-desc-tab" aria-selected="true">OFFICIAL TRAILER</a>
                             </li>
                             
                             <li class="nav-item">
                                 <a class="nav-link" id="product-shipping-link" data-toggle="tab" href="#product-shipping-tab" role="tab" aria-controls="product-shipping-tab" aria-selected="false">Shipping & Returns</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="product-review-link" data-toggle="tab" href="#product-review-tab" role="tab" aria-controls="product-review-tab" aria-selected="false">Reviews (2)</a>
-                            </li>
+                            
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade" id="product-info-tab" role="tabpanel" aria-labelledby="product-info-link">
@@ -155,15 +149,12 @@
                             </div><!-- .End .tab-pane -->
                             <div class="tab-pane fade show active" id="product-desc-tab" role="tabpanel" aria-labelledby="product-desc-link">
                                 <div class="product-desc-content">
-                                    <h3>Product Information</h3>
-                                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis. Phasellus ultrices nulla quis nibh. Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus. </p>
-                                    <ul>
-                                        <li>Nunc nec porttitor turpis. In eu risus enim. In vitae mollis elit. </li>
-                                        <li>Vivamus finibus vel mauris ut vehicula.</li>
-                                        <li>Nullam a magna porttitor, dictum risus nec, faucibus sapien.</li>
-                                    </ul>
+                                    
+                                    <div class="video-container">
+                                        <iframe class="justify-content-center" width="1100" height="500" src="<%= gameDetails.trailer %>"  frameborder="0" allow=" autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" ></iframe>
+                                    </div>
 
-                                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis. Phasellus ultrices nulla quis nibh. Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus. </p>
+                                    
                                 </div><!-- End .product-desc-content -->
                             </div><!-- .End .tab-pane -->
                             
@@ -174,62 +165,7 @@
                                     We hope you’ll love every purchase, but if you ever need to return an item you can do so within a month of receipt. For full details of how to make a return, please view our <a href="#">Returns information</a></p>
                                 </div><!-- End .product-desc-content -->
                             </div><!-- .End .tab-pane -->
-                            <div class="tab-pane fade" id="product-review-tab" role="tabpanel" aria-labelledby="product-review-link">
-                                <div class="reviews">
-                                    <h3>Reviews (2)</h3>
-                                    <div class="review">
-                                        <div class="row no-gutters">
-                                            <div class="col-auto">
-                                                <h4><a href="#">Samanta J.</a></h4>
-                                                <div class="ratings-container">
-                                                    <div class="ratings">
-                                                        <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
-                                                    </div><!-- End .ratings -->
-                                                </div><!-- End .rating-container -->
-                                                <span class="review-date">6 days ago</span>
-                                            </div><!-- End .col -->
-                                            <div class="col">
-                                                <h4>Good, perfect size</h4>
-
-                                                <div class="review-content">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus cum dolores assumenda asperiores facilis porro reprehenderit animi culpa atque blanditiis commodi perspiciatis doloremque, possimus, explicabo, autem fugit beatae quae voluptas!</p>
-                                                </div><!-- End .review-content -->
-
-                                                <div class="review-action">
-                                                    <a href="#"><i class="icon-thumbs-up"></i>Helpful (2)</a>
-                                                    <a href="#"><i class="icon-thumbs-down"></i>Unhelpful (0)</a>
-                                                </div><!-- End .review-action -->
-                                            </div><!-- End .col-auto -->
-                                        </div><!-- End .row -->
-                                    </div><!-- End .review -->
-
-                                    <div class="review">
-                                        <div class="row no-gutters">
-                                            <div class="col-auto">
-                                                <h4><a href="#">John Doe</a></h4>
-                                                <div class="ratings-container">
-                                                    <div class="ratings">
-                                                        <div class="ratings-val" style="width: 100%;"></div><!-- End .ratings-val -->
-                                                    </div><!-- End .ratings -->
-                                                </div><!-- End .rating-container -->
-                                                <span class="review-date">5 days ago</span>
-                                            </div><!-- End .col -->
-                                            <div class="col">
-                                                <h4>Very good</h4>
-
-                                                <div class="review-content">
-                                                    <p>Sed, molestias, tempore? Ex dolor esse iure hic veniam laborum blanditiis laudantium iste amet. Cum non voluptate eos enim, ab cumque nam, modi, quas iure illum repellendus, blanditiis perspiciatis beatae!</p>
-                                                </div><!-- End .review-content -->
-
-                                                <div class="review-action">
-                                                    <a href="#"><i class="icon-thumbs-up"></i>Helpful (0)</a>
-                                                    <a href="#"><i class="icon-thumbs-down"></i>Unhelpful (0)</a>
-                                                </div><!-- End .review-action -->
-                                            </div><!-- End .col-auto -->
-                                        </div><!-- End .row -->
-                                    </div><!-- End .review -->
-                                </div><!-- End .reviews -->
-                            </div><!-- .End .tab-pane -->
+                            
                         </div><!-- End .tab-content -->
                     </div><!-- End .product-details-tab -->
 
@@ -485,10 +421,10 @@
             </div><!-- End .page-content -->
         </main><!-- End .main -->
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>        
+               
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>   
-
-
+        <script src="assets/js/jquery.elevateZoom.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/zoom.js/1.7.21/zoom.min.js"></script>
     
 
 <!-- ADDING TO WISHLIST -->

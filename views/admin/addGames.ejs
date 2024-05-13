@@ -113,6 +113,11 @@
                                              <textarea class="form-control" rows="3" id="description" name="systemReq" placeholder="Text Here..."></textarea>
                                             <div id="descriptionContainer" class="text-danger"></div>
                                         </div>
+                                        <div class="form-group">
+                                            <label for="description">TRAILER LINK</label>
+                                             <textarea class="form-control" rows="3" id="description" name="trailer" placeholder="Link here..."></textarea>
+                                            <div id="descriptionContainer" class="text-danger"></div>
+                                        </div>
                                     </div>
 
 
@@ -169,8 +174,8 @@
         let quantity = document.getElementById('quantity').value.trim();
 
         let nameRegex = /^[a-zA-Z0-9\s\/\-&]*$/;
-        let priceRegex = /^\d+(\.\d{1,2})?$/;
-        let quantityRegex = /^[1-9]\d*$/;
+        let priceRegex = /^\d{3,6}(\.\d{1,2})?$/;
+        let quantityRegex = /^[1-9]\d{0,3}$/;
 
 
         let nameError = document.getElementById('nameError')
@@ -214,6 +219,7 @@
     }   
 
 </script>
+
 
 <script>
 

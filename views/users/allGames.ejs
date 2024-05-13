@@ -37,7 +37,7 @@
             <nav aria-label="breadcrumb" class="breadcrumb-nav mb-2">
                 <div class="container">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="/home">Home</a></li>
                         <li class="breadcrumb-item"><a href="#">All Games</a></li>
                         
                     </ol>
@@ -55,7 +55,7 @@
                 			<div class="toolbox">
                 				<div class="toolbox-left">
                 					<div class="toolbox-info text-black font-weight-bold">
-                						Showing <span>9 of 24</span> Products
+                						Showing <span>6 of <%= number.length %></span> Products
                 					</div><!-- End .toolbox-info -->
                 				</div><!-- End .toolbox-left -->
 								
@@ -74,49 +74,7 @@
 											</select>
 										</div>
                 					</div><!-- End .toolbox-sort -->
-                					<div class="toolbox-layout">
-                						<a href="category-list.html" class="btn-layout">
-                							<svg width="16" height="10">
-                								<rect x="0" y="0" width="4" height="4" />
-                								<rect x="6" y="0" width="10" height="4" />
-                								<rect x="0" y="6" width="4" height="4" />
-                								<rect x="6" y="6" width="10" height="4" />
-                							</svg>
-                						</a>
-
-                						<a href="category-2cols.html" class="btn-layout">
-                							<svg width="10" height="10">
-                								<rect x="0" y="0" width="4" height="4" />
-                								<rect x="6" y="0" width="4" height="4" />
-                								<rect x="0" y="6" width="4" height="4" />
-                								<rect x="6" y="6" width="4" height="4" />
-                							</svg>
-                						</a>
-
-                						<a href="category.html" class="btn-layout active">
-                							<svg width="16" height="10">
-                								<rect x="0" y="0" width="4" height="4" />
-                								<rect x="6" y="0" width="4" height="4" />
-                								<rect x="12" y="0" width="4" height="4" />
-                								<rect x="0" y="6" width="4" height="4" />
-                								<rect x="6" y="6" width="4" height="4" />
-                								<rect x="12" y="6" width="4" height="4" />
-                							</svg>
-                						</a>
-
-                						<a href="category-4cols.html" class="btn-layout">
-                							<svg width="22" height="10">
-                								<rect x="0" y="0" width="4" height="4" />
-                								<rect x="6" y="0" width="4" height="4" />
-                								<rect x="12" y="0" width="4" height="4" />
-                								<rect x="18" y="0" width="4" height="4" />
-                								<rect x="0" y="6" width="4" height="4" />
-                								<rect x="6" y="6" width="4" height="4" />
-                								<rect x="12" y="6" width="4" height="4" />
-                								<rect x="18" y="6" width="4" height="4" />
-                							</svg>
-                						</a>
-                					</div><!-- End .toolbox-layout -->
+                					
                 				</div><!-- End .toolbox-right -->
                 			</div><!-- End .toolbox -->
 							<div class="products mb-3">
@@ -134,18 +92,29 @@
 														<a href="/gameDetails?id=<%= game._id %>">
 															<img src="<%= game.mainImage[0].path %>" alt="<%= game.name %>" class="product-image with-border " width="200" height="200">
 														</a>
+
 														<div class="product-action-vertical">
-															<a onclick="addToWishlist('<%= game._id %>')" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
+															<% if (user) { %>
+																<a onclick="addToWishlist('<%= game._id %>')" class="btn-product-icon btn-wishlist btn-expandable"><span>Add to wishlist</span></a>
+															<%  }else {  %>
+																<a href="/login" class="btn-product-icon btn-wishlist btn-expandable"><span>Add to wishlist</span></a>
+														    <%   }  %>
+															
 														<!--	<a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
 															<a href="#" class="btn-product-icon btn-compare" title="Compare"><span>Compare</span></a>-->
 														</div>
 						
 														<div class="product-action">
-															<% if (game.stock > 0) { %>
-																<a   onclick="addToCart('<%= game._id %>' )" class="btn-product btn-cart" style="background-color:rgb(92, 90, 88); color: white; font-weight: bold;"><span>add to cart</span></a>
-															<% } else { %>
-																<span class="btn-product btn-out-of-stock" style="background-color: rgb(243, 70, 70); color: rgb(0, 0, 0); font-weight: bold;"><span>Out of Stock</span></span>
-															<%  }  %>	
+															<% if (user) { %>
+																<% if (game.stock > 0 ) { %>
+																	<a   onclick="addToCart('<%= game._id %>' )" class="btn-product btn-cart" style="background-color:rgb(92, 90, 88); color: white; font-weight: bold;"><span>Add to cart</span></a>
+																<% } else { %>
+																	<span class="btn-product btn-out-of-stock" style="background-color: rgb(243, 70, 70); color: rgb(0, 0, 0); font-weight: bold;"><span>Out of Stock</span></span>
+																<%  }  %>	
+															<%  }else {  %>
+																<a  href="/login" class="btn-product btn-cart" style="background-color:rgb(92, 90, 88); color: white; font-weight: bold;"><span>Add to cart</span></a>
+														    <%   }  %>
+																
 															
 														</div><!-- End .product-action -->
 														<div class="product-action-vertical">
@@ -175,23 +144,25 @@
 							
 
                 			<nav aria-label="Page navigation">
-							    <ul class="pagination justify-content-center">
-							        <li class="page-item disabled">
-							            <a class="page-link page-link-prev" href="#" aria-label="Previous" tabindex="-1" aria-disabled="true">
-							                <span aria-hidden="true"><i class="icon-long-arrow-left"></i></span>Prev
-							            </a>
-							        </li>
-							        <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
-							        <li class="page-item"><a class="page-link" href="#">2</a></li>
-							        <li class="page-item"><a class="page-link" href="#">3</a></li>
-							        <li class="page-item-total">of 6</li>
-							        <li class="page-item">
-							            <a class="page-link page-link-next" href="#" aria-label="Next">
-							                Next <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span>
-							            </a>
-							        </li>
-							    </ul>
-							</nav>
+								<ul class="pagination justify-content-center">
+								  <li class="page-item <%= prevPage === 1? 'disabled' : '' %>">
+									<a class="page-link page-link-prev" href="?page=<%= prevPage %>" aria-label="Previous">
+									  <span aria-hidden="true"><i class="icon-long-arrow-left"></i></span>Prev
+									</a>
+								  </li>
+								  <% for(let i = 1; i <= totalPages; i++) { %>
+									<li class="page-item <%= page === i? 'active' : '' %>">
+									  <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+									</li>
+								  <% } %>
+								  <li class="page-item <%= nextPage > totalPages? 'disabled' : '' %>">
+									<a class="page-link page-link-next" href="?page=<%= nextPage %>" aria-label="Next">
+									  Next <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span>
+									</a>
+								  </li>
+								</ul>
+							  </nav>
+							  
                 		</div><!-- End .col-lg-9 -->
                 		<aside class="col-lg-3 order-lg-first">
                 			<div class="sidebar sidebar-shop">
@@ -228,69 +199,7 @@
 
         						
 
-        						<div class="widget widget-collapsible">
-    								<h3 class="widget-title">
-									    <a data-toggle="collapse" href="#widget-4" role="button" aria-expanded="true" aria-controls="widget-4">
-									        DEVELOPERS
-									    </a>
-									</h3><!-- End .widget-title -->
-
-									<div class="collapse show" id="widget-4">
-										<div class="widget-body">
-											<div class="filter-items">
-												<div class="filter-item">
-													<div class="custom-control custom-checkbox">
-														<input type="checkbox" class="custom-control-input" id="brand-1">
-														<label class="custom-control-label" for="brand-1">UBISOFT</label>
-													</div><!-- End .custom-checkbox -->
-												</div><!-- End .filter-item -->
-
-												<div class="filter-item">
-													<div class="custom-control custom-checkbox">
-														<input type="checkbox" class="custom-control-input" id="brand-2">
-														<label class="custom-control-label" for="brand-2">E A SPORTS</label>
-													</div><!-- End .custom-checkbox -->
-												</div><!-- End .filter-item -->
-
-												<div class="filter-item">
-													<div class="custom-control custom-checkbox">
-														<input type="checkbox" class="custom-control-input" id="brand-3">
-														<label class="custom-control-label" for="brand-3">NAUGHTY DOG</label>
-													</div><!-- End .custom-checkbox -->
-												</div><!-- End .filter-item -->
-
-												<div class="filter-item">
-													<div class="custom-control custom-checkbox">
-														<input type="checkbox" class="custom-control-input" id="brand-4">
-														<label class="custom-control-label" for="brand-4">ROCKSTAR GAMES</label>
-													</div><!-- End .custom-checkbox -->
-												</div><!-- End .filter-item -->
-
-												<div class="filter-item">
-													<div class="custom-control custom-checkbox">
-														<input type="checkbox" class="custom-control-input" id="brand-5">
-														<label class="custom-control-label" for="brand-5">ACTIVISION</label>
-													</div><!-- End .custom-checkbox -->
-												</div><!-- End .filter-item -->
-
-												<div class="filter-item">
-													<div class="custom-control custom-checkbox">
-														<input type="checkbox" class="custom-control-input" id="brand-6">
-														<label class="custom-control-label" for="brand-6">KONAMI</label>
-													</div><!-- End .custom-checkbox -->
-												</div><!-- End .filter-item -->
-
-												<div class="filter-item">
-													<div class="custom-control custom-checkbox">
-														<input type="checkbox" class="custom-control-input" id="brand-7">
-														<label class="custom-control-label" for="brand-7">BIOWAR</label>
-													</div><!-- End .custom-checkbox -->
-												</div><!-- End .filter-item -->
-
-											</div><!-- End .filter-items -->
-										</div><!-- End .widget-body -->
-									</div><!-- End .collapse -->
-        						</div><!-- End .widget -->
+        						
 
         						
                 			</div><!-- End .sidebar sidebar-shop -->
@@ -355,7 +264,7 @@
 				Swal.fire({
                         icon: 'success',
                         title: 'Success!',
-                        text: "Game Added to Cart Successfully",
+                        text: "Game Added to Wishlist Successfully",
                         showConfirmButton: false,
                         timer: 1500
                     }).then(() => {
@@ -439,7 +348,7 @@
                     </figure>
                     <div class="product-body">
                         <div class="product-cat">
-                            <a href="/gameDetails?id=${game._id}">${game.categoryName}</a>
+                            
                         </div>
                         <h3 class="product-title"><a href="/gameDetails?id=${game._id}">${game.name}</a></h3><!-- End .product-title -->
                         <div class="product-price">
@@ -449,6 +358,7 @@
                     </div><!-- End .product-body -->
                 </div><!-- End .product -->
             </div>
+							
 				
 				`;
                 gameList.insertAdjacentHTML('beforeend',gameItem)
@@ -521,7 +431,7 @@
 					</figure>
 					<div class="product-body">
 						<div class="product-cat">
-							<a href="/gameDetails?id=${game._id}">${game.categoryName}</a>
+							
 						</div>
 						<h3 class="product-title"><a href="/gameDetails?id=${game._id}">${game.name}</a></h3><!-- End.product-title -->
 						<div class="product-price">
@@ -611,7 +521,7 @@
 					</figure>
 					<div class="product-body">
 						<div class="product-cat">
-							<a href="/gameDetails?id=${game._id}">${game.categoryName}</a>
+							
 						</div>
 						<h3 class="product-title"><a href="/gameDetails?id=${game._id}">${game.name}</a></h3><!-- End.product-title -->
 						<div class="product-price">
@@ -627,7 +537,8 @@
 		}
 	});
 </script>
-	
+
+
 
 <%-include('../layouts/footbar.ejs')%>
 <%-include('../layouts/footer.ejs')%>

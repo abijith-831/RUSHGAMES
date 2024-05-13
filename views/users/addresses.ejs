@@ -201,6 +201,7 @@
                             <div class="col-sm-12">                               
                                        
                                         <% addresses.forEach((item ) => { %> 
+                                                
                                             <% item.addresses.forEach( (address , index) =>  { %>
                                                 <div class="card mb-2">
                                                     <div class="card-body">
@@ -219,15 +220,15 @@
                                                     data-house-no="<%= address.houseNo %>">View</a>
                                                     
                                                   
-                                                    <a id="editAddressBtn" class="btn change-btn"  data-toggle="modal" data-target="#editAddressModal"
-                                                data-name="<%= address.name %>"
-                                                data-mobile="<%= address.mobile %>"
-                                                data-pincode="<%= address.pincode %>"
-                                                data-district="<%= address.district %>"
-                                                data-state="<%= address.state %>"
-                                                data-city="<%= address.city %>"
-                                                data-area="<%= address.area %>"
-                                                data-house-no="<%= address.houseNo %>">Edit</a>
+                                                    <a id="editAddressBtn" class="btn change-btn edit-address-btn"  data-toggle="modal" data-target="#editAddressModal"
+                                                        data-name="<%= address.name %>"
+                                                        data-mobile="<%= address.mobile %>"
+                                                        data-pincode="<%= address.pincode %>"
+                                                        data-district="<%= address.district %>"
+                                                        data-state="<%= address.state %>"
+                                                        data-city="<%= address.city %>"
+                                                        data-area="<%= address.area %>"
+                                                        data-house-no="<%= address.houseNo %>">Edit</a>
     
                                                     <a data-id="<%= address._id%>" class="btn change-btn delete-address-btn" style="background-color: rgb(240, 104, 104)" data-toggle="modal" data-target="#">Delete</a>
                                                 </div>
@@ -242,10 +243,15 @@
                             </div>
                            
                         </div>
+                        <% if (addresses.length <=2) { %> 
                             <div style="color: black;  " class="col-sm-12 d-flex justify-content-center">
                                 
                                 <a id="addAddressBtn" class="btn change-btn " data-toggle="modal" data-target="#addAddressModal">+ Add Address</a>
                             </div>
+                        <%  }else{ %>
+                            <p>dsffsdf</p>
+                        <%   }  %>
+                            
 
                         </div>
                     </div>
@@ -256,7 +262,6 @@
 
     </div>
 </div>
-
 
 
 
@@ -352,9 +357,6 @@
       </div>
   </div>
 </div>
-
-
-
 
 
 
@@ -622,38 +624,42 @@
 </script>
 
 
-<!-- edit Address functionality -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Get all edit buttons
-        var editButtons = document.querySelectorAll('[id="editAddressBtn"]');
+        // Function to populate the form with address details
+        function populateFormWithAddressData(data) {
+            document.getElementById('name').value = data.name;
+            document.getElementById('mobile').value = data.mobile;
+            document.getElementById('pincode').value = data.pincode;
+            document.getElementById('district').value = data.district;
+            document.getElementById('state').value = data.state;
+            document.getElementById('city').value = data.city;
+            document.getElementById('area').value = data.area;
+            document.getElementById('houseNo').value = data.houseNo;
+        }
     
-        // Loop through each edit button
-        editButtons.forEach(function(button) {
-            // Add click event listener to each button
-            button.addEventListener('click', function(e) {
+        // Listen for clicks on edit address buttons
+        document.querySelectorAll('.edit-address-btn').forEach(function(button) {
+            button.addEventListener('click', function(event) {
                 // Prevent the default action
-                e.preventDefault();
+                event.preventDefault();
     
                 // Get the data attributes from the clicked button
-                var name = this.getAttribute('data-name');
-                var mobile = this.getAttribute('data-mobile');
-                var pincode = this.getAttribute('data-pincode');
-                var district = this.getAttribute('data-district');
-                var state = this.getAttribute('data-state');
-                var city = this.getAttribute('data-city');
-                var area = this.getAttribute('data-area');
-                var houseNo = this.getAttribute('data-house-no');
+                var data = {
+                    name: this.getAttribute('data-name'),
+                    mobile: this.getAttribute('data-mobile'),
+                    pincode: this.getAttribute('data-pincode'),
+                    district: this.getAttribute('data-district'),
+                    state: this.getAttribute('data-state'),
+                    city: this.getAttribute('data-city'),
+                    area: this.getAttribute('data-area'),
+                    houseNo: this.getAttribute('data-house-no')
+                };
     
-                // Populate the modal form fields with the data attributes
-                document.getElementById('name').value = name;
-                document.getElementById('mobile').value = mobile;
-                document.getElementById('pincode').value = pincode;
-                document.getElementById('district').value = district;
-                document.getElementById('state').value = state;
-                document.getElementById('city').value = city;
-                document.getElementById('area').value = area;
-                document.getElementById('houseNo').value = houseNo;
+                // Populate the form with the address data
+                populateFormWithAddressData(data);
+                var myModal = new bootstrap.Modal(document.getElementById('editAddressModal'));
+                myModal.show();
             });
         });
     });

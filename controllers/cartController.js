@@ -15,7 +15,6 @@ const loadCart = async (req, res) => {
     }).exec();
     
     if (!cart || cart.games.length === 0) {
-      // If cart is empty, render the cart page with a message
       const totalCartPrice = 0;
       res.render('cart', { user: userData, cartData: [], totalCartPrice, cartId: null, isEmpty: true });
     } else {
@@ -29,7 +28,7 @@ const loadCart = async (req, res) => {
       }));
   
       const totalCartPrice = cart.totalCartPrice;
-      res.render('cart', { user: userData, cartData, totalCartPrice, cartId: cart._id, isEmpty: false });
+        res.render('cart', { user: userData, cartData, totalCartPrice, cartId: cart._id, isEmpty: false });
     }
   } catch (error) {
     console.error('Error fetching cart:', error);

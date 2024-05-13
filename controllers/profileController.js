@@ -4,12 +4,19 @@ const Order = require('../models/orderModel')
 const bcrypt = require('bcrypt')
 const Games = require('../models/gameModel')
 
+
 // ********** FOR LOADING USER PROFILE PAGE  **********
 const loadUserProfile = async (req,res)=>{
     try {
       let user = req.session.user_id;
       const userData = await User.findOne({_id:user})
-      res.render('userProfile',{user:userData})
+      if(userData.is_blocked){
+        req.session.user_id = null;
+        res.redirect('/login')
+      }else{
+        res.render('userProfile',{user:userData})
+      }
+      
     } catch (error) {
       console.log(error);
     }
@@ -72,7 +79,10 @@ const loadAddresses = async (req,res)=>{
     let user = req.session.user_id;
     const userData = await User.findOne({_id:user})
     const addresses = await Address.find({userId : user})
+    
+    
     res.render('addresses',{user:userData,addresses})
+    
   } catch (error) {
     console.log(error);
   }
@@ -142,15 +152,24 @@ const loadOrderHistory = async (req,res)=>{
   try {
     const userId = req.session.user_id;
     const userData = await User.findOne({_id:userId})
-    const orders = await Order.find({userId : userId}).populate('games.gameId');
-   
-    res.render('orderHistory',{user:userData , order:orders})
+    
+    let orders = await Order.find({userId : userId}).populate('games.gameId');
+    let totalAmountSums = [];
+    orders.forEach(item=>{
+      const totalAmountSum   = item.games
+        .filter(game => game.Status !== "Cancelled")
+        .reduce((acc,curr)=>acc+curr.totalAmount,0)
+        totalAmountSums.push(totalAmountSum)
+    })
+    totalAmountSums = totalAmountSums.reverse()
+    orders = orders.reverse()
+    res.render('orderHistory',{user:userData , order:orders , totalAmountSums}) 
   } catch (error) {
     console.log(error);
   }
 }
 
-
+ 
 // ********** FOR RENDERING ORDER DETAILS PAGE **********
 const loadOrderDetailsPage = async (req,res)=>{
   try {
@@ -158,12 +177,37 @@ const loadOrderDetailsPage = async (req,res)=>{
     const userId = req.session.user_id;
     const {orderId} = req.query;
     const userData = await User.findOne({_id:userId})
-    
     const order = await Order.findOne({orderId:orderId}).populate('games.gameId')
+    let total = 0
+    if (order) {
+      total = order.games
+        .filter(game => game.Status !== "Cancelled")
+        .reduce((acc, curr) => acc + curr.totalAmount, 0);
+    }
+    
    
-    res.render('orderDetailsPage',{user:userData , order : order})
+    res.render('orderDetailsPage',{user:userData , order : order , total})
+    
+    
   } catch (error) {
     console.log(error);
+  }
+}
+
+
+// ********** FOR CANCEL ORDER  **********
+const cancelOrder = async (req,res)=>{
+  try {
+    const userId = req.session.user_id;
+    const {reason,orderId,gameId} = req.body;
+    const order = await Order.findOne({_id:orderId })
+    const game = order.games.find(item =>item.gameId.equals(gameId))
+    game.reason = reason ; 
+    game.Status = 'Cancelled';
+    await order.save()
+    res.json({success:true})
+  } catch (error) {
+    console.log('error');
   }
 }
 
@@ -179,5 +223,6 @@ module.exports = {
     deleteAddress,
 
     loadOrderHistory,
-    loadOrderDetailsPage
+    loadOrderDetailsPage,
+    cancelOrder
 }

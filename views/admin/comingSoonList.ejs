@@ -1,0 +1,200 @@
+<%-include('../layouts/adminHeader.ejs')%>
+<%-include('../layouts/adminSidebar.ejs')%>
+
+<style>
+    .purple-header-box {
+    background-color: #936dd1; /* Purple color */
+    color: #ffffff; /* White text color */
+    padding: 15px; /* Adjust padding as needed */
+    border-radius: 5px; /* Optional: Add rounded corners */
+    margin-bottom: 20px; /* Optional: Add space below the box */
+    text-align: center;
+}
+.search-bar {
+    margin-bottom: 10px; /* Adjust spacing between search bar and heading */
+}
+.search-btn {
+        width: 100px; /* Adjust the width of the button as needed */
+        height: 40px; /* Adjust the height of the button as needed */
+        border: 2px solid #000; /* Black border */
+        border-radius: 5px; /* Make it round */
+        background-color: #936dd1; /* Black background */
+        color: #050404; /* White text color */
+        font-size: 14px; /* Adjust font size */
+        padding: 0; /* Remove padding */
+    }
+
+
+.search-bar {
+    width: calc(100% - 80px); /* Adjust the width of the search bar */
+    margin-right: 10px; /* Adjust spacing between search bar and button */
+}
+.btn-primary {
+    border-radius: 5px; /* Slight curve */
+    background-color: #936dd1; /* Purple background */
+    border-color: #0a0a0a; /* Border color same as background for a consistent look */
+    color: #050404; /* Black text color */
+    font-size: 14px; /* Adjust font size */
+    padding: 8px 20px; /* Adjust padding */
+}
+.custom-table-header {
+    background-color: grey;
+    color: black;
+}
+</style>
+
+<div class="page-wrapper">
+ 
+    <div class="container-fluid">
+    
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        
+                        <div class="purple-header-box"> <!-- Added div with custom class -->
+                             
+                            <h4 class="card-title">Coming Soon Games Informations</h4>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table ">
+                                <thead class="custom-table-header">
+                                    <tr>
+                                        <th scope="col">SL NO.</th>
+                                        <th scope="col">GAME NAME</th>
+                                        <th scope="col">IMAGE</th>
+                                        <th scope="col">CATEGORY</th> 
+                                        <th scope="col">ARRIVAL</th>                                              
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <%= console.log('sdfhbf'+comings) %>
+                                    <% comings.forEach((game,index) => { %>
+                                        <tr>
+                                            <td><%= index+1 %></td>
+                                            <td><%= game.name %></td>
+                                            <td>
+                                                
+                                                    <% game.image.forEach(image => { %>
+                                                        <img style="height: 50px; width: 50px;" src="<%= image.path %>" alt="<%= game.name %> main image" class="img-fluid">
+                                                    <% }); %>        
+                                            </td>
+                                            <td><%= game.categoryName %></td>
+                                            <td><%= game.expectedArrival %></td>
+                                            
+                                            
+                                            
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+   
+    
+    <div class="text-center">
+        <a id="addComingSoonBtn" class="btn btn-primary" data-toggle="modal" data-target="#addComingSoonModal" >+ Add Games</a>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="addComingSoonModal" tabindex="-1" role="dialog" aria-labelledby="addGameModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addGameModalLabel">Add Coming Soon Game</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Form to add new game -->
+                <form id="addGameForm" action="/admin/addComingSoonGames" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="gameName">Game Name</label>
+                        <input type="text" class="form-control" id="gameName" name="gameName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="category">CATEGORY</label>
+                        <select class="custom-select mr-sm-2" id="category" name="category">
+                            <% categories.forEach(category => { %>
+                                <option value="<%=category._id%>"><%= category.name %></option>
+                            <% }) %>
+                            
+                            
+                            
+                        </select>
+                        <div class="form-group">
+                            <label for="imageInput">GAME MAIN IMAGE</label>
+                                <div class="input-with-preview">
+                                    <input type="file" class="form-control-file" id="imageInput"   accept="image/*" name="image" required>
+                                    <canvas id="croppedImage" style="display: none;"></canvas>
+                                    <div id="imagePreview" class="d-flex flex-wrap mt-2"></div>
+                                </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="gameArrival">Arrival</label>
+                            <input type="date" class="form-control" id="gameArrival" name="gameArrival" required>
+                        </div>
+                        <div id="categoryContainer" class="text-danger"></div>
+                    </div>
+                    
+                    <button type="submit" id="saveComingSoon" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<!-- image preview -->
+<script>
+
+    // ********** IMAGE PREVIEW FOR ADD GAMES IMAGE **********
+    function previewImage (input , previewElement) {
+        const preview = document.getElementById(previewElement);
+        preview.innerHTML = '';
+
+        if(input.files){
+            Array.from(input.files).forEach(file=>{
+                const reader = new FileReader();
+                reader.onload = function(e){
+                    const img = document.createElement('img')
+                    img.src = e.target.result;
+                    img.style.maxWidth = '100px';
+                    img.style.maxHeight = '100px';
+                    
+                    preview.appendChild(img)
+                }
+                reader.readAsDataURL(file)
+            })
+        }
+    }
+
+    document.getElementById('imageInput').addEventListener('change',function(){
+        previewImage(this,'imagePreview')
+    })
+
+  
+
+  
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
+
+<%-include('../layouts/adminFooter.ejs')%>

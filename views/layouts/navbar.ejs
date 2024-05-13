@@ -95,7 +95,7 @@
     <div class="wrap-container">
         <header class="header header-intro-clearance header-3">
             
-            <div class="header-middle" style="height: 110px;">
+            <div class="header-middle" >
                 <div class="container">
                     <div class="header-left">
                         <button class="mobile-menu-toggler">
@@ -159,39 +159,17 @@
                                 <a href="/wishlist" title="Wishlist">
                                     <div class="icon">
                                         <i class="icon-heart-o"></i>
-                                        <span class="wishlist-count badge">3</span>
+                                        
                                     </div>
                                     <p>Wishlist</p>
                                 </a>
                             </div><!-- End .compare-dropdown -->
 
-                            <div class="dropdown cart-dropdown">
-                                <a href="/cart" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
-                                    <div class="icon">
-                                        <i class="icon-shopping-cart"></i>
-                                        <span class="cart-count">2</span>
-                                    </div>
-                                    <p>Cart</p>
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <div class="dropdown-cart-products">
-                                        <div class="product">
-                                            <div class="product-cart-details">
-                                                <h4 class="product-title">
-                                                    
-                                                </h4>
-                                            </div><!-- End .product-cart-details --> 
-                                        </div><!-- End .product -->
-                                    </div><!-- End .cart-product -->
-
-                                   
-                                    <div class="dropdown-cart-action">
-                                        <a href="/cart" class="btn btn-primary">View Cart</a>
-                                        
-                                    </div><!-- End .dropdown-cart-total -->
-                                </div><!-- End .dropdown-menu -->
-                            </div><!-- End .cart-dropdown -->
+                            <a href="/cart">
+                                <i class="icon-shopping-cart" style="font-size: 40px; padding-left: 10px; padding-bottom: 20px; color: white;"></i>
+                                
+                            </a>
+                            <!-- End .cart-dropdown -->
                         </div>
                     </div><!-- End .header-right -->
                 </div><!-- End .container -->
@@ -199,11 +177,11 @@
 
             <div class="header-middle" style="background-color: rgb(56, 54, 54); padding-top: 5px; padding-bottom: 5px;"> 
                
-                <nav>
+                <nav style="width: 100%; display: flex; justify-content: space-around;">
                     <a href="/" class="active">Home</a>
                     <a href="/allGames">All Games</a>
                     <a href="#">Trending</a>
-                    <a href="#">Coming Soon</a>
+                    <a href="/comingSoon">Coming Soon</a>
                     <a href="/aboutUs">About Us</a>
                     <a href="/contactUs">Contact Us</a>
                 </nav>

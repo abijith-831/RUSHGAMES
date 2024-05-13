@@ -1,0 +1,137 @@
+<%-include('../layouts/header.ejs')%>
+<%-include('../layouts/navbar.ejs')%>
+<style>
+    .product-main-image{
+        border: 5px solid black; /* Black border */
+    color: black; /* Black text */
+    background-color: transparent; /* Transparent background */
+    }
+    .btn-outline-primary-2 {
+    border: 1px solid black; /* Black border */
+    color: black; /* Black text */
+    background-color: transparent; /* Transparent background */
+    height: 50px;
+}
+.custom-border  {
+    border: 1px solid black;
+}
+.product-image {
+        border: 3px solid black; /* Add a black border */
+    }
+    .product-action .btn-cart {
+    color: black;
+    border-color: black;
+}
+.product-price {
+    color: black;
+    font-weight: bold;
+}
+.btn-product,
+    .btn-product-icon {
+        color: #000; /* Black color */
+    }
+</style>
+
+
+<body>
+    <div class="page-wrapper">
+        <header class="header">
+            
+            <div class="header-middle sticky-header">
+                <div class="container">
+                    
+                    <div class="header-right">
+                        
+                       
+
+                        
+                    </div><!-- End .header-right -->
+                </div><!-- End .container -->
+            </div><!-- End .header-middle -->
+        </header><!-- End .header -->
+
+        <main class="main">
+            <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+                <div class="container d-flex align-items-center">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">All Games</a></li>
+                        <li class="breadcrumb-item active" aria-current="page"><%= game.name %></li>
+                    </ol>
+
+                    
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+
+            <div class="page-content">
+                <div class="container">
+                    <div class="product-details-top mb-2">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="product-gallery product-gallery-vertical">
+                                    <div class="row">
+                                        <figure class="product-main-image">
+                                          
+                                            <img id="product-zoom" src="<%=game.image[0].path %>"  alt="product image" >                                        
+                                        </figure><!-- End .product-main-image -->                                       
+                                    </div><!-- End .row -->
+                                </div><!-- End .product-gallery -->
+                            </div><!-- End .col-md-6 -->
+
+                            <div class="col-md-6">
+                                <div class="product-details product-details-centered">
+                                    <h1 class="product-title"><%= game.name %></h1><!-- End .product-title -->
+
+                                    
+
+                                    <div class="product-price">
+                                        
+                                    </div><!-- End .product-price -->
+
+                                    <div class="product-content">
+                                        <p>Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue. Morbi purus libero.</p>
+                                    </div><!-- End .product-content -->
+
+                                    <div class="details-filter-row details-row-size">
+                                        <label>Category : <%= game.category.name %> </label>
+                                        
+                                       
+                                    </div><!-- End .details-filter-row -->
+                                    <a href="#" class="btn-product btn-cart  btn btn-outline-primary-2"  title="Cart"><span>NOTIFY ME</span></a>
+                                    <div class="details-filter-row details-row-size">
+                                        
+
+                                        
+                                    </div><!-- End .details-filter-row -->
+
+                                    <div class="product-details-action">
+                                       
+
+                                       
+                                    </div><!-- End .product-details-action -->              
+                                </div><!-- End .product-details -->
+                            </div><!-- End .col-md-6 -->
+                        </div><!-- End .row -->
+                    </div><!-- End .product-details-top -->
+
+                    
+
+
+                  
+
+
+                   
+                </div><!-- End .container -->
+            </div><!-- End .page-content -->
+        </main><!-- End .main -->
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>        
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>   
+
+
+    
+
+
+         
+<%-include('../layouts/footbar.ejs')%>
+<%-include('../layouts/footer.ejs')%>

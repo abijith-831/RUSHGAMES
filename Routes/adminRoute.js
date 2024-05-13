@@ -11,6 +11,7 @@ const gameController = require('../controllers/gameController')
 const adminDashboardController = require('../controllers/adminDashboardController')
 const orderController = require('../controllers/orderController')
 
+
 const adminAuth = require('../middleware/adminAuth')
 
 admin_route.set('view engine','ejs')
@@ -48,6 +49,11 @@ admin_route.post('/editGamesSubmit',gameController.editGames)
 admin_route.get('/gameStatus',gameController.gameStatus)
 
 
+// ****** COMING SOON GAMES SECTION ******
+admin_route.get('/comingSoonList',gameController.loadComingSoon)
+admin_route.post('/addComingSoonGames',gameController.addComingSoonGames)
+
+
 // ****** CATEGORY CONTROL SECTION ******
 admin_route.get('/categoryList',categoryController.loadCategoryList)
 admin_route.get('/addCategory',categoryController.loadAddCategory)
@@ -61,5 +67,7 @@ admin_route.get('/categoryStatus',categoryController.categoryStatus)
 
 // ****** ORDER MANAGEMENT SECTION ******
 admin_route.get('/orderHistory',orderController.loadOrderHistory)
+admin_route.get('/adminOrderDetailsPage',orderController.loadAdminOrderDetails)
+
 
 module.exports = admin_route; 

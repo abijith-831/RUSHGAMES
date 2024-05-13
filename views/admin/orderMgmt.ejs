@@ -1,67 +1,112 @@
 <%-include('../layouts/adminHeader.ejs')%>
 <%-include('../layouts/adminSidebar.ejs')%>
 
-        <div class="page-wrapper">
+<style>
+    .purple-header-box {
+    background-color: #936dd1; /* Purple color */
+    color: #ffffff; /* White text color */
+    padding: 15px; /* Adjust padding as needed */
+    border-radius: 5px; /* Optional: Add rounded corners */
+    margin-bottom: 20px; /* Optional: Add space below the box */
+    text-align: center;
+}
+.search-bar {
+    margin-bottom: 10px; /* Adjust spacing between search bar and heading */
+}
+.search-btn {
+        width: 100px; /* Adjust the width of the button as needed */
+        height: 40px; /* Adjust the height of the button as needed */
+        border: 2px solid #000; /* Black border */
+        border-radius: 5px; /* Make it round */
+        background-color: #936dd1; /* Black background */
+        color: #050404; /* White text color */
+        font-size: 14px; /* Adjust font size */
+        padding: 0; /* Remove padding */
+    }
 
-            <div class="page-breadcrumb">
-                <div class="row">
-                    <div class="col-7 align-self-center">
-                        <h4 class="page-title text-truncate text-dark font-weight-medium mb-1">Order Management</h4>
-                        <div class="d-flex align-items-center">
-                            <nav aria-label="breadcrumb">
-                               
-                            </nav>
+
+.search-bar {
+    width: calc(100% - 80px); /* Adjust the width of the search bar */
+    margin-right: 10px; /* Adjust spacing between search bar and button */
+}
+.btn-primary {
+    border-radius: 5px; /* Slight curve */
+    background-color: #936dd1; /* Purple background */
+    border-color: #0a0a0a; /* Border color same as background for a consistent look */
+    color: #050404; /* Black text color */
+    font-size: 14px; /* Adjust font size */
+    padding: 8px 20px; /* Adjust padding */
+}
+.custom-table-header {
+    background-color: grey;
+    color: black;
+}
+</style>
+
+<div class="page-wrapper">
+
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        
+                        <div class="purple-header-box"> 
+                             
+                            <h4 class="card-title">ORDER MANAGEMENT</h4>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table ">
+                                <thead class="custom-table-header">
+                                    <tr>
+                                        <th scope="col">SL.NO</th>
+                                        <th scope="col">CUSTOMER</th>
+                                        <th scope="col">ORDER-ID</th>
+                                        <th scope="col">TOTAL</th>
+                                        <th scope="col">DATE</th> 
+                                        <th scope="col">PAYMENT</th>  
+                                        <th scope="col">ACTION</th>                                              
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% orders.forEach( (order , index) => { %> 
+                                        <tr>
+                                            <td><%= index+1 %></td>
+                                            <td><%= order.userId.name%></td>
+                                            <td><%= order.orderId %></td>
+                                            <td><%= order.totalCartPrice %></td>
+                                            <td><%= order.orderDate %></td>
+                                            <td><%= order.paymentMethod %></td>
+                                            <td class="text-right align-middle">
+                                            <button class="btn btn-primary" onclick="showOrderDetailsPage('<%= order._id%>')">Details</button>                                                                                                      
+                                               
+                                                
+                                            </td>
+                                        </tr>
+                                    
+                                    <%  })  %>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    
                 </div>
             </div>
-   
-            <div class="container-fluid">
-   
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                
-                                <div class="table-responsive">
-                                    <table id="zero_config" class="table border table-striped table-bordered text-nowrap">
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Position</th>
-                                                <th>Office</th>
-                                                <th>Age</th>
-                                                <th>Start date</th>
-                                                <th>Salary</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Tiger Nixon</td>
-                                                <td>System Architect</td>
-                                                <td>Edinburgh</td>
-                                                <td>61</td>
-                                                <td>2011/04/25</td>
-                                                <td>$320,800</td>
-                                            </tr>
-                                           
-                                        </tbody>
-                                        
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-               
-               
-               
-            </div>
-            
         </div>
+    </div> 
+</div>
+   
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
-    </div>
 
+
+ <!--  pass orderId to backend / loadorderDetailsPage -->
+<script>
+    function showOrderDetailsPage(orderId) {
+        console.log('ordadf');
+        const url = `/admin/adminOrderDetailsPage?orderId=${orderId}`;
+        window.location.href = url;
+    }
+</script>
 
 <%-include('../layouts/adminFooter.ejs')%>

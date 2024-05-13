@@ -40,10 +40,15 @@ const gameSchema = mongoose.Schema({
         validate : [arrayLimit,'{PATH} exceeds the limit of 4'],
         required : true
     },
+    trailer : {
+        type : String , 
+        required : true
+    },
     is_listed : {
         type : Boolean,
         default : true
     }
+
     
 })
 

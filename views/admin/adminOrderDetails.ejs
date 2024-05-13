@@ -1,0 +1,133 @@
+<%-include('../layouts/adminHeader.ejs')%>
+<%-include('../layouts/adminSidebar.ejs')%>
+
+
+<style>
+    .headings{
+        color: rgb(0, 0, 0);
+    }  
+</style>
+
+<div class="page-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        
+                        <div class="purple-header-box"> 
+                             
+                            <h4 class="card-title text-center">ORDER DETAILS PAGE</h4>
+                        </div>
+                        <div class="table-responsive">
+                            <div class="row" style="background-color: rgb(255, 255, 255);  ; padding: 20px; border: 2px solid black;">
+                                <div class="col-md-4 ">
+                                    <h4 class="text-center headings black-text">Delivery Address <i class="fas fa-map-marker-alt"></i></h4>
+                                    <p><strong>Name:</strong> <span class="black-text"><%= order.addresses.name %></span></p>
+                                    <p><strong>Mobile:</strong> <span class="black-text"><%= order.addresses.mobile %></span></p>
+                                    <p><strong>Pincode:</strong> <span class="black-text"><%= order.addresses.pincode %></span></p>
+                                    <p><strong>District:</strong> <span class="black-text"><%= order.addresses.district %></span></p>
+                                    <p><strong>State:</strong> <span class="black-text"><%= order.addresses.state %></span></p>
+                                    <p><strong>City:</strong> <span class="black-text"><%= order.addresses.city %></span></p>
+                                    <p><strong>Area:</strong> <span class="black-text"><%= order.addresses.area %></span></p>
+                                    <p><strong>House No:</strong> <span class="black-text"><%= order.addresses.houseNo %></span></p>
+                                </div>
+                                
+                               
+                                <div class="col-md-4">
+                                    <h4 class="text-center headings " style="font-weight: bold;" >Order Info <i class="fas fa-info-circle"></i></h4>
+                                    <p><strong>Name: <%= order.userId.name  %></strong> <span class="black-text" id="customerEmail"></span></p>
+                                    <p><strong>Phone: <%= order.userId.mobile %></strong> <span class="black-text" id="customerPhone"></span></p>
+                                    <p><strong>Email: <%= order.userId.email  %></strong> <span class="black-text" id="customerEmail"></span></p>
+                                    <p> <strong>Ordered Date: <%= order.orderDate %></strong> <span class="black-text" id="orderDate"></span></p>
+                                    <p><strong>Order ID: <%= order.orderId%></strong> <span class="black-text" id="orderId"></span></p>
+                                    <p><strong>Payment Method : <%=order.paymentMethod %></strong> <span class="black-text" id="customerName"></span></p>
+                                    
+                                    
+                                </div>
+                                <div class="col-md-4">
+                                    <h4 class="text-center headings">Your Rewards</h4>
+                                    <div id="orderItems">
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12" style="background-color: rgb(255, 255, 255); color: white; padding: 20px; border: 2px solid black;">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h2 class="text-center headings">Ordered Games</h2>
+                                        <hr>
+                                    </div>
+                                    
+                                </div>
+                                <div class="row d-flex justify-content-center align-items-center">
+                                    <div class="col-lg-12 col-xl-12">
+                                        <div class="card" style="border-radius: 10px">
+                                            <div class="card-body p-4">
+                                                <% if (order.games.length === 0) { %> 
+                                                    <h4 class="text-center">You haven't Ordered Anything yet!</h4>
+                                                <% } else { %>
+                                                    <% order.games.forEach((game, index) => { %>
+                                                        <div class="card shadow-0 border mb-4">
+                                                            <div class="card-body">
+                                                                <div class="row">
+                                                                    <div class="col-md-2 mt-1">
+                                                                        <img src="<%= game.gameId.mainImage[0].path %>" class=" " style="height: 75px; width: 75px" alt="<%= game.gameId.name %>" />
+                                                                    </div>
+                                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                                        <p class="text-muted mb-0"><%= game.gameId.name %></p>
+                                                                    </div>
+                                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                                        <p class="text-muted mb-0 ">Qty: <%= game.quantity %></p>
+                                                                    </div>
+                                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                                        <p class="text-muted mb-0 "><%= game.totalAmount %></p>
+                                                                    </div>
+                                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                                        <p class="text-muted mb-0 "><%= game.Status %></p>
+                                                                    </div>
+                                                                            
+                                                                                                            
+                                                                    <div class="col-md-2">
+                                                                        <button class="btn btn-danger">Cancel Item</button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row mt-3" style="font-weight: bold;">
+                                                                    <div class="col-md-4">
+                                                                        <p class="text-muted mb-0" style="font-weight: bold;">Total Price: <%= game.totalAmount %></p>
+                                                                    </div>
+                                                                    
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    <% }) %>
+                                                <% } %>
+                                                <!-- Display the totalCartPrice in a common, single place -->
+                                                <div class="row mt-3" style="font-weight: bold;">
+                                                    <div class="col-md-12">
+                                                        <p class="text-muted mb-0" style="font-weight: bold;">Total Cart Price: <%= order.totalCartPrice %></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+  
+    
+   
+</div>
+
+
+
+
+<%-include('../layouts/adminFooter.ejs')%>

@@ -1,5 +1,6 @@
 const Category = require("../models/categoryModel");
 const Games = require("../models/gameModel");
+const ComingSoon = require('../models/comingSoonModel')
 const multer = require("multer");
 const path = require("path");
 const express = require("express");
@@ -10,16 +11,29 @@ const sharp = require('sharp')
 // ********** FOR LOADING GAMESLIST **********
 const loadGamesList = async (req, res) => {
   try {
-    const games = await Games.find();
+    
     let success = req.flash("success");
 
+    
+    const page = parseInt(req.query.page)||1;
+    const limit = 10;
+    const skip = (page-1)*limit;
+    const games = await Games.find().skip(skip).limit(limit)
     for (let game of games) {
       const category = await Category.findById(game.category);
       if (category) {
         game.categoryName = category.name;
       }
     }
-    res.render("gamesList", { games, success });
+    const totalGames = await Games.countDocuments();
+    const totalPages = Math.ceil(totalGames/limit)
+
+    let prevPage = page - 1;
+    let nextPage = page + 1;
+    if(prevPage < 1 ) prevPage = 1;
+    if(nextPage > totalPages) nextPage = totalPages
+    
+    res.render("gamesList", { games, success , totalPages , totalGames , prevPage , nextPage , page , limit});
   } catch (error) {
     console.log(error);
   }
@@ -52,6 +66,11 @@ const location = multer.diskStorage({
 const upload = multer({ storage: location }).fields([
   { name: "mainImage", maxCount: 1 },
   { name: "screenshotImages", maxCount: 4 },
+    
+]);
+
+const coming = multer({ storage: location }).fields([
+  { name: "image", maxCount: 1 },   
 ]);
 
 
@@ -75,8 +94,8 @@ const addGames = async (req, res) => {
         return res.redirect("/admin/addGames");
       }
 
-      // Handling the main image upload
-      const mainImageFile = req.files['mainImage'][0]; // Assuming only one main image
+      
+      const mainImageFile = req.files['mainImage'][0]; 
       const mainImage = {
         filename: mainImageFile.filename,
         path: "/uploads/" + mainImageFile.filename,
@@ -101,6 +120,7 @@ const addGames = async (req, res) => {
         systemReq: req.body.systemReq,
         mainImage,
         screenshotImages,
+        trailer : req.body.trailer
       });
 
       await newGame.save();
@@ -191,11 +211,75 @@ const gameStatus = async (req,res)=>{
 }
 
 
+
+const loadComingSoon = async (req,res)=>{
+  try {
+    const categories = await Category.find()
+    const comings = await ComingSoon.find()
+    for (let game of comings) {
+      const category = await Category.findById(game.category);
+      if (category) {
+        game.categoryName = category.name;
+      }
+    }
+    res.render('comingSoonList',{categories , comings})
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+const addComingSoonGames = async (req,res)=>{
+  try {
+    
+    coming(req,res,async function (err){
+      if (err) {
+        console.log(err);
+      }
+      
+      const name = req.body.gameName.trim().toUpperCase()
+      const alreadyExist = await Games.findOne({ name });
+      if (alreadyExist) {
+        req.flash("errmsg", "This Game is already Added. Please try a Different Game");
+        return res.redirect("/admin/comingSoonList");
+      }
+      const alreadyExists = await ComingSoon.findOne({ name });
+      if (alreadyExists) {
+        req.flash("errmsg", "This Game is already Added. Please try a Different Game");
+        return res.redirect("/admin/comingSoonList");
+      }
+      const mainImageFile = req.files.image[0]
+      console.log('sfg'+mainImageFile);
+      const image = {
+        filename : mainImageFile.filename,
+        path : '/uploads/'+mainImageFile.filename
+      }
+      const newGame = new ComingSoon({
+        name,
+        category: req.body.category,
+        systemReq: req.body.systemReq,
+        image,
+        expectedArrival : req.body.gameArrival
+      })
+      await newGame.save()
+    })
+    
+    
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
 module.exports = {
   loadGamesList,
   loadAddGames,
   addGames,
   loadEditGames,
   editGames,
-  gameStatus
+  gameStatus,
+
+
+  loadComingSoon,
+  addComingSoonGames
 };

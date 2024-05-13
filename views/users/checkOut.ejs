@@ -161,16 +161,16 @@ input[type="radio"]:checked + label {
             	<div class="checkout">
 	                <div class="container-fluid">
             			
-            			<form action="/placeOrder" method = 'POST' id="orderForm">
+            			<form action="/placeOrder" method = 'POST' id="orderForm" >
 		                	<div class="row">
                                 <aside class="col-lg-8 content-container ">
-                                    <div class="address-selection-box">
+                                    <div class="address-selection-box" required>
 										<h3 style="text-align: center;">Choose Your Address</h3>
 									
 										<% addresses.forEach((item) => { %>
 											<% item.addresses.forEach((address, index) => { %>
 												<div class="address-option">
-													<input type="radio" name="address" id="address<%= index + 1 %>" value="<%= address._id %>">
+													<input type="radio" name="address" id="address<%= index + 1 %>" value="<%= address._id %>" required>
 													<label for="address<%= index + 1 %>">
 														<h4> Address <%= index + 1 %> </h4>
 														<p><%= address.name %>, <%= address.city %>, <%= address.state %></p>
@@ -215,6 +215,12 @@ input[type="radio"]:checked + label {
                                             <label for="checkout-discount-input" class="text-truncate">Have a coupon? <span>Click here to enter your code</span></label>
                                         </form>
                                     </div>
+									<% if (errmsg) { %> 
+											<div class="alert text-center " style="color: red;">
+												<%= errmsg %>
+											</div>
+									
+									<%   }  %>
                                 </aside>
                                 
 		 
@@ -261,7 +267,7 @@ input[type="radio"]:checked + label {
 											<div class="card">
 												<div class="card-header" id="heading-1">
 													<h2 class="card-title">
-														<input type="radio" name="paymentMethod" value="directBankTransfer" id="paymentMethod1">
+														<input type="radio" name="paymentMethod" value="directBankTransfer" id="paymentMethod1" required>
 														<label for="paymentMethod1" data-toggle="collapse" data-target="#collapse-1" aria-expanded="true" aria-controls="collapse-1">
 															Direct bank transfer
 														</label>
@@ -501,7 +507,7 @@ input[type="radio"]:checked + label {
 			</div>
 		</div>
 	</div>
-  </div>
+</div>
   
 
 <!-- view Address functionality -->
@@ -587,14 +593,14 @@ input[type="radio"]:checked + label {
 
 <!-- Plugins JS File -->
 <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/jquery.hoverIntent.min.js"></script>
-    <script src="assets/js/jquery.waypoints.min.js"></script>
-    <script src="assets/js/superfish.min.js"></script>
-    <script src="assets/js/owl.carousel.min.js"></script>
-    <!-- Main JS File -->
-    <script src="assets/js/main.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/jquery.hoverIntent.min.js"></script>
+<script src="assets/js/jquery.waypoints.min.js"></script>
+<script src="assets/js/superfish.min.js"></script>
+<script src="assets/js/owl.carousel.min.js"></script>
+<!-- Main JS File -->
+<script src="assets/js/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 </body>
 
 

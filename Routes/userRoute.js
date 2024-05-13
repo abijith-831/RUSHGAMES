@@ -39,8 +39,9 @@ user_route.get('/logout', userAuth.isLogin , userController.userLogout)
 user_route.get('/userProfile' , userAuth.isLogin , profileController.loadUserProfile)
 user_route.post('/editUserProfile',profileController.editUserProfile)
 user_route.post('/editUserPassword',profileController.editUserPassword)
-user_route.get('/orderHistory',profileController.loadOrderHistory)
-user_route.get('/orderDetailsPage',profileController.loadOrderDetailsPage)
+user_route.get('/orderHistory', userAuth.isLogin , profileController.loadOrderHistory)
+user_route.get('/orderDetailsPage', userAuth.isLogin, profileController.loadOrderDetailsPage)
+user_route.post('/cancelOrder',profileController.cancelOrder)
 
 
 //******   USER CART SECTIONS ******
@@ -72,6 +73,9 @@ user_route.post('/deleteAddress',profileController.deleteAddress)
 //******   FOR RENDERING OTHER PAGES ******
 user_route.get('/aboutUs',userController.loadAboutUs)
 user_route.get('/contactUs',userController.loadContactUs)
+user_route.get('/comingSoon',userController.loadComingSoon)
+user_route.get('/comingSoonDetails',userController.loadComingSoonDetails)
+
 
 
 user_route.get('/allGames',userController.loadAllGames)

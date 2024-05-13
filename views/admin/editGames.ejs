@@ -85,19 +85,19 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="name">GAME NAME</label>
-                                            <input type="text" class="form-control" id="name" name="name" placeholder="Enter Product Name" value="<%= gameDetails && gameDetails.name ? gameDetails.name : '' %>">
+                                            <input type="text" class="form-control" id="name" name="name" placeholder="Enter Product Name" value="<%= gameDetails && gameDetails.name ? gameDetails.name : '' %>" required>
 
                                             
                                             <div id="nameContainer" class="text-danger"></div>
                                         </div>
                                         <div class="form-group">
                                             <label for="price">PRICE</label>
-                                            <input type="text" class="form-control" id="price" name="price" placeholder="Enter Product Price" value="<%= gameDetails && gameDetails.price ? gameDetails.price : '' %>">
+                                            <input type="text" class="form-control" id="price" name="price" placeholder="Enter Product Price" value="<%= gameDetails && gameDetails.price ? gameDetails.price : '' %>" required>
                                             <div id="priceContainer" class="text-danger"></div>
                                         </div>
                                         <div class="form-group">
                                             <label for="quantity">QUANTITY</label>
-                                            <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Enter Quantity" value="<%= gameDetails && gameDetails.quantity ? gameDetails.quantity : '' %>">
+                                            <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Enter Quantity" value="<%= gameDetails && gameDetails.quantity ? gameDetails.quantity : '' %>" required>
                                             <div id="quantityContainer" class="text-danger"></div>
                                         </div>
                                         <div class="form-group">

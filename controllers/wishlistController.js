@@ -76,7 +76,7 @@ const removeFromWishlist = async (req,res)=>{
 // ********** FOR ADDING GAME TO THE CART AND REMOVE FROM THE WISHLIST **********
 const addToCartAndRemove = async (req, res) => {
     try {
-        if (req.session.user_id) {
+        
             const userId = req.session.user_id;
             const gameId = req.query.gameId;
             const game = await Games.findById(gameId);
@@ -124,9 +124,8 @@ const addToCartAndRemove = async (req, res) => {
                 await newCart.save();
                 res.json({ success: true });
             }
-        } else {
-            res.status(401).json({ success: false, error: 'User not authenticated' });
-        }
+        
+           
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, error: 'Internal server error' });

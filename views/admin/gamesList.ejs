@@ -26,37 +26,69 @@
 
 
 .search-bar {
-    width: calc(100% - 80px); /* Adjust the width of the search bar */
-    margin-right: 10px; /* Adjust spacing between search bar and button */
+    width: calc(100% - 80px); 
+    margin-right: 10px;
 }
 .btn-primary {
-    border-radius: 5px; /* Slight curve */
-    background-color: #936dd1; /* Purple background */
-    border-color: #0a0a0a; /* Border color same as background for a consistent look */
-    color: #050404; /* Black text color */
-    font-size: 14px; /* Adjust font size */
-    padding: 8px 20px; /* Adjust padding */
+    border-radius: 5px; 
+    background-color: #936dd1; 
+    border-color: #0a0a0a; 
+    color: #050404;
+    font-size: 14px; 
 }
 .custom-table-header {
     background-color: grey;
     color: black;
 }
+.pagination {
+    margin-top: 20px;
+}
+
+.pagination .page-item {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.pagination .page-link {
+    color: #007bff;
+    border: 1px solid #007bff;
+    padding: 6px 12px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.pagination .page-link:hover {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
+}
+
+.pagination .page-item.active .page-link {
+    z-index: 1;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
 </style>
 
 <div class="page-wrapper">
-    <!-- ============================================================== -->
-    <!-- Container fluid  -->
-    <!-- ============================================================== -->
+
     <div class="container-fluid">
-        <!-- ============================================================== -->
-        <!-- Start Page Content -->
-        <!-- ============================================================== -->
+ 
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
                         
-                        <div class="purple-header-box"> <!-- Added div with custom class -->
+                        <div class="purple-header-box"> 
                              
                             <h4 class="card-title">Games Informations</h4>
                         </div>
@@ -64,6 +96,7 @@
                             <table class="table ">
                                 <thead class="custom-table-header">
                                     <tr>
+                                        <th scope="col">SL NO></th>
                                         <th scope="col">GAME NAME</th>
                                         <th scope="col">IMAGE</th>
                                         <th scope="col">PRICE</th>
@@ -73,8 +106,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% games.forEach(game => { %>
+                                    <% const indexPage = (page-1)*limit %>
+                                    <% games.forEach((game,index) => { %>
                                         <tr>
+                                            <td><%= index +1 +indexPage %></td>
                                             <td><%= game.name %></td>
                                             <td>
                                                 <% if (game.mainImage && game.mainImage.length > 0) { %>
@@ -109,13 +144,34 @@
                             </table>
                         </div>
                     </div>
+                    <nav aria-label="page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item <%= prevPage ===1 ? 'disabled' : '' %>">
+                                <a class="page-link-prev" href="?page=<%= prevPage %>" aria-label="Previous" >
+                                    <span aria-hidden="'true"><i class="icon-long-arrow-left"></i></span>Prev
+                                </a>
+                            </li>
+                            <% for (let i =1 ; i<= totalPages ; i++) { %> 
+                                <li class="page-item <%= page ===i? 'ative':''%>" >
+                                    <a class="page-link" href="?page=<%=i%>"><%= i %></a>
+                                </li>
+                            <%  } %>
+                                <li class="page-item <%= nextPage > totalPages?'disabled':''%>">
+                                    <a class="page-link page-link-next" href="?page=<%= nextPage%>" aria-label="next">
+                                        Next <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span>
+                                    </a>
+                                </li>
+                                <div class="text-right col-lg-2">
+                                    <a href="/admin/addGames" class="btn btn-primary">+ Add Games</a>
+                                </div>
+                        </ul>
+                        
+                    </nav>
+                    
                 </div>
             </div>
         </div>
 
-        <!-- ============================================================== -->
-        <!-- End Page wrapper  -->
-        <!-- ============================================================== -->
     </div>
     <% if (success) { %> 
         <div class="alert  text-center" role="alert" style="color:green; background: white;">
@@ -123,10 +179,9 @@
         </div>
     <% } %>
     
-    <div class="text-center">
-        <a href="/admin/addGames" class="btn btn-primary">+ Add Games</a>
-    </div>
+    
 </div>
+
 
 <script>
     function confirmAction(gameId) {  
