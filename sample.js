@@ -619,96 +619,443 @@
 //                     });
 //                 });
 
-const LoadOrderDatails = async(req,res)=> {
+// const LoadOrderDatails = async(req,res)=> {
 
-    try {
+//     try {
 
-        const userid = req.session.user_id;
-        const userdata = await User.findOne({_id:userid})
+//         const userid = req.session.user_id;
+//         const userdata = await User.findOne({_id:userid})
 
-        const orderdata = await Order.find({userId:userid}).populate('items.productId')
+//         const orderdata = await Order.find({userId:userid}).populate('items.productId')
 
-        res.render('userOrderDetailsPage',{userdata:userdata,orderDatas:orderdata})
+//         res.render('userOrderDetailsPage',{userdata:userdata,orderDatas:orderdata})
         
-    } catch (error) {
-        console.log(error.message);
-    }
+//     } catch (error) {
+//         console.log(error.message);
+//     }
 
-}
+// }
 
-<div class="col-md-8 order-det">
-                    <div class="card">
-                        <h5 class="h5hed">Your Orders</h5>
-                        <hr>
+// <div class="col-md-8 order-det">
+//                     <div class="card">
+//                         <h5 class="h5hed">Your Orders</h5>
+//                         <hr>
 
-                        <div class="card-body">
-                            <% if(orderDatas.length> 0){ %>
-
-
-                                <% orderDatas.forEach(i=> { %>
+//                         <div class="card-body">
+//                             <% if(orderDatas.length> 0){ %>
 
 
-                                    <div class="col-md-12"
-                                        style="margin-top: -15px; display: flex; align-items: center; justify-content: space-between;">
-                                        <p style=" margin: 0;">#Order ID: <span style="color: red;">
-                                                <%= i.orderId %>
-                                            </span> | Order On <%= i.currendDate.toLocaleDateString('en-US', {
-                                                day: 'numeric' , month: 'short' , year: 'numeric' }) %>
-                                        </p>
-                                        <a href="/singleOrderDetails?id=<%= i.orderId %>"><button style="height: 35px;"
-                                                class="btn btn-success p-1">View Order Details</button></a>
-                                    </div>
+//                                 <% orderDatas.forEach(i=> { %>
 
-                                    <hr>
-                                    <% if(i.items.length> 0){ %>
-                                        <% i.items.forEach(product=> { %>
 
-                                            <div class="col-md-12">
+//                                     <div class="col-md-12"
+//                                         style="margin-top: -15px; display: flex; align-items: center; justify-content: space-between;">
+//                                         <p style=" margin: 0;">#Order ID: <span style="color: red;">
+//                                                 <%= i.orderId %>
+//                                             </span> | Order On <%= i.currendDate.toLocaleDateString('en-US', {
+//                                                 day: 'numeric' , month: 'short' , year: 'numeric' }) %>
+//                                         </p>
+//                                         <a href="/singleOrderDetails?id=<%= i.orderId %>"><button style="height: 35px;"
+//                                                 class="btn btn-success p-1">View Order Details</button></a>
+//                                     </div>
 
-                                                <div class="row">
-                                                    <div style="width: 80px;  ">
-                                                        <img src="<%= product.productId.image[0] %>" alt="fsdfdff"
-                                                            style="width: 80px; height: 80px;">
-                                                    </div>
-                                                    <div style="margin-left: 30px; width: 170px;">
-                                                        <br>
-                                                        <p style="font-size: 20px; font-weight: 500;">
-                                                            <%= product.productId.pname %>
-                                                        </p>
-                                                    </div>
-                                                    <div style="margin-left: 25px;">
-                                                        <p>Price</p>
-                                                        <p style="font-size: 16px; font-weight: 500;">₹<%= product.price
-                                                                %>
-                                                        </p>
-                                                    </div>
+//                                     <hr>
+//                                     <% if(i.items.length> 0){ %>
+//                                         <% i.items.forEach(product=> { %>
 
-                                                    <div style="margin-left: 90px;">
-                                                        <p>QTY</p>
-                                                        <p style="font-size: 16px; font-weight: 500;">
-                                                            <%= product.quantity %>
-                                                        </p>
-                                                    </div>
-                                                    <div style="margin-left: 70px;">
+//                                             <div class="col-md-12">
 
-                                                        <p>Status</p>
-                                                        <p
-                                                            style="font-size: 16px; font-weight: 500; color: rgb(9, 117, 9);">
-                                                            <%= product.Status %>
-                                                        </p>
-                                                    </div>
+//                                                 <div class="row">
+//                                                     <div style="width: 80px;  ">
+//                                                         <img src="<%= product.productId.image[0] %>" alt="fsdfdff"
+//                                                             style="width: 80px; height: 80px;">
+//                                                     </div>
+//                                                     <div style="margin-left: 30px; width: 170px;">
+//                                                         <br>
+//                                                         <p style="font-size: 20px; font-weight: 500;">
+//                                                             <%= product.productId.pname %>
+//                                                         </p>
+//                                                     </div>
+//                                                     <div style="margin-left: 25px;">
+//                                                         <p>Price</p>
+//                                                         <p style="font-size: 16px; font-weight: 500;">₹<%= product.price
+//                                                                 %>
+//                                                         </p>
+//                                                     </div>
+
+//                                                     <div style="margin-left: 90px;">
+//                                                         <p>QTY</p>
+//                                                         <p style="font-size: 16px; font-weight: 500;">
+//                                                             <%= product.quantity %>
+//                                                         </p>
+//                                                     </div>
+//                                                     <div style="margin-left: 70px;">
+
+//                                                         <p>Status</p>
+//                                                         <p
+//                                                             style="font-size: 16px; font-weight: 500; color: rgb(9, 117, 9);">
+//                                                             <%= product.Status %>
+//                                                         </p>
+//                                                     </div>
                                                    
 
-                                                </div>
-                                                <hr>
-                                            </div>
-                                            <br>
-                                            <% }) %>
-                                                <% } %>
+//                                                 </div>
+//                                                 <hr>
+//                                             </div>
+//                                             <br>
+//                                             <% }) %>
+//                                                 <% } %>
 
 
-                                                    <% }); %>
-                                                        <% } %>
-                        </div>
-                    </div>
-                </div>
+//                                                     <% }); %>
+//                                                         <% } %>
+//                         </div>
+//                     </div>
+//                 </div>
+
+//  Add razor Section :-
+
+// function razorpay(amount) {
+//     console.log('reached razor' + amount);
+//     const form = document.getElementById('myForm');
+//     fetch('/razor', {
+//         method: 'POST',
+//         headers: { 'Content-type': 'application/json' },
+//         body: JSON.stringify({ amount })
+//     }).then(res => res.json()).then(data => {
+//         if (data.succes) {
+
+//             let options = {
+//                 "key": ${data.key_id},
+//                 "amount": ${data.amount},
+//                 "currency": "INR",
+//                 "name": "ZERAC",
+//                 "order_id": ${data.order_id},
+//                 "handler": function (response) {
+//                     form.submit();
+
+//                 },
+//                 "profile": {
+//                     "name": ${data.name},
+//                     "email": ${data.email}
+//                 }
+//             }
+
+//             let razorpayObject = new Razorpay(options);
+//             razorpayObject.on('payment.failed', (response) => {
+//                 alert('payment failed');
+//             });
+//             razorpayObject.open();
+//         }
+//     })
+// }
+
+
+// // razor
+// const razor = async (req, res) => {
+//     try {
+
+//         const user = await User.findOne({ _id: req.session.user })
+
+//         const amount = req.body.amount * 100
+
+//         const options = {
+//             amount: amount,
+//             currency: "INR",
+//             receipt: 'ffarsanakt@gmail.com'
+//         }
+
+//         instance.orders.create(options, (err, order) => {
+
+//             if (!err) {
+//                 res.send({
+//                     succes: true,
+//                     msg: 'ORDER created',
+//                     order_id: order.id,
+//                     amount: amount,
+//                     key_id: process.env.RAZORPAY_IDKEY,
+//                     name: user.fullName,
+//                     email: user.email
+//                 })
+
+//             } else {
+
+//                 console.error("Error creating order:", err);
+//                 res.status(500).send({ success: false, msg: "Failed to create order" });
+
+//             }
+//         })
+//     } catch (err) {
+//         console.log(err.message + '     razor')
+//     }
+// }
+
+// const Razorpay = require('razorpay');
+// require('dotenv').config();
+// const instance = new Razorpay({
+//     key_id: process.env.RAZORPAY_IDKEY,
+//     key_secret: process.env.RAZORPAY_SECRET_KEY,
+// });
+
+// module.exports=instance
+
+
+const  placecorder=async (req,res)=>{
+    try {
+      const userId=req.session.user_id
+      const paymentmethod=req.body.paymentMethod
+      const selectedValue = req.body.selectedValue;
+      const total=req.body.total
+      const couponid=req.body.couponid
+  
+  
+      if(couponid){
+  
+       const couponCheck = await Coupondb.findById(couponid)
+       console.log(couponCheck);
+       if(couponCheck){
+        couponCheck.userUsed.push({ user_id: userId });
+        await couponCheck.save()
+       }
+      }
+  
+  
+  
+      const cartId = req.session.user_id; // Replace with the actual cart ID
+      const cart = await Cart.findOne({ userid: cartId });
+  
+  
+      // Fetch product details for each product in the cart
+  
+      const products = await Promise.all(cart.products.map(async (cartProduct) => {
+          const productDetails = await Product.findById(cartProduct.productId);
+          productDetails.Quantity -= cartProduct.quantity;
+          await productDetails.save();
+          return {
+              products: cartProduct.productId,
+              name: productDetails.Name,
+              price: productDetails.Price,
+              quantity: cartProduct.quantity,
+              total: cartProduct.totalPrice,
+              orderStatus: cartProduct.status,
+              image:cartProduct.image,
+              reason: cartProduct.cancellationReason,
+          };
+      }));
+  
+      // You can now use the 'products' array containing the product details
+      const orderData = {
+          user: req.session.user_id,
+          Products: products,
+          paymentMode: paymentmethod,
+          total:total,
+          date: new Date(),
+          address: selectedValue,
+      };
+    
+      // Create an instance of the Orders model
+      const orderInstance = new Order(orderData);
+     
+      if(paymentmethod=="wallet"){
+        orderInstance.paymentStatus="Wallet"
+        await orderInstance.save()
+         const savedOrder = await orderInstance.save().then(async()=>{
+           await Cart.deleteOne({userid:req.session.user_id})
+       })
+       const user=await User.findOne({_id:req.session.user_id})
+       user.wallet=user.wallet-total
+       const transaction = {
+        amount: total, 
+        description: "Product Purchased ",
+        date: new Date(),
+        status: "out",
+        }
+        user.walletHistory.push(transaction);
+       await user.save()
+  
+        res.json({ success: true, products: products,orderId: orderInstance._id});
+      }
+  
+        if(paymentmethod==="Cash on delivery"){
+          orderInstance.paymentStatus="COD"
+         await orderInstance.save()
+          const savedOrder = await orderInstance.save().then(async()=>{
+            await Cart.deleteOne({userid:req.session.user_id})
+        })
+         res.json({ success: true, products: products,orderId: orderInstance._id });
+        }else if(paymentmethod==="Razorpay"){
+          const totalpriceInPaise = Math.round(orderData.total * 100);
+          const minimumAmount = 100;
+          const adjustedAmount = Math.max(totalpriceInPaise, minimumAmount);
+  
+         generateRazorpay(orderInstance._id,adjustedAmount).then(async(response)=>{
+  
+          const savedOrder = await orderInstance.save()
+          res.json({ Razorpay: response, products: products });
+         })
+  
+        }
+  }   catch (error) {
+      console.error('Error:', error);
+      // Respond with an error message
+      res.status(500).json({ success: false, message: 'An error occurred while processing the order or updating product stock.' });
+  }
+  
+  }
+
+
+
+
+
+  const instance = new Razorpay({
+    key_id: "rzp_test_QmkTPpR7YwgsmH",
+    key_secret:"XEwHXRnbP4kAiT17e5nWBbLk",
+  });
+  
+  
+  const generateRazorpay=(orderid,adjustedAmount)=>{
+  
+   return new Promise((resolve,reject)=>{
+  
+  
+  
+    const options = {
+      amount: adjustedAmount,
+      currency: "INR",
+      receipt: ""+orderid
+    };
+    instance.orders.create(options, function(err, order) {
+      if(err){
+        console.log(err);
+      }
+  
+      resolve(order)
+    });
+   })
+  }
+
+
+
+
+
+  function sendSelection() {
+
+    // Get the selected value
+    const selectedValue = document.getElementById("addressSelect").value;
+    const  paymentMethod= document.getElementById('payment').value
+    const  total=document.getElementById('discount').textContent
+    const  couponid  =  document.getElementById('couponcode').value
+    if(!selectedValue){
+        const message=document.getElementById('addr').innerHTML="Please Select the Address"
+        return
+    }
+    // Example fetch API request
+    fetch('/placeorder', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            paymentMethod: paymentMethod,
+            selectedValue: selectedValue,
+            total:total,
+            couponid:couponid
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Backend response:', data);
+
+        // Check if the order processing was successful
+        if (data.success) {
+
+            Swal.fire({
+                title: 'Order Placed Successfully!',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 2000 // Set the duration for the alert
+
+            });
+
+                setTimeout(()=>{
+
+                    window.location.href = /vieworder/${data.orderId};
+                    },2000)
+        }else if(data.Razorpay){
+
+            const options = {
+"key": "rzp_test_QmkTPpR7YwgsmH", // Enter the Key ID generated from the Dashboard
+"amount": data.Razorpay.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+"currency": "INR",
+"name": "Elegant style",
+"description": "Test Transaction",
+"image": "https://example.com/your_logo",
+"order_id": data.Razorpay.id, //This is a sample Order ID. Pass the id obtained in the response of Step 1
+"handler": function (response){
+    // alert(response.razorpay_payment_id);
+    // alert(response.razorpay_order_id);
+    // alert(response.razorpay_signature)
+     verifyPayment(response,data.Razorpay)
+},
+"prefill": {
+    "name": "Gaurav Kumar",
+    "email": "gaurav.kumar@example.com",
+    "contact": "9000090000"
+},
+"notes": {
+    "address": "Razorpay Corporate Office"
+},
+"theme": {
+    "color": "#3399cc"
+}
+};
+
+var rzp1 = new Razorpay(options);
+rzp1.open();
+        var rzp1 = new Razorpay(options);
+        rzp1.open()
+        } else {
+            // Display SweetAlert error notification
+            Swal.fire({
+                title: 'Order Processing Failed',
+                text: 'An error occurred while processing the order.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Handle errors if any
+    });
+}
+
+function verifyPayment(payment,order){
+    console.log(payment);
+  $.ajax({
+    url:'/verifypayment',
+    data:{
+        payment,
+        order
+    },
+    method:"POST",
+    success:(response)=>{
+        if(response.payment){
+
+            Swal.fire({
+                title: 'Order Placed Successfully!',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 2000 // Set the duration for the alert
+
+            });
+            const orderid=order.receipt
+            setTimeout(()=>{
+
+                    window.location.href = /vieworder/${orderid};
+            },2000)
+        }
+    }
+  })
+}

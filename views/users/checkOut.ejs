@@ -267,9 +267,9 @@ input[type="radio"]:checked + label {
 											<div class="card">
 												<div class="card-header" id="heading-1">
 													<h2 class="card-title">
-														<input type="radio" name="paymentMethod" value="directBankTransfer" id="paymentMethod1" required>
+														<input type="radio" name="paymentMethod" value="wallet" id="paymentMethod1" required>
 														<label for="paymentMethod1" data-toggle="collapse" data-target="#collapse-1" aria-expanded="true" aria-controls="collapse-1">
-															Direct bank transfer
+															Wallet
 														</label>
 													</h2>
 												</div>
@@ -295,8 +295,24 @@ input[type="radio"]:checked + label {
 													</div>
 												</div>
 											</div>
-										
-											<!-- Add more accordion items as needed -->
+											<div class="card">
+												<div class="card-header" id="heading-2">
+													<h2 class="card-title">
+														<input type="radio" name="paymentMethod" value="onlinePayment" id="paymentMethod3">
+														<label for="paymentMethod3" data-toggle="collapse" data-target="#collapse-3" aria-expanded="true" aria-controls="collapse-3">
+															Online Payment
+														</label>
+													</h2>
+												</div>
+												<div id="collapse-3" class="collapse" aria-labelledby="heading-3" data-parent="#accordion-payment">
+													<div class="card-body">
+														Quisque volutpat mattis eros. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros.
+													</div>
+												</div>
+											</div>
+											
+										    </div>
+											
 										
 										</div>
 										<!-- End .accordion -->
@@ -553,16 +569,19 @@ input[type="radio"]:checked + label {
 <script>
 	 document.addEventListener('DOMContentLoaded', () => {
 		function proceedToCheckout(paymentMethod, addressId) {
+			
 			fetch('/placeOrder', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({ paymentMethod : paymentMethod, addressId : addressId })
+				
 			})
 				.then(response => response.json())
 				.then(data => {
-					if (data.success) {			
+					if (data.success) {	
+							
 						Swal.fire({
 							icon: 'success',
 							title: 'Success!',
@@ -570,10 +589,54 @@ input[type="radio"]:checked + label {
 							showConfirmButton: false,
 							timer: 1500
 							})
-					} else {
+					} else if(data.Razorpay){
+						console.log('abdinn');
+						console.log('hvvjmvjvjvbb'+Razorpay);
 						
-					}
-				})
+						const options = {
+							
+								"key": 'rzp_test_v7eXLfL0Wt6Ws9', 
+								"amount": data.Razorpay.amount, 
+								"currency": "INR",
+								"name": "Rush Games",
+								"description": "Test Transaction",
+								"image": "https://example.com/your_logo",
+								"order_id": data.Razorpay.id,
+								"handler": function (response){
+									// alert(response.razorpay_payment_id);
+									// alert(response.razorpay_order_id);
+									// alert(response.razorpay_signature)
+									verifyPayment(response,data.Razorpay)
+								},
+								"prefill": {
+									"name": "Abhijith",
+									"email": "abhijithasokan831gmail.com",
+									"contact": "1234567890"
+								},
+								"notes": {
+									"address": "Razorpay Corporate Office"
+								},
+								"theme": {
+									"color": "#3399cc"
+								}
+								};
+						
+						var rzp1 = new Razorpay(options);
+						rzp1.open()
+						
+						} else {
+							// Display SweetAlert error notification
+							Swal.fire({
+								title: 'Order Processing Failed',
+								text: 'An error occurred while processing the order.',
+								icon: 'error',
+								confirmButtonText: 'OK'
+							});
+
+						}
+					})
+					
+				
 				.catch(error => {
 					console.error('Fetch error:', error);
 				});
@@ -586,9 +649,39 @@ input[type="radio"]:checked + label {
         proceedToCheckout(paymentMethod, selectedAddress);
     });
 });
+
+function verifyPayment(payment,order){
+    console.log(payment);
+  $.ajax({
+    url:'/verifypayment',
+    data:{
+        payment,
+        order
+    },
+    method:"POST",
+    success:(response)=>{
+        if(response.payment){
+
+            Swal.fire({
+                title: 'Order Placed Successfully!',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 2000 // Set the duration for the alert
+
+            });
+            const orderid=order.receipt
+            setTimeout(()=>{
+
+                    window.location.href = `/vieworder/${orderid}`;
+            },2000)
+        }
+    }
+  })
+}
 </script>
 
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 <!-- Plugins JS File -->

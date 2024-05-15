@@ -249,7 +249,7 @@ const addComingSoonGames = async (req,res)=>{
         return res.redirect("/admin/comingSoonList");
       }
       const mainImageFile = req.files.image[0]
-      console.log('sfg'+mainImageFile);
+      
       const image = {
         filename : mainImageFile.filename,
         path : '/uploads/'+mainImageFile.filename

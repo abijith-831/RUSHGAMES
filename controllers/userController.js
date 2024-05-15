@@ -429,7 +429,8 @@ const searchName = async (req,res)=>{
 // ********** FOR FILTERING GAMES BASED ON CATEGORIES **********
 const filterGames = async (req,res)=>{
   try {
-    const {categories} = req.body; 
+    const {categories} = req.body;
+    // console.log('sdhfbjhsf'+categories); 
     const allGames = await Games.find({is_listed : true})
     const gamesFound = await Games.find({
       $and : [
@@ -437,6 +438,7 @@ const filterGames = async (req,res)=>{
         {is_listed : true}
       ]      
     })
+    // console.log('sjkfsdf'+gamesFound);
     if(gamesFound.length === 0){
       res.json(allGames)
     }else{
@@ -464,7 +466,7 @@ const loadComingSoonDetails = async (req,res)=>{
   try {
     const gameId = req.query.id;
     const game = await Coming.findOne({_id:gameId}).populate('category')
-    console.log('game'+game);
+    
     res.render('comingSoonDetails',{game})
   } catch (error) {
     console.log(error);

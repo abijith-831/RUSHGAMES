@@ -4,7 +4,12 @@ const Games = require('../models/gameModel');
 const Cart = require('../models/cartModel');
 const Address = require('../models/addressModel')
 const Order = require('../models/orderModel') 
+const Razorpay = require('razorpay')
 
+const instance = new Razorpay({
+  key_id : 'rzp_test_v7eXLfL0Wt6Ws9',
+  key_secret : 'AYLcwjPi06hnNEvNPogTv4lf'
+})
 
 
 // ********** FOR RENDERING CHECKOUT PAGE **********
@@ -18,10 +23,11 @@ const loadCheckOut = async (req,res)=>{
       if(!cartData || cartData.games.length === 0){
         return res.json({message:"There is Nothing in Cart to Purchase"})
       }
+      
       const gameIds = cartData.games.map(game => game.gameId);
       const gameDetailsPromises = gameIds.map(gameId => Games.findOne({_id: gameId}));
       const gameDetails = await Promise.all(gameDetailsPromises); 
-      res.render('checkOut',{user : userData , addresses , cartData , gameDetails,errmsg})
+      res.render('checkOut',{user : userData , addresses , cartData , gameDetails,errmsg })
     } catch (error) {
       console.log(error);
     }
@@ -69,7 +75,7 @@ const addNewAddress = async (req,res)=>{
 // ********** FOR ORDER PLACEMENT  **********
 const placeOrder = async (req,res)=>{
   try {
- 
+  
     const userId = req.session.user_id;
     const selectedPayment = req.body.paymentMethod;
     const addressId = req.body.addressId;
@@ -115,17 +121,43 @@ const placeOrder = async (req,res)=>{
       orderId : orderId,
       orderDate : new Date()
     })
-     
-    await newOrder.save()
-    await Cart.findOneAndDelete({userId : userId})
-    for (const item of cart.games){
-      await Games.updateOne(
-        {_id:item.gameId},
-        {$inc : {stock : - item.quantity}}
-      )
-    }
+          
+    const orderInstance = new Order(newOrder);
+        if(selectedPayment === 'wallet'){// wallet payment
+          console.log('walletttt');
+          
+        }else if(selectedPayment === 'onlinePayment'){// razorpay online payment 
+          //console.log('ssbfbf'+orderInstance._id);
+          const totalCartPrice = Math.round(newOrder.totalCartPrice * 100)
+          const minimumAmount = 100;
+          const adjustedAmount = Math.max(totalCartPrice , minimumAmount)
+          
+          generateRazorpay(orderInstance._id , adjustedAmount).then(async(response)=>{
+            const savedOrder = await orderInstance.save()
+            await Cart.findOneAndDelete({userId : userId})
+            console.log('carttds'+cart.games);
+            for(let item of cart.games){
+              await Games.updateOne(
+                {_id:item.gameId},
+                {$inc : {stock : -item.quantity}}
+              )
+            }
+            // console.log('rthddjhb'+Razorpay);
+            res.json({Razorpay : response ,})
+          })
+          
+        }else if(selectedPayment === 'cashOnDelivery'){// cash on delivery 
+          await orderInstance.save()
+          await Cart.findOneAndDelete({userId : userId})
+          for (const item of cart.games){
+            await Games.updateOne(
+              {_id:item.gameId},
+              {$inc : {stock : - item.quantity}}
+            )
+          }
+          res.json({success: true})
+        }
     
-    res.json({success: true})
     
     
   } catch (error) {
@@ -133,6 +165,23 @@ const placeOrder = async (req,res)=>{
   }
 }
 
+
+const generateRazorpay = (orderId , adjustedAmount)=>{
+  return new Promise((resolve , reject)=>{
+
+    const options = {
+      amount : adjustedAmount,
+      currency : 'INR',
+      receipt : ""+orderId
+    };
+    instance.orders.create(options,function(err,order){
+      if(err){
+        console.log(err);
+      }
+      resolve(order)
+    })
+  })
+}
  
 // ********** FOR GENERATE RANDOM 8 DIGIT NUMBER FOR ORDER-ID  **********
 function generateOrderId() {
@@ -144,7 +193,8 @@ function generateOrderId() {
 module.exports = {
     loadCheckOut,
     addNewAddress,
-    placeOrder
+    placeOrder,
+    instance
 }
 
 
