@@ -3,7 +3,7 @@ const Address = require('../models/addressModel')
 const Order = require('../models/orderModel')
 const bcrypt = require('bcrypt')
 const Games = require('../models/gameModel')
-
+const Wallet = require('../models/walletModel')
 
 // ********** FOR LOADING USER PROFILE PAGE  **********
 const loadUserProfile = async (req,res)=>{
@@ -212,17 +212,79 @@ const cancelOrder = async (req,res)=>{
 }
 
 
+// ********** FOR RENDERING WALLET  **********
+const loadWallet = async (req,res)=>{
+  try {
+    const userId = req.session.user_id;
+    const userData = await User.findOne({_id:userId})
+    const wallet = await Wallet.findOne({userId:userId})
+    console.log('wallet'+wallet);
+    
+    res.render('wallet',{user:userData})
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+//********** FOR ADDING MONEY TO WALLET **********
+const addMoneyToWallet = async (req , res)=>{
+  try {
+    const userId = req.session.user_id
+    const {amount,method} = req.body;
+    const amountNum = Number(amount)
+    const wallet = await Wallet.findOne({userId : userId})
+    
+    if(wallet){
+      
+      const previousBalance = wallet.balance
+      wallet.balance += amountNum
+      wallet.history.push({
+        amount : amountNum,
+        method,
+        transactionType : 'credit',
+        date : Date.now(),
+        previousBalance
+      })
+      await wallet.save()
+    }else{
+      const walletData = new Wallet({
+        userId:userId,
+        balance : amountNum,
+        history : [{
+          amount : amountNum,
+          method,
+          transactionType:'credit',
+          date : Date.now(),
+          previousBalance : 0
+        }]
+
+      })
+      await walletData.save()
+    }
+    
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 
 module.exports = {
     loadUserProfile,
     editUserProfile,
     editUserPassword,
 
+
     loadAddresses,
     addNewAddress,
     deleteAddress,
 
+
     loadOrderHistory,
     loadOrderDetailsPage,
-    cancelOrder
+    cancelOrder ,
+
+
+    loadWallet,
+    addMoneyToWallet
 }

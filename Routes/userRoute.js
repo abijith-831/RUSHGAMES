@@ -42,6 +42,8 @@ user_route.post('/editUserPassword',profileController.editUserPassword)
 user_route.get('/orderHistory', userAuth.isLogin , profileController.loadOrderHistory)
 user_route.get('/orderDetailsPage', userAuth.isLogin, profileController.loadOrderDetailsPage)
 user_route.post('/cancelOrder',profileController.cancelOrder)
+user_route.get('/wallet',profileController.loadWallet)
+user_route.post('/addMoneyToWallet',profileController.addMoneyToWallet)
 
 
 //******   USER CART SECTIONS ******

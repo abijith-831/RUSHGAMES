@@ -1,0 +1,363 @@
+<%-include('../layouts/header.ejs')%>
+<%-include('../layouts/navbar.ejs')%>
+
+
+<style>
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700,500&display=swap');
+
+.card {
+    background-color: #413f3f;
+}
+
+p {
+    margin: 0px;
+}
+
+.h8 {
+    font-size: 25px;
+    font-weight: 600;
+    color: white;
+}
+
+.card .atm {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+}
+
+.card .visa {
+    width: 50px;
+    height: 20px;
+    object-fit: fill;
+}
+
+.card .master {
+    width: 50px;
+    height: 50px;
+    object-fit: fill;
+}
+
+.debit-card {
+    width: 100%;
+    height: 312px;
+    padding: 20px;
+    background-color: #52636d;
+    background-image: linear-gradient(160deg, #0093E9 0%, #80D0C7 100%);
+    position: relative;
+    border-radius: 5px;
+    box-shadow: 3px 3px 5px #0000001a;
+    transition: all 0.3s ease-in;
+    cursor: pointer;
+}
+
+.debit-card:hover {
+    box-shadow: 5px 3px 5px #000000a2;
+}
+
+
+
+.text-muted {
+    font-size: 0.8rem;
+}
+
+.text-white {
+    font-size: 14px;
+}
+
+.input {
+    position: absolute;
+    top: 6px;
+    right: 0;
+}
+
+
+
+
+
+      .gradient-custom {
+        background-image: url("/assets/images/backgrounds/login-bg.jp");
+      }
+
+      body {
+        color: #1a202c;
+        text-align: left;
+      }
+
+      .card {
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      }
+
+      .card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 2 solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.25rem;
+      }
+
+      .card-body {
+        flex: 1 1 auto;
+        min-height: 1px;
+        padding: 1rem;
+      }
+
+      .gutters-sm {
+        margin-right: -8px;
+        margin-left: -8px;
+      }
+
+      .gutters-sm>.col,
+      .gutters-sm>[class*="col-"] {
+        padding-right: 8px;
+        padding-left: 8px;
+      }
+
+      .mb-3,
+      .my-3 {
+        margin-bottom: 1rem !important;
+      }
+
+      .bg-gray-300 {
+        background-color: #e2e8f0;
+      }
+
+      .h-100 {
+        height: 100% !important;
+      }
+
+      .shadow-none {
+        box-shadow: none !important;
+      }
+
+      .buttons {
+        width: 100%;
+        height: 40px;
+        border: none;
+        background-color: white;
+        color: black;
+        border: 2px;
+        border-radius: 5px;
+        margin-top: 10px;
+        text-align: left;
+      }
+
+      .buttons:hover {
+        background-color: rgb(240, 104, 104);
+      }
+
+      .custom-border {
+        border: 1px solid #e3e3e3;
+        border-radius: 10px;
+      }
+
+      .card-body {
+        border: 1px solid;
+      }
+
+     
+      .edit-btn,
+      .change-btn,
+      .save-btn {
+        background-color: white;
+        color: black;
+        border: 1px solid;
+      }
+      .button-group {
+  display: flex;
+  gap : 30px;
+  margin-top: 10px;
+}
+
+.button-group .btn {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.button-group .btn:last-child {
+  margin-right: 0; 
+}
+     
+</style>
+
+
+<div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.png'); width: 100%">
+      <div class="container">
+        <h1 class="page-title text-white">Wallet</h1>
+      </div>
+      <!-- End .container -->
+</div>
+
+<div class="container" >
+      <div class="main-body">
+        <div class="row gutters-sm" style="margin-top: 50px">
+          <div class="col-md-3 mb-3">
+            <div class="cardborder">
+              <div class="card-body">
+                <div class="d-flex flex-column align-items-center text-center">
+                  <img src="/assets/images/profile.jpg" />
+                  <div class="mt-1">
+                    <button class="buttons" onclick="location.href='/userProfile'">
+                      My Account
+                      <i class="fas fa-user" style="margin-right: 5px"></i>
+                    </button>
+                    <a href="/orderHistory">
+                      <button class="buttons">
+                        Order History<i style="margin-right: 5px" class="fas fa-cart-plus"></i>
+                      </button>
+                    </a>
+                    <button class="buttons" onclick="location.href='/addresses'">
+                      Addresses
+                      <i class="fas fa-address-book" style="margin-right: 5px"></i>
+                    </button>
+                    <button class="buttons" style="background-color: rgb(240, 104, 104)">
+                      Wallet <i class="fas fa-wallet" style="margin-right: 5px"></i>
+                    </button>
+                    <button class="buttons">
+                      Offers <i class="fas fa-tag" style="margin-right: 5px"></i>
+                    </button>
+                    <a href="/logout">
+                      <button class="buttons">
+                        Logout
+                        <i class="fas fa-sign-out-alt" style="margin-right: 5px"></i>
+                      </button>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-8 ml-5">
+            <div class="card mb-3">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-sm-12">                               
+                    <div class="wrapper">
+                      <div class="card px-4">
+                        <br>
+                        <div class="debit-card mb-3">
+                          <div class="d-flex flex-column h-100">
+                            <label class="d-block">
+                              <div class="d-flex position-relative">
+                                <div>
+                                  <img src="https://www.freepnglogos.com/uploads/visa-inc-logo-png-11.png" class="visa" alt="">
+                                  
+                                  <h4 class="mt-2 mb-4 text-white fw-bold"></h4>
+                                </div>
+                                <div class="input">
+                                  <h5>Balance</h5>
+                                  <h5> Rs</h5>
+                                </div>
+                              </div>
+                            </label>
+                            <div class="mt-auto fw-bold d-flex align-items-center justify-content-between">
+                              <p>XXXX-XXXX-XXXX</p>
+                              <p>01/24</p>
+                            </div>
+                          </div>
+                        </div>
+                        <br>
+                        <div class="button-group">
+                          <a id="addMoneyBtn" class="btn change-btn" style="background-color: rgb(102, 212, 111)" data-toggle="modal" data-target="#addMoneyModal">+ ADD MONEY</a>
+                          <a id="editAddressBtn" class="btn change-btn edit-address-btn" style="background-color: rgb(240, 104, 104)" data-toggle="modal" data-target="#editAddressModal">WITHDRAW</a>
+                          <a data-id="" class="btn change-btn delete-address-btn"  data-toggle="modal" data-target="#">TRANSACTIONS</a>
+                        </div>
+                      </div>
+                      <br>
+                    </div>  
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
+
+
+
+<!----------- add money to wallet modal ------------------------------------ -->
+<div class="modal fade" id="addMoneyModal" tabindex="-1" role="dialog" aria-labelledby="addMoneyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content bg-black text-red px-5 mt-4 mb-4">
+      <br>
+      <div class="modal-header border-bottom-red" >      
+        <h5 class="modal-title" style="text-align: center;" id="addMoneyModalLabel">Add Money To Wallet</h5>
+        <button type="button" class="close text-red" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="walletForm">   
+            <div class="form-group">
+              <label for="amount" >Amount</label>
+              <input type="text" class="form-control" id="amount" placeholder="Enter the Amount you want to Add" required>
+            </div>
+            <div class="form-group">
+              <label for="method"  id="method">Payment Method</label>
+              <select class="form-control" id="methodSelect">
+                <option style="font-size: 16px; color: black;" value="googlepay">GOOGLE PAY</option>
+                <option style="font-size: 16px; color: black;" value="phonepay">PHONE PAY</option>
+                <option style="font-size: 16px; color: black;" value="paytm">PAY TM </option>
+                <option style="font-size: 16px; color: black;" value="bharatpay">BHARAT PAY</option>              
+              </select>
+            </div>       
+          <button type="submit" class="btn btn-success btn-block" id="saveMoneyBtn">ADD MONEY</button>
+          <br><br>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Add money to wallet functionality -->   
+<script>
+  
+  document.getElementById('walletForm').addEventListener('submit',function(event){
+    event.preventDefault();
+    
+    const amount = document.getElementById('amount').value;
+    const method = document.getElementById('methodSelect').value;
+    console.log('sjfs'+amount);
+    console.log('linj'+method);
+    const formData = {amount , method}
+    
+    fetch('/addMoneyToWallet',{
+      method : 'POST',
+      headers : {
+        'Content-Type' : 'application/json'
+      },
+      body : JSON.stringify(formData)
+      
+    })
+    .then(response=>response.json())
+    .then(data=>{
+      console.log('sdfsfjs'+data);
+    })
+    .catch(error =>{
+      console.log(error);
+    })
+
+    
+  })
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>\
+  <script src="https://use.fontawesome.com/releases/v5.7.2/css/all.css"></script>
+
+<%-include('../layouts/footbar.ejs')%>
+<%-include('../layouts/footer.ejs')%>
+
+
+
+
+      

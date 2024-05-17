@@ -800,262 +800,316 @@
 // module.exports=instance
 
 
-const  placecorder=async (req,res)=>{
-    try {
-      const userId=req.session.user_id
-      const paymentmethod=req.body.paymentMethod
-      const selectedValue = req.body.selectedValue;
-      const total=req.body.total
-      const couponid=req.body.couponid
+// const  placecorder=async (req,res)=>{
+//     try {
+//       const userId=req.session.user_id
+//       const paymentmethod=req.body.paymentMethod
+//       const selectedValue = req.body.selectedValue;
+//       const total=req.body.total
+//       const couponid=req.body.couponid
   
   
-      if(couponid){
+//       if(couponid){
   
-       const couponCheck = await Coupondb.findById(couponid)
-       console.log(couponCheck);
-       if(couponCheck){
-        couponCheck.userUsed.push({ user_id: userId });
-        await couponCheck.save()
-       }
-      }
-  
-  
-  
-      const cartId = req.session.user_id; // Replace with the actual cart ID
-      const cart = await Cart.findOne({ userid: cartId });
+//        const couponCheck = await Coupondb.findById(couponid)
+//        console.log(couponCheck);
+//        if(couponCheck){
+//         couponCheck.userUsed.push({ user_id: userId });
+//         await couponCheck.save()
+//        }
+//       }
   
   
-      // Fetch product details for each product in the cart
   
-      const products = await Promise.all(cart.products.map(async (cartProduct) => {
-          const productDetails = await Product.findById(cartProduct.productId);
-          productDetails.Quantity -= cartProduct.quantity;
-          await productDetails.save();
-          return {
-              products: cartProduct.productId,
-              name: productDetails.Name,
-              price: productDetails.Price,
-              quantity: cartProduct.quantity,
-              total: cartProduct.totalPrice,
-              orderStatus: cartProduct.status,
-              image:cartProduct.image,
-              reason: cartProduct.cancellationReason,
-          };
-      }));
+//       const cartId = req.session.user_id; // Replace with the actual cart ID
+//       const cart = await Cart.findOne({ userid: cartId });
   
-      // You can now use the 'products' array containing the product details
-      const orderData = {
-          user: req.session.user_id,
-          Products: products,
-          paymentMode: paymentmethod,
-          total:total,
-          date: new Date(),
-          address: selectedValue,
-      };
+  
+//       // Fetch product details for each product in the cart
+  
+//       const products = await Promise.all(cart.products.map(async (cartProduct) => {
+//           const productDetails = await Product.findById(cartProduct.productId);
+//           productDetails.Quantity -= cartProduct.quantity;
+//           await productDetails.save();
+//           return {
+//               products: cartProduct.productId,
+//               name: productDetails.Name,
+//               price: productDetails.Price,
+//               quantity: cartProduct.quantity,
+//               total: cartProduct.totalPrice,
+//               orderStatus: cartProduct.status,
+//               image:cartProduct.image,
+//               reason: cartProduct.cancellationReason,
+//           };
+//       }));
+  
+//       // You can now use the 'products' array containing the product details
+//       const orderData = {
+//           user: req.session.user_id,
+//           Products: products,
+//           paymentMode: paymentmethod,
+//           total:total,
+//           date: new Date(),
+//           address: selectedValue,
+//       };
     
-      // Create an instance of the Orders model
-      const orderInstance = new Order(orderData);
+//       // Create an instance of the Orders model
+//       const orderInstance = new Order(orderData);
      
-      if(paymentmethod=="wallet"){
-        orderInstance.paymentStatus="Wallet"
-        await orderInstance.save()
-         const savedOrder = await orderInstance.save().then(async()=>{
-           await Cart.deleteOne({userid:req.session.user_id})
-       })
-       const user=await User.findOne({_id:req.session.user_id})
-       user.wallet=user.wallet-total
-       const transaction = {
-        amount: total, 
-        description: "Product Purchased ",
-        date: new Date(),
-        status: "out",
-        }
-        user.walletHistory.push(transaction);
-       await user.save()
+//       if(paymentmethod=="wallet"){
+//         orderInstance.paymentStatus="Wallet"
+//         await orderInstance.save()
+//          const savedOrder = await orderInstance.save().then(async()=>{
+//            await Cart.deleteOne({userid:req.session.user_id})
+//        })
+//        const user=await User.findOne({_id:req.session.user_id})
+//        user.wallet=user.wallet-total
+//        const transaction = {
+//         amount: total, 
+//         description: "Product Purchased ",
+//         date: new Date(),
+//         status: "out",
+//         }
+//         user.walletHistory.push(transaction);
+//        await user.save()
   
-        res.json({ success: true, products: products,orderId: orderInstance._id});
-      }
+//         res.json({ success: true, products: products,orderId: orderInstance._id});
+//       }
   
-        if(paymentmethod==="Cash on delivery"){
-          orderInstance.paymentStatus="COD"
-         await orderInstance.save()
-          const savedOrder = await orderInstance.save().then(async()=>{
-            await Cart.deleteOne({userid:req.session.user_id})
-        })
-         res.json({ success: true, products: products,orderId: orderInstance._id });
-        }else if(paymentmethod==="Razorpay"){
-          const totalpriceInPaise = Math.round(orderData.total * 100);
-          const minimumAmount = 100;
-          const adjustedAmount = Math.max(totalpriceInPaise, minimumAmount);
+//         if(paymentmethod==="Cash on delivery"){
+//           orderInstance.paymentStatus="COD"
+//          await orderInstance.save()
+//           const savedOrder = await orderInstance.save().then(async()=>{
+//             await Cart.deleteOne({userid:req.session.user_id})
+//         })
+//          res.json({ success: true, products: products,orderId: orderInstance._id });
+//         }else if(paymentmethod==="Razorpay"){
+//           const totalpriceInPaise = Math.round(orderData.total * 100);
+//           const minimumAmount = 100;
+//           const adjustedAmount = Math.max(totalpriceInPaise, minimumAmount);
   
-         generateRazorpay(orderInstance._id,adjustedAmount).then(async(response)=>{
+//          generateRazorpay(orderInstance._id,adjustedAmount).then(async(response)=>{
   
-          const savedOrder = await orderInstance.save()
-          res.json({ Razorpay: response, products: products });
-         })
+//           const savedOrder = await orderInstance.save()
+//           res.json({ Razorpay: response, products: products });
+//          })
   
-        }
-  }   catch (error) {
-      console.error('Error:', error);
-      // Respond with an error message
-      res.status(500).json({ success: false, message: 'An error occurred while processing the order or updating product stock.' });
-  }
+//         }
+//   }   catch (error) {
+//       console.error('Error:', error);
+//       // Respond with an error message
+//       res.status(500).json({ success: false, message: 'An error occurred while processing the order or updating product stock.' });
+//   }
   
-  }
+//   }
 
 
 
 
 
-  const instance = new Razorpay({
-    key_id: "rzp_test_QmkTPpR7YwgsmH",
-    key_secret:"XEwHXRnbP4kAiT17e5nWBbLk",
-  });
-  
-  
-  const generateRazorpay=(orderid,adjustedAmount)=>{
-  
-   return new Promise((resolve,reject)=>{
+//   const instance = new Razorpay({
+//     key_id: "rzp_test_QmkTPpR7YwgsmH",
+//     key_secret:"XEwHXRnbP4kAiT17e5nWBbLk",
+//   });
   
   
+//   const generateRazorpay=(orderid,adjustedAmount)=>{
   
-    const options = {
-      amount: adjustedAmount,
-      currency: "INR",
-      receipt: ""+orderid
-    };
-    instance.orders.create(options, function(err, order) {
-      if(err){
-        console.log(err);
-      }
+//    return new Promise((resolve,reject)=>{
   
-      resolve(order)
-    });
-   })
-  }
+  
+  
+//     const options = {
+//       amount: adjustedAmount,
+//       currency: "INR",
+//       receipt: ""+orderid
+//     };
+//     instance.orders.create(options, function(err, order) {
+//       if(err){
+//         console.log(err);
+//       }
+  
+//       resolve(order)
+//     });
+//    })
+//   }
 
 
 
 
 
-  function sendSelection() {
+//   function sendSelection() {
 
-    // Get the selected value
-    const selectedValue = document.getElementById("addressSelect").value;
-    const  paymentMethod= document.getElementById('payment').value
-    const  total=document.getElementById('discount').textContent
-    const  couponid  =  document.getElementById('couponcode').value
-    if(!selectedValue){
-        const message=document.getElementById('addr').innerHTML="Please Select the Address"
-        return
-    }
-    // Example fetch API request
-    fetch('/placeorder', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            paymentMethod: paymentMethod,
-            selectedValue: selectedValue,
-            total:total,
-            couponid:couponid
-        }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Backend response:', data);
+//     // Get the selected value
+//     const selectedValue = document.getElementById("addressSelect").value;
+//     const  paymentMethod= document.getElementById('payment').value
+//     const  total=document.getElementById('discount').textContent
+//     const  couponid  =  document.getElementById('couponcode').value
+//     if(!selectedValue){
+//         const message=document.getElementById('addr').innerHTML="Please Select the Address"
+//         return
+//     }
+//     // Example fetch API request
+//     fetch('/placeorder', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({
+//             paymentMethod: paymentMethod,
+//             selectedValue: selectedValue,
+//             total:total,
+//             couponid:couponid
+//         }),
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         console.log('Backend response:', data);
 
-        // Check if the order processing was successful
-        if (data.success) {
+//         // Check if the order processing was successful
+//         if (data.success) {
 
-            Swal.fire({
-                title: 'Order Placed Successfully!',
-                icon: 'success',
-                showConfirmButton: false,
-                timer: 2000 // Set the duration for the alert
+//             Swal.fire({
+//                 title: 'Order Placed Successfully!',
+//                 icon: 'success',
+//                 showConfirmButton: false,
+//                 timer: 2000 // Set the duration for the alert
 
-            });
+//             });
 
-                setTimeout(()=>{
+//                 setTimeout(()=>{
 
-                    window.location.href = /vieworder/${data.orderId};
-                    },2000)
-        }else if(data.Razorpay){
+//                     window.location.href = /vieworder/${data.orderId};
+//                     },2000)
+//         }else if(data.Razorpay){
 
-            const options = {
-"key": "rzp_test_QmkTPpR7YwgsmH", // Enter the Key ID generated from the Dashboard
-"amount": data.Razorpay.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-"currency": "INR",
-"name": "Elegant style",
-"description": "Test Transaction",
-"image": "https://example.com/your_logo",
-"order_id": data.Razorpay.id, //This is a sample Order ID. Pass the id obtained in the response of Step 1
-"handler": function (response){
-    // alert(response.razorpay_payment_id);
-    // alert(response.razorpay_order_id);
-    // alert(response.razorpay_signature)
-     verifyPayment(response,data.Razorpay)
-},
-"prefill": {
-    "name": "Gaurav Kumar",
-    "email": "gaurav.kumar@example.com",
-    "contact": "9000090000"
-},
-"notes": {
-    "address": "Razorpay Corporate Office"
-},
-"theme": {
-    "color": "#3399cc"
-}
-};
+//             const options = {
+// "key": "rzp_test_QmkTPpR7YwgsmH", // Enter the Key ID generated from the Dashboard
+// "amount": data.Razorpay.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+// "currency": "INR",
+// "name": "Elegant style",
+// "description": "Test Transaction",
+// "image": "https://example.com/your_logo",
+// "order_id": data.Razorpay.id, //This is a sample Order ID. Pass the id obtained in the response of Step 1
+// "handler": function (response){
+//     // alert(response.razorpay_payment_id);
+//     // alert(response.razorpay_order_id);
+//     // alert(response.razorpay_signature)
+//      verifyPayment(response,data.Razorpay)
+// },
+// "prefill": {
+//     "name": "Gaurav Kumar",
+//     "email": "gaurav.kumar@example.com",
+//     "contact": "9000090000"
+// },
+// "notes": {
+//     "address": "Razorpay Corporate Office"
+// },
+// "theme": {
+//     "color": "#3399cc"
+// }
+// };
 
-var rzp1 = new Razorpay(options);
-rzp1.open();
-        var rzp1 = new Razorpay(options);
-        rzp1.open()
-        } else {
-            // Display SweetAlert error notification
-            Swal.fire({
-                title: 'Order Processing Failed',
-                text: 'An error occurred while processing the order.',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
+// var rzp1 = new Razorpay(options);
+// rzp1.open();
+//         var rzp1 = new Razorpay(options);
+//         rzp1.open()
+//         } else {
+//             // Display SweetAlert error notification
+//             Swal.fire({
+//                 title: 'Order Processing Failed',
+//                 text: 'An error occurred while processing the order.',
+//                 icon: 'error',
+//                 confirmButtonText: 'OK'
+//             });
 
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        // Handle errors if any
-    });
-}
+//         }
+//     })
+//     .catch(error => {
+//         console.error('Error:', error);
+//         // Handle errors if any
+//     });
+// }
 
-function verifyPayment(payment,order){
-    console.log(payment);
-  $.ajax({
-    url:'/verifypayment',
-    data:{
-        payment,
-        order
-    },
-    method:"POST",
-    success:(response)=>{
-        if(response.payment){
+// function verifyPayment(payment,order){
+//     console.log(payment);
+//   $.ajax({
+//     url:'/verifypayment',
+//     data:{
+//         payment,
+//         order
+//     },
+//     method:"POST",
+//     success:(response)=>{
+//         if(response.payment){
 
-            Swal.fire({
-                title: 'Order Placed Successfully!',
-                icon: 'success',
-                showConfirmButton: false,
-                timer: 2000 // Set the duration for the alert
+//             Swal.fire({
+//                 title: 'Order Placed Successfully!',
+//                 icon: 'success',
+//                 showConfirmButton: false,
+//                 timer: 2000 // Set the duration for the alert
 
-            });
-            const orderid=order.receipt
-            setTimeout(()=>{
+//             });
+//             const orderid=order.receipt
+//             setTimeout(()=>{
 
-                    window.location.href = /vieworder/${orderid};
-            },2000)
-        }
-    }
-  })
-}
+//                     window.location.href = /vieworder/${orderid};
+//             },2000)
+//         }
+//     }
+//   })
+// }
+
+
+// <div class="wrapper">
+//     <div class="card px-4">
+//         <div class=" my-3">
+//             <p class="h8">Card number</p>
+//             <p class="text-muted ">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+//         </div>
+
+//         <div class="debit-card mb-3">
+//             <div class="d-flex flex-column h-100">
+//                 <label class="d-block">
+//                     <div class="d-flex position-relative">
+//                         <div>
+//                             <img src="https://www.freepnglogos.com/uploads/visa-inc-logo-png-11.png" class="visa"
+//                                 alt="">
+//                             <p class="mt-2 mb-4 text-white fw-bold">Sai Kumar</p>
+//                         </div>
+//                         <div class="input">
+//                             <input type="radio" name="card" id="check">
+//                         </div>
+//                     </div>
+//                 </label>
+//                 <div class="mt-auto fw-bold d-flex align-items-center justify-content-between">
+//                     <p>4989 1237 1234 4532</p>
+//                     <p>01/24</p>
+//                 </div>
+//             </div>
+//         </div>
+//         <div class="debit-card card-2 mb-4">
+//             <div class="d-flex flex-column h-100">
+//                 <label class="d-block">
+//                     <div class="d-flex position-relative">
+//                         <div>
+//                             <img src="https://www.freepnglogos.com/uploads/mastercard-png/mastercard-logo-png-transparent-svg-vector-bie-supply-0.png"
+//                                 alt="master" class="master">
+//                             <p class="text-white fw-bold">Sai Kumar</p>
+//                         </div>
+//                         <div class="input">
+//                             <input type="radio" name="card" id="check">
+//                         </div>
+//                     </div>
+//                 </label>
+//                 <div class="mt-auto fw-bold d-flex align-items-center justify-content-between">
+//                     <p class="m-0">5540 2345 3453 2343</p>
+//                     <p class="m-0">05/23</p>
+//                 </div>
+//             </div>
+//         </div>
+//         <div class="btn mb-4">
+//             Book Now
+//         </div>
+//     </div>
+// </div>

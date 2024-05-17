@@ -2,7 +2,6 @@
 <%-include('../layouts/navbar.ejs')%>
 
 
-
 <style>
     body {
         
@@ -144,6 +143,7 @@
     }
 </style>
 
+
 <div class="page-header  text-center" style="background-image: url('assets/images/page-header-bg.png'); width: 100%;">
     <div class="container">
         <h1 class="page-title text-white">My Account</h1>
@@ -166,7 +166,7 @@
                                 <button class="buttons " style="background-color: rgb(240, 104, 104);" >My Account <i class="fas fa-user" style="margin-right: 5px; "></i></button>
                                 <a href="/orderHistory"><button class="buttons">Order History <i style="margin-right: 5px;"class="fas fa-cart-plus"></i></button></a>
                                 <button class="buttons" onclick="location.href='/addresses'">Addresses <i class="fas fa-address-book" style="margin-right: 5px;"></i></button>
-                                <button class="buttons">Wallet <i class="fas fa-wallet" style="margin-right: 5px;"></i></button>
+                                <a href="/wallet"><button class="buttons">Wallet <i class="fas fa-wallet" style="margin-right: 5px;"></i></button></a>
                                 <button class="buttons">Offers <i class="fas fa-tag" style="margin-right: 5px;"></i></button>
                                 <a href="/logout"><button class="buttons">Logout <i class="fas fa-sign-out-alt" style="margin-right: 5px;"></i></button></a>
                             </div>
