@@ -217,10 +217,13 @@ const loadWallet = async (req,res)=>{
   try {
     const userId = req.session.user_id;
     const userData = await User.findOne({_id:userId})
-    const wallet = await Wallet.findOne({userId:userId})
-    console.log('wallet'+wallet);
-    
-    res.render('wallet',{user:userData})
+    const wallet = await Wallet.findOne({userId:userId}) 
+    let rev = []
+    if (wallet){
+      rev =  [...wallet.history].reverse()
+    }
+    res.render('wallet',{user:userData , wallet , rev})
+        
   } catch (error) {
     console.log(error);
   }
@@ -230,6 +233,7 @@ const loadWallet = async (req,res)=>{
 //********** FOR ADDING MONEY TO WALLET **********
 const addMoneyToWallet = async (req , res)=>{
   try {
+
     const userId = req.session.user_id
     const {amount,method} = req.body;
     const amountNum = Number(amount)
@@ -244,9 +248,12 @@ const addMoneyToWallet = async (req , res)=>{
         method,
         transactionType : 'credit',
         date : Date.now(),
-        previousBalance
+        previousBalance,
+        currBalance : wallet.balance
       })
+
       await wallet.save()
+      res.json({success:true})
     }else{
       const walletData = new Wallet({
         userId:userId,
@@ -256,11 +263,15 @@ const addMoneyToWallet = async (req , res)=>{
           method,
           transactionType:'credit',
           date : Date.now(),
-          previousBalance : 0
+          previousBalance : 0,
+          currBalance : amountNum
         }]
 
       })
+
       await walletData.save()
+      
+      res.json({success : true})
     }
     
   } catch (error) {
@@ -268,6 +279,40 @@ const addMoneyToWallet = async (req , res)=>{
   }
 }
 
+
+
+
+const withdrawMoney = async (req,res)=>{
+  try {
+    const userId = req.session.user_id
+    const {amount}= req.body;
+    const amountNum = Number(amount)
+    const wallet = await Wallet.findOne({userId : userId})
+    if(wallet.balance<amountNum){
+      
+      res.json({success:false , message : "Insufficient"})
+    }else{
+    
+      const previousBalance = wallet.balance;
+      wallet.balance = wallet.balance-amountNum;
+      
+      wallet.history.push({
+      amount : amountNum,
+      method : 'Tranferred to Bank',
+      transactionType : 'debit',
+      date : Date.now(),
+      previousBalance,
+      currBalance : wallet.balance
+    })
+    await wallet.save()
+    res.json({success : true})
+    }
+    
+    
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 module.exports = {
     loadUserProfile,
@@ -286,5 +331,6 @@ module.exports = {
 
 
     loadWallet,
-    addMoneyToWallet
+    addMoneyToWallet,
+    withdrawMoney
 }

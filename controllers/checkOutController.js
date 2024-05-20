@@ -5,6 +5,8 @@ const Cart = require('../models/cartModel');
 const Address = require('../models/addressModel')
 const Order = require('../models/orderModel') 
 const Razorpay = require('razorpay')
+const Wallet = require('../models/walletModel')
+const Coupon = require('../models/couponModel')
 
 const instance = new Razorpay({
   key_id : 'rzp_test_v7eXLfL0Wt6Ws9',
@@ -14,6 +16,7 @@ const instance = new Razorpay({
 
 // ********** FOR RENDERING CHECKOUT PAGE **********
 const loadCheckOut = async (req,res)=>{
+  
     try {
       let userId = req.session.user_id;
       let errmsg = req.flash('errmsg')
@@ -24,10 +27,12 @@ const loadCheckOut = async (req,res)=>{
         return res.json({message:"There is Nothing in Cart to Purchase"})
       }
       
+      const coupon = await Coupon.find({is_active:false})
+     
       const gameIds = cartData.games.map(game => game.gameId);
       const gameDetailsPromises = gameIds.map(gameId => Games.findOne({_id: gameId}));
       const gameDetails = await Promise.all(gameDetailsPromises); 
-      res.render('checkOut',{user : userData , addresses , cartData , gameDetails,errmsg })
+      res.render('checkOut',{user : userData , addresses , cartData , gameDetails,errmsg ,coupon})
     } catch (error) {
       console.log(error);
     }
@@ -124,10 +129,31 @@ const placeOrder = async (req,res)=>{
           
     const orderInstance = new Order(newOrder);
         if(selectedPayment === 'wallet'){// wallet payment
-          console.log('walletttt');
+          const wallet = await Wallet.findOne({userId:userId})
+          if(!wallet){
+            return res.json({success:false , message:"nowallet"})
+          }
+          else if(cart.totalCartPrice>wallet.balance){
+            return res.json({success:false , message:"Insufficient"})
+          }else{
+            console.log('sdfsdfsdf');
+            await orderInstance.save();
+            wallet.balance = wallet.balance - cart.totalCartPrice;
+            wallet.history.push({
+              amount : cart.totalCartPrice,
+              method : 'Purchase',
+              transactionType : 'debit',
+              date : Date.now(),
+              currBalance: wallet.balance
+            })
+            await wallet.save()
+            await Cart.findOneAndDelete({userId:userId});
+            return res.json({success : true})
+
+          }
+          
           
         }else if(selectedPayment === 'onlinePayment'){// razorpay online payment 
-          //console.log('ssbfbf'+orderInstance._id);
           const totalCartPrice = Math.round(newOrder.totalCartPrice * 100)
           const minimumAmount = 100;
           const adjustedAmount = Math.max(totalCartPrice , minimumAmount)
@@ -135,27 +161,20 @@ const placeOrder = async (req,res)=>{
           generateRazorpay(orderInstance._id , adjustedAmount).then(async(response)=>{
             const savedOrder = await orderInstance.save()
             await Cart.findOneAndDelete({userId : userId})
-            console.log('carttds'+cart.games);
-            for(let item of cart.games){
-              await Games.updateOne(
-                {_id:item.gameId},
-                {$inc : {stock : -item.quantity}}
-              )
-            }
-            // console.log('rthddjhb'+Razorpay);
             res.json({Razorpay : response ,})
           })
           
         }else if(selectedPayment === 'cashOnDelivery'){// cash on delivery 
           await orderInstance.save()
           await Cart.findOneAndDelete({userId : userId})
-          for (const item of cart.games){
-            await Games.updateOne(
-              {_id:item.gameId},
-              {$inc : {stock : - item.quantity}}
-            )
-          }
+          
           res.json({success: true})
+        }
+        for (const item of cart.games){
+          await Games.updateOne(
+            {_id:item.gameId},
+            {$inc : {stock : - item.quantity}}
+          )
         }
     
     

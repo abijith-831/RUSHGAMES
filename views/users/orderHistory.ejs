@@ -277,7 +277,9 @@
                                                 <p class="text-muted mb-0" style="font-weight: bold;">Total Price: <%= totalAmountSums[index] %></p>
                                             </div>
                                             <div class="col-md-4">
-                                                <p class="text-muted mb-0" style="font-weight: bold;">Ordered Date: <%= orderItem.orderDate %></p>
+                                              
+                                                <p class="text-muted mb-0" style="font-weight: bold;">
+                                                  Ordered Date: <%= new Date(orderItem.orderDate).toLocaleString('en-IN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true }) %></p>
                                             </div>
                                             <div class="col-md-4">
                                                 <button class="btn btn-primary" onclick="showOrderDetailsPage('<%= orderItem.orderId%>')">Order Details</button>

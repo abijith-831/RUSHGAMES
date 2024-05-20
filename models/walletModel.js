@@ -27,7 +27,11 @@ const walletSchema =new mongoose.Schema({
         },
         previousBalance:{
             type:Number
+        },
+        currBalance : {
+            type:Number
         }
+
     }]
 })
 

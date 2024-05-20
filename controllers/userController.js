@@ -22,8 +22,9 @@ const securePassword = async (password) => {
 const loadHome = async (req, res) => {
   try {
     let user = req.session.user_id;
+
     const categories = await Category.find();
-    const fc3 = await Games.find({_id :'663fa719bc93b7f06033477d'})
+    
     
     if(user){
       const userData = await User.findById(user);
@@ -31,7 +32,7 @@ const loadHome = async (req, res) => {
         req.session.user_id = null
         res.redirect('/login')
       }else{
-        res.render("home", { user: userData , categories});
+        res.render("home", { user: userData , categories });
       }
     }else{
       res.render('home',{categories})

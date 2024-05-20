@@ -209,12 +209,18 @@ input[type="radio"]:checked + label {
                                 
 										<a id="addAddressBtn" class="btn change-btn " data-toggle="modal" data-target="#addAddressModal">+ Add Address</a>
 									</div>
-                                    <div class="checkout-discount ">
-                                        <form action="#">
-                                            <input type="text" class="form-control"  id="checkout-discount-input">
-                                            <label for="checkout-discount-input" class="text-truncate">Have a coupon? <span>Click here to enter your code</span></label>
-                                        </form>
-                                    </div>
+                                    <div class="checkout-discount">
+										<label for="coupon">Have a coupon?</label>
+										<div class="select-custom">
+										  <select name="coupon" id="coupon" class="form-control">
+											<option value="" id="nameZ-A">Nothing</option>
+											<% coupon.forEach(item => { %>
+											  <option value="<%= item.couponName %>"><%= item.couponName %> - <%= item.discount %>%</option>
+											<% }) %>
+										  </select>
+										</div>
+									  </div>
+									  
 									<% if (errmsg) { %> 
 											<div class="alert text-center " style="color: red;">
 												<%= errmsg %>
@@ -624,7 +630,23 @@ input[type="radio"]:checked + label {
 						var rzp1 = new Razorpay(options);
 						rzp1.open()
 						
-						} else {
+						}else if(data.message=="nowallet"){
+							Swal.fire({
+								icon : 'error',
+								title : 'No Wallet',
+								text : 'You dont have wallet to Purchase',
+								confirmButtonText : 'OK'
+							});
+						}
+						else if(data.message = "Insufficient"){
+							Swal.fire({
+								icon : 'error',
+								title : 'Insufficient Balance',
+								text : 'You dont have enough balance in your Wallet',
+								confirmButtonText : 'OK'
+							});
+							
+						}else {
 							// Display SweetAlert error notification
 							Swal.fire({
 								title: 'Order Processing Failed',
@@ -634,6 +656,7 @@ input[type="radio"]:checked + label {
 							});
 
 						}
+						
 					})
 					
 				

@@ -10,7 +10,7 @@ const categoryController = require('../controllers/categoryController')
 const gameController = require('../controllers/gameController')
 const adminDashboardController = require('../controllers/adminDashboardController')
 const orderController = require('../controllers/orderController')
-
+const couponController = require('../controllers/couponController')
 
 const adminAuth = require('../middleware/adminAuth')
 
@@ -68,6 +68,12 @@ admin_route.get('/categoryStatus',categoryController.categoryStatus)
 // ****** ORDER MANAGEMENT SECTION ******
 admin_route.get('/orderHistory',orderController.loadOrderHistory)
 admin_route.get('/adminOrderDetailsPage',orderController.loadAdminOrderDetails)
+admin_route.post('/changeStatus',orderController.changeStatus)
 
+
+// ****** OFFER HANDINLING SECTION ******
+admin_route.get('/couponList',couponController.loadCouponList)
+admin_route.post('/addCoupon',couponController.addCoupon)
+admin_route.post('/couponStatus',couponController.couponStatus)
 
 module.exports = admin_route; 

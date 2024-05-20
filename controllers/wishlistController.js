@@ -8,9 +8,12 @@ const Cart = require('../models/cartModel')
 const loadWishlist = async (req,res)=>{
     try {
         const userId = req.session.user_id;
+        
         const userData = await User.findOne({_id : userId})
         const wishlistData = await Wishlist.findOne({userId:userId}).populate('games.gameId');
-        res.render('wishlist',{ user : userData , wishlistData : wishlistData})
+        const count = wishlistData.games.length
+        
+        res.render('wishlist',{ user : userData , wishlistData : wishlistData , count : count})
     } catch (error) {
         console.log(error);
     }

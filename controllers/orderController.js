@@ -1,5 +1,6 @@
 const Users = require('../models/userModel')
 const Order = require('../models/orderModel')
+const Games = require('../models/gameModel')
 
 
 // ********** FOR RENDERING ORDER MANAGEMENNT PAGE **********
@@ -20,7 +21,7 @@ const loadAdminOrderDetails = async (req,res)=>{
         const orders = await Order.find({_id:orderId}).populate('userId').populate('games.gameId')
         if (orders.length === 1) {
             const order = orders[0];
-            console.log('order',order);
+            
             res.render('adminOrderDetails', { order });
         }
         
@@ -29,8 +30,28 @@ const loadAdminOrderDetails = async (req,res)=>{
     }
 }
 
+
+// ********** FOR CHANGING THE STATUS IN ADMIN SIDE ********** 
+const changeStatus = async (req,res)=>{
+    try {
+        
+    const {status , orderId , gameId} = req.body
+    const order = await Order.findById(orderId);
+    if(!order){
+        return res.status(404).json({message: 'Order not found'})
+    }
+    const game = order.games.find(item=>item.gameId.toString()===gameId)
+    game.Status = status;
+    await order.save()
+   
+    }catch(error){
+        console.log(error);
+    }
+}
  
+
 module.exports = {
     loadOrderHistory,
-    loadAdminOrderDetails
+    loadAdminOrderDetails,
+    changeStatus
 } 

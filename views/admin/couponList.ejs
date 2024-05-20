@@ -1,0 +1,409 @@
+<%-include('../layouts/adminHeader.ejs')%>
+<%-include('../layouts/adminSidebar.ejs')%>
+
+<style>
+    .purple-header-box {
+    background-color: #936dd1; /* Purple color */
+    color: #ffffff; /* White text color */
+    padding: 15px; /* Adjust padding as needed */
+    border-radius: 5px; /* Optional: Add rounded corners */
+    margin-bottom: 20px; /* Optional: Add space below the box */
+    text-align: center;
+}
+.search-bar {
+    margin-bottom: 10px; /* Adjust spacing between search bar and heading */
+}
+.purple-button {
+    background-color: #936dd1;
+    color: white; /* text color */
+    border: 1px solid black; /* black border */
+    border-radius: 5px; /* slight curve */
+    padding: 10px 20px; /* adjust padding as needed */
+    font-size: 16px; /* adjust font size as needed */
+    cursor: pointer; /* cursor style */
+    /* You can add additional styling as needed */
+}
+.search-btn {
+        width: 100px; /* Adjust the width of the button as needed */
+        height: 40px; /* Adjust the height of the button as needed */
+        border: 2px solid #000; /* Black border */
+        border-radius: 2px; /* Make it round */
+        background-color: #936dd1; /* Black background */
+        color: #050404; /* White text color */
+        font-size: 14px; /* Adjust font size */
+        padding: 0; /* Remove padding */
+    }
+
+.search-btn::after {
+    
+    display: inline-block;
+    margin-left: 0.3rem; /* Adjust spacing between button and text */
+}
+.search-bar {
+    width: calc(100% - 80px); /* Adjust the width of the search bar */
+    margin-right: 10px; /* Adjust spacing between search bar and button */
+}
+.custom-table-header {
+    background-color: grey;
+    color: black;
+    width: 100%;
+}
+.modal-content {
+        background-color: #f8f9fa; /* Light grey background */
+        color: #343a40; /* Darker text for better readability */
+        font-family: 'Arial', sans-serif; /* A common sans-serif font */
+    }
+
+   .modal-header {
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
+        padding: 1rem;
+        background-color: #007bff; /* Bootstrap primary blue */
+        color: white; /* White text on blue background */
+    }
+
+   .modal-title {
+        margin: 0;
+        line-height: 1.5;
+    }
+
+   .modal-footer {
+        border-bottom-left-radius: 0.25rem;
+        border-bottom-right-radius: 0.25rem;
+        padding: 1rem;
+        background-color: #e9ecef; /* Light grey footer */
+        color: #495057; /* Slightly darker text for contrast */
+    }
+
+    /* Form Field Styling */
+   .form-group label {
+        display: block;
+        margin-top: 0.5rem;
+        margin-bottom: 0.125rem;
+        font-weight: bold;
+    }
+
+   .form-control {
+        height: calc(1.5em + 0.75rem + 2px); 
+        box-shadow: none; 
+        border-radius: 0.25rem; 
+    }
+
+    p#errorMessage {
+        color: #dc3545;
+        margin-top: 0.25rem;
+    }
+
+ 
+   .btn-success {
+        background-color: #28a745;
+        border-color: #218838; 
+    }
+    .modal-dialog {
+    max-width: 40vw; 
+}
+
+</style>
+
+<div class="page-wrapper">
+    <!-- ============================================================== -->
+    <!-- Container fluid  -->
+    <!-- ============================================================== -->
+    <div class="container-fluid">
+        <!-- ============================================================== -->
+        <!-- Start Page Content -->
+        <!-- ============================================================== -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body" >
+                       
+                        <div class="purple-header-box"> <!-- Added div with custom class -->
+                            <h4 class="card-title">COUPON LIST</h4>
+                        </div>
+                       
+                        
+
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr style="width: 100%;">
+                                      <th scope="col">CODE</th>
+                                        <th scope="col">COUPON NAME</th>
+                                        <th scope="col">MIN AMT</th>
+                                        <th scope="col">DISCOUNT</th>
+                                        <th scope="col">START DATE</th>
+                                        <th scope="col">EXPIRY</th>
+                                        <th scope="col" class="text-right">ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                  <% coupons.forEach((item)=> { %>
+                                    <tr style="width: 100%;">
+                                      <th scope="col"><%= item.couponCode%></th>
+                                      <th scope="col"><%= item.couponName%></th>
+                                      <th scope="col"><%= item.minimum %></th>
+                                      <th scope="col"><%= item.discount %>%</th>
+                                      <th scope="col"><%= new Date(item.StartDate).toLocaleString('en-IN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true }) %></th>
+                                      <th scope="col"><%= new Date(item.expiry).toLocaleString('en-IN', { year: 'numeric', month: '2-digit', day: '2-digit' }) %></th>
+                                      <td class="text-right align-middle">
+                                        
+                                        <% if (item.is_active===false) { %>
+                                          <a>
+                                            <button id="Hide-<%= item._id %>" onclick="confirmAction('<%= item._id %>' , 'Show')"  class="btn btn-danger ml-5">Hide</button>
+                                          </a>
+                                        <%  }else{ %>
+                                          <a >
+                                            <button id="Show-<%= item._id %> " onclick="confirmAction('<%= item._id %>' , 'Hide')" class="btn btn-success ml-5">Show</button>
+                                          </a>
+                                        <%  } %>
+                                            
+                                    </td>
+                                    </tr>
+                                  <%  })  %>
+                                   
+                                </tbody>
+                            </table>
+
+                            <div class="text-center mt-4">
+                                <a id="addCouponBtn" class="purple-button" data-toggle="modal" data-target="#addCouponModal">+ Add Coupons</a>
+                            </div>     
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Page wrapper  -->
+        <!-- ============================================================== -->
+    </div>
+</div>
+
+
+
+
+<!----------- add coupon modal ------------------------------------ -->
+<div class="modal fade" id="addCouponModal" tabindex="-1" role="dialog" aria-labelledby="addCouponModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content  text-red px-5 mt-4 mb-4">
+        <br>
+        <div class="modal-header border-bottom-red">
+          <h5 class="modal-title" style="text-align: center;" id="addCouponModalLabel">Add Coupons</h5>
+          <button type="button" class="close text-red" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <form id="couponForm" onclick="return validation()">
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="couponName">couponName</label>
+                  <input type="text" class="form-control" id="couponName" placeholder="Enter the couponName you want to Add" required>
+                  <p id="couponNameError" style="color: red;"></p>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="minimum">minimum</label>
+                  <input type="text" class="form-control" id="minimum" placeholder="Enter the minimum you want to Add" required>
+                  <p id="minimumError" style="color: red;"></p>
+                </div>
+              </div>
+            </div>
+            
+            
+            <div class="form-group">
+                <label for="description">description</label>
+                <input type="text" class="form-control" id="description" placeholder="Enter the description you want to Add" required>
+                <p id="descriptionError" style="color: red;"></p>
+            </div>
+           <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="expiryDate">expiryDate</label>
+                  <input type="date" class="form-control" id="expiryDate" placeholder="Enter the expiryDate you want to Add" required>
+                  <p id="expiryDateError" style="color: red;"></p>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label for="discount">discount</label>
+                  <input type="text" class="form-control" id="discount" placeholder="Enter the discount you want to Add" required>
+                  <p id="discountError" style="color: red;"></p>
+                </div>
+              </div>
+           </div>
+            
+            
+            
+            
+            <button type="submit"  class="btn btn-success btn-block" id="submitCouponModal"  >ADD COUPON</button>
+            <br><br>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+<!-- Add coupon functionality -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelector('#submitCouponModal').addEventListener('click', function (event) {
+      event.preventDefault();
+      if (validation()) {
+        const couponName = document.getElementById('couponName').value.trim();
+        const minimum = document.getElementById('minimum').value.trim();
+        const description = document.getElementById('description').value.trim();
+        const expiryDate = document.getElementById('expiryDate').value.trim();
+        const discount = document.getElementById('discount').value.trim();
+        const formData = { couponName, minimum, description, expiryDate, discount };
+
+        fetch('/admin/addCoupon', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Coupon Added Successfully',
+                showConfirmButton: false,
+                timer: 1500
+              })
+                .then(() => {
+                  window.location.reload();
+                });
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'An error occurred while processing your request.',
+                confirmButtonText: 'OK'
+              });
+            }
+
+            $('#addCouponModal').modal('hide');
+          })
+          .catch(error => {
+            console.log(error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error!',
+              text: 'An error occurred while processing your request.',
+              confirmButtonText: 'OK'
+            });
+            $('#addCouponModal').modal('hide');
+          });
+      }
+    });
+  });
+
+  function validation() {
+    const couponName = document.getElementById('couponName').value.trim();
+    const minimum = document.getElementById('minimum').value.trim();
+    const description = document.getElementById('description').value.trim();
+    const discount = document.getElementById('discount').value.trim();
+
+    const couponNameRegex = /^[a-zA-Z0-9]+$/;
+    const minimumRegex = /^[1-9]\d{0,3}(?:\.\d{1,2})?$/; // Allows numbers from 1 to 10000
+    const discountRegex = /^(100|[1-9]?\d)(\.\d{1,2})?$/; // Allows numbers from 1 to 100
+
+    let couponNameError = document.getElementById('couponNameError');
+    let minimumError = document.getElementById('minimumError');
+    let discountError = document.getElementById('discountError');
+
+    couponNameError.innerText = '';
+    if (couponName === '') {
+      couponNameError.innerText = "Coupon Name cannot be empty";
+      return false;
+    } else if (!couponNameRegex.test(couponName)) {
+      couponNameError.innerText = "Coupon Name should only contain alphabets and numbers";
+      return false;
+    }
+
+    minimumError.innerText = '';
+    if (minimum === '') {
+      minimumError.innerText = "Minimum amount cannot be empty";
+      return false;
+    } else if (!minimumRegex.test(minimum)) {
+      minimumError.innerText = "Minimum amount should be a positive number between 1 and 10,000";
+      return false;
+    } else if (Number(minimum) > 10000) {
+      minimumError.innerText = "Minimum amount cannot exceed 10,000";
+      return false;
+    }
+
+    discountError.innerText = '';
+    if (discount === '') {
+      discountError.innerText = "Discount cannot be empty";
+      return false;
+    } else if (!discountRegex.test(discount)) {
+      discountError.innerText = "Discount should be a positive number between 1 and 100";
+      return false;
+    } else if (Number(discount) > 100) {
+      discountError.innerText = "Discount cannot exceed 100";
+      return false;
+    }
+
+    return true;
+  }
+</script>
+
+
+<!-- coupon hide & show functionality -->
+<script>
+  function confirmAction(couponId) {
+      Swal.fire({
+          title: 'Are you sure?',
+          text: 'You are about to change this Coupon?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, Change it!',
+          cancelButtonText: 'Cancel'
+      }).then((result) => {
+          if (result.isConfirmed) { 
+              fetch('/admin/couponStatus', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ couponId: couponId })
+              })
+             .then(response => response.json()) 
+             .then(data => {
+                  if (data.success) { 
+                      let action = data.newStatus? 'Hiding' : 'Showing'; 
+                      Swal.fire({
+                          title: `${action}`,
+                          text: `The coupon has been ${action}`,
+                          icon: 'success',
+                          showConfirmButton: false,
+                          timer: 1500,
+                          timerProgressBar: true
+                      }).then(() => {
+                          window.location.reload(); // Reload the page to reflect the changes
+                      });
+                  }
+              });
+          }
+      });
+  }
+</script>
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<%-include('../layouts/adminFooter.ejs')%>

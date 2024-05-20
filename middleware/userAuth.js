@@ -32,6 +32,7 @@ const isLogout = async (req,res,next)=>{
 const isNavUser = async (req,res,next)=>{
     try {
         if(req.session && req.session.userid){
+            
             res.locals.userNavbar = true;
             return next() 
         }else{

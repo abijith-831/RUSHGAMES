@@ -149,7 +149,7 @@
     }).then((result) => {
         
         if (result.isConfirmed) {
-            console.log('1');
+           
             fetch(`/admin/categoryStatus?categoryId=${categoryId}`)
             
                 .then(response => response.json())

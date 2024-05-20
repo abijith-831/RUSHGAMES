@@ -72,7 +72,7 @@
                                 <div class="card shadow-0 border mb-4">
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-md-3 mt-1">
+                                            <div class="col-md-2 mt-1">
                                                 <img src="<%= game.gameId.mainImage[0].path %>" class=" " style="height: 75px; width: 75px" alt="<%= game.gameId.name %>" />
                                             </div>
                                             <% if (game.Status==='Cancelled') { %>
@@ -102,16 +102,23 @@
                                                     <p class="text-muted mb-0 "><%= game.totalAmount %></p>
                                                 </div> 
                                             <%   }  %> 
-                                            <%= console.log ('order'+order._id) %>
+                                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                <p class="text-muted mb-0 "><%= game.Status %></p>
+                                            </div> 
                                             <% if (game.Status==='Cancelled') { %>
                                                 <div class="col-md-2 " style="color: black; font-size: 50px; text-decoration: line-through;" >
-                                                    <a class="btn change-btn" style="border: 2px solid rgb(0, 0, 0); text-decoration: line-through; " >Cancelled</a>
-                                                </div>  
+                                                    <a class="btn change-btn" style="border: 2px solid rgb(0, 0, 0); " >Cancelled</a>
+                                                </div>
+                                            <%  }else if(game.Status ==="Delivered") { %>  
+                                                <div class="col-md-2 " style="color: black; font-size: 50px; border-color: rgb(17, 16, 16); " >
+                                                    <a class="btn change-btn" style="border: 2px solid rgb(5, 5, 5);" data-toggle="modal" data-target="#cancelOrderModa" data-game-id="<%= game.gameId._id %>" data-order-id="<%= order._id %>">Return </a>
+                                                </div>
                                             <%  }else { %>
                                                 <div class="col-md-2 " style="color: black; font-size: 50px; border-color: red; " >
                                                     <a class="btn change-btn" style="border: 2px solid red;" data-toggle="modal" data-target="#cancelOrderModal" data-game-id="<%= game.gameId._id %>" data-order-id="<%= order._id %>">Cancel Order</a>
                                                 </div>  
                                             <%   }  %>
+                                            
                                                                                    
                                             
                                         </div>
