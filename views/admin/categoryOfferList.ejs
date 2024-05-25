@@ -1,0 +1,280 @@
+<%-include('../layouts/adminHeader.ejs')%>
+<%-include('../layouts/adminSidebar.ejs')%>
+
+<style>
+    .purple-header-box {
+    background-color: #936dd1; /* Purple color */
+    color: #ffffff; /* White text color */
+    padding: 15px; /* Adjust padding as needed */
+    border-radius: 5px; /* Optional: Add rounded corners */
+    margin-bottom: 20px; /* Optional: Add space below the box */
+    text-align: center;
+}
+.search-bar {
+    margin-bottom: 10px; /* Adjust spacing between search bar and heading */
+}
+.purple-button {
+    background-color: #936dd1;
+    color: white; /* text color */
+    border: 1px solid black; /* black border */
+    border-radius: 5px; /* slight curve */
+    padding: 10px 20px; /* adjust padding as needed */
+    font-size: 16px; /* adjust font size as needed */
+    cursor: pointer; /* cursor style */
+    /* You can add additional styling as needed */
+}
+.search-btn {
+        width: 100px; /* Adjust the width of the button as needed */
+        height: 40px; /* Adjust the height of the button as needed */
+        border: 2px solid #000; /* Black border */
+        border-radius: 2px; /* Make it round */
+        background-color: #936dd1; /* Black background */
+        color: #050404; /* White text color */
+        font-size: 14px; /* Adjust font size */
+        padding: 0; /* Remove padding */
+    }
+
+.search-btn::after {
+    
+    display: inline-block;
+    margin-left: 0.3rem; /* Adjust spacing between button and text */
+}
+.search-bar {
+    width: calc(100% - 80px); /* Adjust the width of the search bar */
+    margin-right: 10px; /* Adjust spacing between search bar and button */
+}
+.custom-table-header {
+    background-color: grey;
+    color: black;
+    width: 100%;
+}
+.modal-content {
+        background-color: #f8f9fa; /* Light grey background */
+        color: #343a40; /* Darker text for better readability */
+        font-family: 'Arial', sans-serif; /* A common sans-serif font */
+    }
+
+   .modal-header {
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
+        padding: 1rem;
+        background-color: #007bff; /* Bootstrap primary blue */
+        color: white; /* White text on blue background */
+    }
+
+   .modal-title {
+        margin: 0;
+        line-height: 1.5;
+    }
+
+   .modal-footer {
+        border-bottom-left-radius: 0.25rem;
+        border-bottom-right-radius: 0.25rem;
+        padding: 1rem;
+        background-color: #e9ecef; /* Light grey footer */
+        color: #495057; /* Slightly darker text for contrast */
+    }
+
+    /* Form Field Styling */
+   .form-group label {
+        display: block;
+        margin-top: 0.5rem;
+        margin-bottom: 0.125rem;
+        font-weight: bold;
+    }
+
+   .form-control {
+        height: calc(1.5em + 0.75rem + 2px); 
+        box-shadow: none; 
+        border-radius: 0.25rem; 
+    }
+
+    p#errorMessage {
+        color: #dc3545;
+        margin-top: 0.25rem;
+    }
+
+ 
+   .btn-success {
+        background-color: #28a745;
+        border-color: #218838; 
+    }
+    .modal-dialog {
+    max-width: 40vw; 
+}
+
+</style>
+
+<div class="page-wrapper">
+
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body" >
+                       
+                        <div class="purple-header-box"> 
+                            <h4 class="card-title">CATEGORY OFFERS LIST</h4>
+                        </div>
+                                        
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr style="width: 100%;">
+                                      <th scope="col">SL NO</th>
+                                        <th scope="col">CATEGORY NAME</th>                                
+                                        <th scope="col">DISCOUNT</th>
+                                        <th scope="col">START DATE</th>
+                                        <th scope="col">EXPIRY</th>
+                                        <th scope="col" class="text-right">ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                                                  
+                                </tbody>
+                            </table>
+
+                            <div class="text-center mt-4">
+                                <a id="addCategoryOfferBtn" class="purple-button " data-toggle="modal" data-target="#addCategoryOfferModal" style="color: black;">+ Add Category Offers</a>
+                            </div> 
+                            <br>    
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!----------- add category Offer modal ---------------------- -->
+<div class="modal fade" id="addCategoryOfferModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryOfferModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content  text-red px-5 mt-4 mb-4">
+        <br>
+        <div class="modal-header border-bottom-red">
+          <h5 class="modal-title" style="text-align: center;" id="addCategoryOfferModalLabel">Add Category Offers</h5>
+          <button type="button" class="close text-red" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="categoryOfferForm" >
+                    
+                <div class="form-group">
+                    <label for="categoryName">Category Name</label>
+                    <select class="form-control" id="categoryName" required>
+                        <option value="">Select a Category</option>
+                        
+                    </select>
+                    <p id="categoryNameError" style="color: red;"></p>
+                </div>
+                           
+                <div class="form-group">
+                  <label for="discount">discount</label>
+                  <input type="text" class="form-control" id="discount" placeholder="Enter the discount you want to Add" required>
+                  <p id="discountError" style="color: red;"></p>
+                </div>
+                
+                <div class="form-group">
+                  <label for="expiryDate">expiryDate</label>
+                  <input type="date" class="form-control" id="expiryDate" placeholder="Enter the expiryDate you want to Add" required>
+                  <p id="expiryDateError" style="color: red;"></p>
+                </div>
+                                               
+            <button type="submit"  class="btn btn-success btn-block" id="submitCategoryOfferModal"  >ADD CATEGORY OFFER</button>
+
+            <br><br>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+<!----------- add category Offer fucntionality  ----------- -->
+<script>
+    document.addEventListener('DOMContentLoaded',function(){
+        document.querySelector('#submitCategoryOfferModal').addEventListener('click',function(event){
+            event.preventDefault();
+              if(validation()){
+                const gameId = document.getElementById('gameName').value.trim();
+                const discount = document.getElementById('discount').value.trim();
+                const expiryDate = document.getElementById('expiryDate').value.trim();
+
+                const formData = { gameId , discount , expiryDate }
+
+                fetch('/admin/addGameOffer',{
+                    method : 'POST',
+                    headers : {
+                        "Content-type":"application/json"
+                    },
+                    body : JSON.stringify(formData)
+                })
+                .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: 'Coupon Added Successfully',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                                .then(() => {
+                                window.location.reload();
+                                });
+                            } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: 'An error occurred while processing your request.',
+                                confirmButtonText: 'OK'
+                            });
+                            }
+
+                            $('#addCouponModal').modal('hide');
+                        })
+                        .catch(error => {
+                            console.log(error);
+                            Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'An error occurred while processing your request.',
+                            confirmButtonText: 'OK'
+                            });
+                            $('#addCouponModal').modal('hide');
+                        });
+              }
+                
+            
+        })
+    })
+
+function validation(){
+    
+    const discount = document.getElementById('discount').value.trim();
+    const discountRegex = /^(100|[1-9]?\d)(\.\d{1,2})?$/;
+    let discountError = document.getElementById('discountError');
+    discountError.innerText = '';
+    if (discount === '') {
+      discountError.innerText = "Discount cannot be empty";
+      return false;
+    } else if (!discountRegex.test(discount)) {
+      discountError.innerText = "Discount should be a positive number between 1 and 100";
+      return false;
+    } else if (Number(discount) > 100) {
+      discountError.innerText = "Discount cannot exceed 100";
+      return false;
+    }
+
+    return true;
+}
+
+</script>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<%-include('../layouts/adminFooter.ejs')%>

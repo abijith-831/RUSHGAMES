@@ -11,6 +11,8 @@ const gameController = require('../controllers/gameController')
 const adminDashboardController = require('../controllers/adminDashboardController')
 const orderController = require('../controllers/orderController')
 const couponController = require('../controllers/couponController')
+const offerController = require('../controllers/offerController')
+
 
 const adminAuth = require('../middleware/adminAuth')
 
@@ -71,9 +73,17 @@ admin_route.get('/adminOrderDetailsPage',orderController.loadAdminOrderDetails)
 admin_route.post('/changeStatus',orderController.changeStatus)
 
 
-// ****** OFFER HANDINLING SECTION ******
+// ****** COUPON HANDINLING SECTION ******
 admin_route.get('/couponList',couponController.loadCouponList)
 admin_route.post('/addCoupon',couponController.addCoupon)
 admin_route.post('/couponStatus',couponController.couponStatus)
+
+
+admin_route.get('/gameOfferList',offerController.loadgameOfferList)
+admin_route.post('/addGameOffer',offerController.addGameOffer)
+admin_route.post('/gameOfferStatus',offerController.gameOfferStatus)
+
+admin_route.get('/categoryOfferList',offerController.loadCategoryOfferList)
+
 
 module.exports = admin_route; 
