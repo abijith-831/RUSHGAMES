@@ -4,6 +4,8 @@ const Order = require('../models/orderModel')
 const bcrypt = require('bcrypt')
 const Games = require('../models/gameModel')
 const Wallet = require('../models/walletModel')
+const Coupon = require('../models/couponModel')
+const Cart = require('../models/cartModel')
 
 // ********** FOR LOADING USER PROFILE PAGE  **********
 const loadUserProfile = async (req,res)=>{
@@ -178,6 +180,7 @@ const loadOrderDetailsPage = async (req,res)=>{
     const {orderId} = req.query;
     const userData = await User.findOne({_id:userId})
     const order = await Order.findOne({orderId:orderId}).populate('games.gameId')
+    console.log(order+'order');
     let total = 0
     if (order) {
       total = order.games
@@ -281,7 +284,7 @@ const addMoneyToWallet = async (req , res)=>{
 
 
 
-
+//********** FOR WITHDRAWING MONEY TO WALLET **********
 const withdrawMoney = async (req,res)=>{
   try {
     const userId = req.session.user_id
@@ -314,6 +317,51 @@ const withdrawMoney = async (req,res)=>{
   }
 }
 
+
+//********** FOR RENDERING COUPONS PAGE IN USER SIDE **********
+const loadCoupons = async (req,res)=>{
+  try {
+    const userId = req.session.user_id;
+    const userData = await User.findOne({_id : userId}).populate('coupons')
+    const coupons = userData.coupons
+  
+    res.render('coupons',{user : userData , coupons : coupons})
+    
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+// ********** CHECK COUPON IS AVAILABLE OR NOT  **********
+const checkCoupon = async (req,res)=>{
+  try {
+
+      const  userId = req.session.user_id;
+      const user = await User.findOne({_id:userId}).populate('coupons')
+      const code  = req.body.code
+
+      
+      if(!user.coupons || user.coupons.length===0){
+        console.log('no coupon')
+        return res.json({success:false , message :'no coupon'})
+      }
+    
+      const exists = user.coupons.find(item=>item.couponCode === code)
+      const cart = await Cart.findOne({userId:userId})
+      if(exists){
+        res.json({success:true , discountPercentage: exists.discount , cart:cart })
+      }else{
+        res.json({success:false , message: 'Invalid or expired coupon.'})
+      }
+      
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: 'server error' });
+  }
+}
+
+
 module.exports = {
     loadUserProfile,
     editUserProfile,
@@ -332,5 +380,9 @@ module.exports = {
 
     loadWallet,
     addMoneyToWallet,
-    withdrawMoney
+    withdrawMoney,
+
+
+    loadCoupons,
+    checkCoupon
 }

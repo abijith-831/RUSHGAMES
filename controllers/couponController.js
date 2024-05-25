@@ -62,8 +62,10 @@ const couponStatus = async (req,res)=>{
 
 
 
+
 module.exports = {
     loadCouponList,
     addCoupon,
-    couponStatus
+    couponStatus,
+
 }

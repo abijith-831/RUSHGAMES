@@ -22,15 +22,13 @@ const securePassword = async (password) => {
 const loadHome = async (req, res) => {
   try {
     let user = req.session.user_id;
-
     const categories = await Category.find();
-    
-    
     if(user){
       const userData = await User.findById(user);
       if(userData.is_blocked){
         req.session.user_id = null
-        res.redirect('/login')
+        res.redirect('/login');
+        return;
       }else{
         res.render("home", { user: userData , categories });
       }
@@ -40,11 +38,11 @@ const loadHome = async (req, res) => {
       
   } catch (error) {
     console.log(error);
-    res.status(500).send("Internal Server Error");
+    
   }
 };
 
-
+ 
 
 // ********** FOR LOADING LOGIN PAGE **********
 const loadLogin = async (req, res) => {
@@ -124,7 +122,10 @@ const verifyLogin = async (req, res) => {
         req.flash("errmsg", "Email or Password is Incorrect...!!!");
         res.redirect("/login");
       }
+      
     }
+    req.flash("errmsg", "Email or Password is Incorrect...!!!");
+        res.redirect("/login");
   } catch (error) {
     console.log(error);
   }

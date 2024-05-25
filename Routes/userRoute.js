@@ -39,12 +39,17 @@ user_route.get('/logout', userAuth.isLogin , userController.userLogout)
 user_route.get('/userProfile' , userAuth.isLogin , profileController.loadUserProfile)
 user_route.post('/editUserProfile',profileController.editUserProfile)
 user_route.post('/editUserPassword',profileController.editUserPassword)
+//----------------
 user_route.get('/orderHistory', userAuth.isLogin , profileController.loadOrderHistory)
 user_route.get('/orderDetailsPage', userAuth.isLogin, profileController.loadOrderDetailsPage)
 user_route.post('/cancelOrder',profileController.cancelOrder)
+//----------------
 user_route.get('/wallet',userAuth.isLogin ,profileController.loadWallet)
 user_route.post('/addMoneyToWallet',profileController.addMoneyToWallet)
 user_route.post('/withdrawMoney',profileController.withdrawMoney)
+//-----------------
+user_route.get('/coupons',userAuth.isLogin , profileController.loadCoupons)
+user_route.post('/checkCoupon',profileController.checkCoupon)
 
 //******   USER CART SECTIONS ******
 user_route.get('/cart' , userAuth.isLogin , cartController.loadCart)

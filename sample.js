@@ -1121,3 +1121,32 @@
 //     }return true
 // })
 // console.log(prime);
+
+
+// let nums= [1,1,2,2,3,4]
+// let num1 = []
+//     let num2 = []
+//     for(let i = 0;i<nums.length;i++){
+//         if(i%2===1){
+//             num1.push(nums[i])
+//         }else{
+//             num2.push(nums[i])
+//         }
+        
+//     }
+//     console.log(num1)
+//     console.log(num2)
+
+let nums = [8,5,7,7]
+let sl = 10
+let fl = 10
+for(let i=0 ;i<nums.length;i++){
+    if(nums[i]<fl){
+        sl = fl
+        fl = nums[i];     
+    }else if( nums [i] <sl && nums[i] > fl){
+        sl = nums[i]
+    }
+}
+console.log(sl);
+console.log(fl);

@@ -19,9 +19,9 @@ const loadAdminOrderDetails = async (req,res)=>{
     try{
         const orderId = req.query.orderId;
         const orders = await Order.find({_id:orderId}).populate('userId').populate('games.gameId')
+        console.log('odf'+orders);
         if (orders.length === 1) {
             const order = orders[0];
-            
             res.render('adminOrderDetails', { order });
         }
         

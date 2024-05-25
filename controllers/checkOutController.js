@@ -8,6 +8,7 @@ const Razorpay = require('razorpay')
 const Wallet = require('../models/walletModel')
 const Coupon = require('../models/couponModel')
 
+
 const instance = new Razorpay({
   key_id : 'rzp_test_v7eXLfL0Wt6Ws9',
   key_secret : 'AYLcwjPi06hnNEvNPogTv4lf'
@@ -80,16 +81,19 @@ const addNewAddress = async (req,res)=>{
 // ********** FOR ORDER PLACEMENT  **********
 const placeOrder = async (req,res)=>{
   try {
-  
+    
     const userId = req.session.user_id;
+    const userData = await User.findOne({_id : userId}).populate('coupons')
     const selectedPayment = req.body.paymentMethod;
+    const couponId = req.body.couponId;
+
+    const coupon = userData.coupons.find(item => item.couponCode === couponId)
+ 
+
     const addressId = req.body.addressId;
-    if (!addressId) {
-      req.flash('errmsg',"Please Select an Address")
-      res.redirect('/checkOut')
-      // return res.status(400).json({ message: "Address not found." });
-    }
-    const abc= await Address.findOne({ 'addresses._id':addressId})
+   
+    const abc= await Address.findOne({'addresses._id':addressId})
+    
     const addressData = abc.addresses.find(address => address._id.equals(addressId))
     
     
@@ -97,7 +101,8 @@ const placeOrder = async (req,res)=>{
     if (!cart) {
       return res.status(400).json({ message: "Cart not found for this user." });
     }
-
+    
+    
     const orderId = generateOrderId()
   
     const newOrder = new Order ({
@@ -124,10 +129,16 @@ const placeOrder = async (req,res)=>{
       paymentMethod : selectedPayment,
       paymentStatus : 'Pending' , 
       orderId : orderId,
-      orderDate : new Date()
+      orderDate : new Date(),
+      
     })
+
+    if (coupon) {
+      newOrder.discount = coupon.discount;
+    }
           
     const orderInstance = new Order(newOrder);
+
         if(selectedPayment === 'wallet'){// wallet payment
           const wallet = await Wallet.findOne({userId:userId})
           if(!wallet){
@@ -136,7 +147,7 @@ const placeOrder = async (req,res)=>{
           else if(cart.totalCartPrice>wallet.balance){
             return res.json({success:false , message:"Insufficient"})
           }else{
-            console.log('sdfsdfsdf');
+ 
             await orderInstance.save();
             wallet.balance = wallet.balance - cart.totalCartPrice;
             wallet.history.push({
@@ -148,6 +159,11 @@ const placeOrder = async (req,res)=>{
             })
             await wallet.save()
             await Cart.findOneAndDelete({userId:userId});
+           
+            await User.updateOne({_id : userId} , {$pull : {coupons : {_id : coupon._id}}})
+            await giveCoupon(userId,cart.totalCartPrice)
+            
+
             return res.json({success : true})
 
           }
@@ -161,6 +177,10 @@ const placeOrder = async (req,res)=>{
           generateRazorpay(orderInstance._id , adjustedAmount).then(async(response)=>{
             const savedOrder = await orderInstance.save()
             await Cart.findOneAndDelete({userId : userId})
+
+            await User.updateOne({_id : userId} , {$pull : {coupons : {_id : coupon._id}}})
+            await giveCoupon(userId , cart.totalCartPrice);
+            
             res.json({Razorpay : response ,})
           })
           
@@ -168,23 +188,55 @@ const placeOrder = async (req,res)=>{
           await orderInstance.save()
           await Cart.findOneAndDelete({userId : userId})
           
+          await giveCoupon(userId, cart.totalCartPrice);
+          
+
           res.json({success: true})
         }
+       
         for (const item of cart.games){
           await Games.updateOne(
             {_id:item.gameId},
             {$inc : {stock : - item.quantity}}
           )
+        } 
+
+        if (coupon) {
+
+          await User.updateOne({ _id: userId }, { $unset: { coupons: "" } });
+
         }
-    
-    
-    
+        
   } catch (error) {
     console.log(error);
   }
 }
 
 
+// ********** GIVE COUPONS FUCNTION **********
+const giveCoupon = async (userId , totalCartPrice)=>{
+  try {
+    
+    const user = await User.findById(userId);
+    if(user.coupons && user.coupons.length>0){
+      return;
+    }
+    console.log('fghjht');
+    const coupons = await Coupon.find({is_active : false})
+  
+    for(const item of coupons){
+      if(totalCartPrice >= item.minimum){
+        await User.findByIdAndUpdate({_id:userId},{$push:{coupons : item._id}});
+        break;
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  } 
+}
+
+
+// ********** RAZORPAY SETTINGS  **********
 const generateRazorpay = (orderId , adjustedAmount)=>{
   return new Promise((resolve , reject)=>{
 
@@ -201,13 +253,15 @@ const generateRazorpay = (orderId , adjustedAmount)=>{
     })
   })
 }
- 
+  
+
 // ********** FOR GENERATE RANDOM 8 DIGIT NUMBER FOR ORDER-ID  **********
 function generateOrderId() {
   const min = 10000000; 
   const max = 99999999; 
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
 
 module.exports = {
     loadCheckOut,

@@ -133,6 +133,9 @@ input[type="radio"]:checked + label {
     display: flex;
     gap: 10px; /* Optional: adds some space between the buttons */
 }
+#apply-button {
+    margin-right: 20px; /* Adjust the value as needed */
+}
 
 </style>
 
@@ -210,16 +213,18 @@ input[type="radio"]:checked + label {
 										<a id="addAddressBtn" class="btn change-btn " data-toggle="modal" data-target="#addAddressModal">+ Add Address</a>
 									</div>
                                     <div class="checkout-discount">
-										<label for="coupon">Have a coupon?</label>
-										<div class="select-custom">
-										  <select name="coupon" id="coupon" class="form-control">
-											<option value="" id="nameZ-A">Nothing</option>
-											<% coupon.forEach(item => { %>
-											  <option value="<%= item.couponName %>"><%= item.couponName %> - <%= item.discount %>%</option>
-											<% }) %>
-										  </select>
-										</div>
-									  </div>
+										<form id="coupon-form" onsubmit="handleInnerForm(event)">
+											<h6>Have a coupon? <span>Click here to enter your code</span></h6>
+											<input type="text" class="form-control" id="checkout-discount-input">
+											<label for="checkout-discount-input" class="text-truncate"></label>
+											<div class="row">
+												<button type="submit" class="btn btn-primary" id="apply-button">Apply</button>
+												<button type="button" class="btn btn-danger" id="remove-button">Remove</button>
+											</div>
+											
+										</form>
+									</div>
+									
 									  
 									<% if (errmsg) { %> 
 											<div class="alert text-center " style="color: red;">
@@ -243,30 +248,31 @@ input[type="radio"]:checked + label {
 		                					</thead>
 
 		                					<tbody>
+												<% cartData.games.forEach((item, index) => { %>
+													<tr>
+														<td><a href="#"><%= gameDetails[index].name %></a></td>
+														<td><%= (item.price * item.quantity).toFixed(2) %> Rs</td>
+													</tr>
+												<% }); %>
 											
-												<% cartData.games.forEach (( item , index) => { %>
-															<tr>
-																<td><a href="#"><%= gameDetails[index].name %></a></td>
-																<td><%= (item.price * item.quantity).toFixed(2) %> Rs</td>
-															</tr>
-														<%   })  %>
+												
+												<tr class="summary-subtotal">
+													<td>Subtotal:</td>
+													<td id="subtotal-price"><%= cartData.totalCartPrice.toFixed(2) %> Rs</td>
+												</tr>
 
-		                						
+												<tr id="discount-row">
+													<td>Discount :</td>
+													<td id="discount-value"><%= cartData.discount ? cartData.discount : 0 %>%</td>
+												</tr>
 
-		                						
-		                						<tr class="summary-subtotal">
-		                							<td>Subtotal:</td>
-		                							<td><%= cartData.totalCartPrice.toFixed(2) %>Rs</td>
-		                						</tr><!-- End .summary-subtotal -->
-		                						<tr>
-		                							<td>Shipping:</td>
-		                							<td>Free shipping</td>
-		                						</tr>
-		                						<tr class="summary-total">
-		                							<td>Total:</td>
-		                							<td>$<%= cartData.totalCartPrice.toFixed(2) %></td>
-		                						</tr><!-- End .summary-total -->
-		                					</tbody>
+												<tr class="summary-total">
+													<td>Total : </td>
+													<td id="total-price"><%= cartData.discountedPrice? cartData.discountedPrice.toFixed(2) : cartData.totalCartPrice.toFixed(2) %> Rs</td>
+												</tr>
+			
+											</tbody>
+											
 		                				</table>
 
 		                				<div class="accordion-summary" id="accordion-payment">
@@ -574,27 +580,44 @@ input[type="radio"]:checked + label {
 <!-- fetching address and payment method and passing it to backend -->
 <script>
 	 document.addEventListener('DOMContentLoaded', () => {
-		function proceedToCheckout(paymentMethod, addressId) {
-			
+		function proceedToCheckout(paymentMethod, addressId , couponId = null) {
+			const requestBody = {
+				paymentMethod : paymentMethod,
+				addressId : addressId
+			}
+
+			if(couponId){
+				requestBody.couponId = couponId;
+			}
 			fetch('/placeOrder', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ paymentMethod : paymentMethod, addressId : addressId })
+				body: JSON.stringify(requestBody)
 				
 			})
 				.then(response => response.json())
 				.then(data => {
 					if (data.success) {	
-							
-						Swal.fire({
-							icon: 'success',
-							title: 'Success!',
-							text: 'Order Placed Successfully .! ',
-							showConfirmButton: false,
-							timer: 1500
-							})
+							if(data.couponCode){
+								console.log('sdfsf');
+								confetti({
+									particleCount: 100,
+									spread: 70,
+									origin: { y: 0.6 }
+                				});
+							}else{
+								console.log('cmkjckus');
+								Swal.fire({
+									icon: 'success',
+									title: 'Success!',
+									text: 'Order Placed Successfully .! ',
+									showConfirmButton: false,
+									timer: 1500
+									})
+							}
+						
 					} else if(data.Razorpay){
 						console.log('abdinn');
 						console.log('hvvjmvjvjvbb'+Razorpay);
@@ -647,7 +670,6 @@ input[type="radio"]:checked + label {
 							});
 							
 						}else {
-							// Display SweetAlert error notification
 							Swal.fire({
 								title: 'Order Processing Failed',
 								text: 'An error occurred while processing the order.',
@@ -667,9 +689,11 @@ input[type="radio"]:checked + label {
 		document.querySelector('#orderForm').addEventListener('submit', (event) => {
         event.preventDefault();
         const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-        console.log('Selected Payment Method:', paymentMethod);
         const selectedAddress = document.querySelector('input[name="address"]:checked').value;
-        proceedToCheckout(paymentMethod, selectedAddress);
+		const couponInput = document.getElementById('checkout-discount-input');
+		const couponId = couponInput ? couponInput.value : null;
+
+        proceedToCheckout(paymentMethod, selectedAddress , couponId);
     });
 });
 
@@ -689,7 +713,7 @@ function verifyPayment(payment,order){
                 title: 'Order Placed Successfully!',
                 icon: 'success',
                 showConfirmButton: false,
-                timer: 2000 // Set the duration for the alert
+                timer: 2000 
 
             });
             const orderid=order.receipt
@@ -704,8 +728,111 @@ function verifyPayment(payment,order){
 </script>
 
 
+<!-- checking coupon is available or not -->
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+    let discountInput = document.getElementById('checkout-discount-input');
+    let applyButton = document.getElementById('apply-button');
+	let removeButton = document.getElementById('remove-button')
+
+    async function handleInnerForm(event) {
+        event.preventDefault();
+
+        const couponCode = discountInput.value;
+        
+        try {
+            const response = await fetch(`/checkCoupon`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ code: couponCode })
+            });
+
+            const data = await response.json();
+
+            if (data.message === 'no coupon') {
+                Swal.fire({
+                    title: "Error",
+                    text: "No coupons available.",
+                    icon: "error"
+                });
+
+                applyButton.disabled = false;
+            } else if (data.success) {
+				const cart = data.cart;
+
+				const originalTotal = parseFloat(cart.totalCartPrice);
+				const discountAmount = originalTotal * (data.discountPercentage / 100)
+				const discountedTotal = originalTotal - discountAmount;
+
+				document.getElementById('subtotal-price').textContent = `${originalTotal.toFixed(2)} Rs`;
+				document.getElementById('discount-value').textContent = `${data.discountPercentage}%`;
+				document.getElementById('total-price').textContent = `${discountedTotal.toFixed(2)} Rs`;
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Coupon applied successfully.',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
+                discountInput.disabled = true;
+                applyButton.textContent = "Applied";
+                applyButton.classList.add('btn-success');
+                applyButton.classList.remove('btn-primary');
+                applyButton.disabled = true;
+				removeButton.disabled = false;
+            } else {
+                Swal.fire({
+                    title: "Invalid Coupon",
+                    text: "The coupon code entered is not valid.",
+                    icon: "error"
+                });
+
+                applyButton.disabled = false;
+            }
+        } catch (error) {
+            console.error('Error checking coupon:', error);
+            Swal.fire({
+                title: "Error",
+                text: "An error occurred. Please try again later.",
+                icon: "error"
+            });
+        }
+    }
+
+	function handleRemoveCoupon(){
+		event.preventDefault()
+		discountInput.value = ''
+		discountInput.disabled = false;
+
+		document.getElementById('discount-value').textContent = '0%';
+		document.getElementById('total-price').textContent = document.getElementById('subtotal-price').textContent;
+
+		applyButton.textContent = 'Apply';
+		applyButton.classList.remove('btn-success');
+		applyButton.classList.add('btn-primary');
+		applyButton.disabled = false
+
+		removeButton.disabled = true
+	}
+
+    applyButton.addEventListener('click',handleInnerForm);
+	removeButton.addEventListener('click',handleRemoveCoupon);
+
+
+	removeButton.disabled = true;
+});
+
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.0.1/confetti.min.js"></script>
+
 
 <!-- Plugins JS File -->
 <script src="assets/js/jquery.min.js"></script>
@@ -716,7 +843,7 @@ function verifyPayment(payment,order){
 <script src="assets/js/owl.carousel.min.js"></script>
 <!-- Main JS File -->
 <script src="assets/js/main.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
 </body>
 
 

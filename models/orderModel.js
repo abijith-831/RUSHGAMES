@@ -7,7 +7,7 @@ const orderSchema = new mongoose.Schema({
         ref:'User',
         required:true,
     },
-
+    
     games:[
         {
             gameId:{
@@ -94,6 +94,9 @@ const orderSchema = new mongoose.Schema({
         type:Date,
         default: ()=> Date.now(),
     },
+    discount : {
+        type :Number
+    }
 })
 
 module.exports = mongoose.model('Order',orderSchema);

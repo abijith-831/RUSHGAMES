@@ -33,7 +33,11 @@ const userSchema = mongoose.Schema({
     is_blocked : {
         type : Boolean,
         required : false
-    }
+    },
+    coupons: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Coupon'
+    }]
 
 })
 

@@ -11,6 +11,7 @@ const loadWishlist = async (req,res)=>{
         
         const userData = await User.findOne({_id : userId})
         const wishlistData = await Wishlist.findOne({userId:userId}).populate('games.gameId');
+        
         const count = wishlistData.games.length
         
         res.render('wishlist',{ user : userData , wishlistData : wishlistData , count : count})
