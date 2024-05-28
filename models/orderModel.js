@@ -33,8 +33,12 @@ const orderSchema = new mongoose.Schema({
             totalAmount:{
                 type:Number,
                 required:true,
-            },
-           
+            },            
+            approval :{
+                type :String,
+                enum : ['Accepted',"Rejected",'Waiting'],
+                default : 'Waiting' 
+            }   
         },
     ],
     totalCartPrice : {

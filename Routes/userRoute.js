@@ -43,7 +43,8 @@ user_route.post('/editUserPassword',profileController.editUserPassword)
 user_route.get('/orderHistory', userAuth.isLogin , profileController.loadOrderHistory)
 user_route.get('/orderDetailsPage', userAuth.isLogin, profileController.loadOrderDetailsPage)
 user_route.post('/cancelOrder',profileController.cancelOrder)
-//----------------
+user_route.post('/returnOrder',profileController.returnOrder)
+//---------------- 
 user_route.get('/wallet',userAuth.isLogin ,profileController.loadWallet)
 user_route.post('/addMoneyToWallet',profileController.addMoneyToWallet)
 user_route.post('/withdrawMoney',profileController.withdrawMoney)
@@ -73,6 +74,8 @@ user_route.post('/placeOrder' , checkOutController.placeOrder)
 
 //******   USER ADDRESS SECTIONS ******
 user_route.get('/addresses' ,userAuth.isLogin , profileController.loadAddresses)
+user_route.get('/editAddress', userAuth.isLogin,profileController.editAddress)
+user_route.post('/submitEditAddress',profileController.submitEditAddress)
 user_route.post('/addNewAddress',profileController.addNewAddress)
 user_route.post('/deleteAddress',profileController.deleteAddress)
 

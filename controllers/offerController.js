@@ -56,18 +56,57 @@ const gameOfferStatus = async (req , res)=>{
 // ********** FOR RENDERING CATEGORY OFFER LIST  **********
 const loadCategoryOfferList = async ( req , res)=>{
     try {
-        const category = await Category.find({is_listed : true})
-   
-        res.render('categoryOfferList',{category})
+        const categories = await Category.find({is_listed : true})
+        const categoryOffer = await CategoryOffer.find().populate('categoryId')
+        
+        res.render('categoryOfferList',{categories , categoryOffer})
     } catch (error) {
         console.log(error);
     }
 }
+
+
+// ********** FOR ADDING CATEGORY OFFER  **********
+const addCategoryOffer = async (req,res)=>{
+    try {
+        const { categoryId , discount , expiryDate } = req.body;
+
+        const categoryOffer = new CategoryOffer ({
+            categoryId,
+            discount,
+            startDate : Date.now(),
+            expiryDate
+        })
+
+        await categoryOffer.save();
+        res.json({success : true}) 
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+// ********** FOR CHANGING THE STATUS OF CATEGORY OFFER  **********
+const categoryOfferStatus= async (req,res)=>{
+    try {
+        const { categoryOfferId } = req.body;
+        const categoryOffer = await CategoryOffer.findOne({_id : categoryOfferId});
+
+        categoryOffer.is_active = !categoryOffer.is_active;
+        await categoryOffer.save();
+        res.json ({success : true , newStatus : categoryOffer.is_active})
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 module.exports = {
     loadgameOfferList,
     addGameOffer,
     gameOfferStatus,
 
-    loadCategoryOfferList
+    loadCategoryOfferList,
+    addCategoryOffer,
+    categoryOfferStatus
 }

@@ -10,8 +10,6 @@ const flash=require('express-flash')
 const session = require('express-session')
 const googleAuth = require('./googleAuth')
 
-const bodyParser = require('body-parser')
-
 app.use(session({
     secret:process.env.SESSION_SECRET,
     resave: false,
@@ -22,7 +20,7 @@ app.use(nocache());
 app.use(flash());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
-app.use(bodyParser.json())
+
 
 
 app.use(express.static(path.join(__dirname,'public')))

@@ -88,9 +88,23 @@
                                                                         <p class="text-muted mb-0 "><%= game.Status %></p>
                                                                     </div>
                                                                             
-                                                                    <% if (game.Status === 'Cancelled') { %>
-                                                                        <!-- If the game is cancelled, do not display the dropdown -->
-                                                                    <% } else { %>
+                                                                    <% if (game.Status === 'Return') { %>
+                                                                        <% if(game.approval === 'Waiting') { %>
+                                                                            <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                                                                <button class="btn btn-success accept-btn" data-game-id="<%= game.gameId._id %>" data-order-id="<%= order._id %>">Accept</button>
+                                                                                <button class="btn btn-danger reject-btn" data-game-id="<%= game.gameId._id %>" data-order-id="<%= order._id %>">Reject</button>
+                                                                            </div>
+                                                                        <% }else if (game.approval === 'Accepted') { %>
+                                                                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                                                <p class="text-muted mb-0 ">Accepted</p>
+                                                                            </div>
+                                                                        <% }else if(game.approval === 'Rejected'){  %>
+                                                                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                                                <p class="text-muted mb-0 ">Rejected</p>
+                                                                            </div>
+                                                                        <%  } %>
+                                                                        
+                                                                    <% } else if (game.Status !== 'Cancelled') { %>
                                                                         <div class="form-group col-md-2">
                                                                             <label for="statusSelect" style="font-size: 16px; color: black;">Status</label>
                                                                             <select class="form-control statusSelect" id="statusSelect<%= index %>" data-orderid="<%= order._id %>" data-gameid="<%= game.gameId._id %>">
@@ -136,6 +150,8 @@
 </div>
 
 
+
+<!-- for changing the status of order-->
 <script>
     document.querySelectorAll('.statusSelect').forEach(selectElement => {
         selectElement.addEventListener('change', function() {
@@ -162,5 +178,92 @@
 </script>
 
 
+<!-- for accepting the return request-->
+<script>
+    document.querySelectorAll('.accept-btn').forEach(button =>{
+        button.addEventListener('click',function (){
+            const gameId = this.getAttribute('data-game-id')
+            const orderId = this.getAttribute('data-order-id')
+
+            fetch('/admin/approveRequest', {
+                method : "POST",
+                headers : {
+                    "Content-Type" : 'application/json'
+                },
+                body : JSON.stringify({orderId : orderId , gameId : gameId})
+            })
+            .then(response => response.json())
+            .then(data =>{
+                if(data.success){
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Return Approved!',
+                        text: 'The return request has been approved',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        location.reload();
+                    });
+                }else{
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: data.message
+                    });
+                }
+            })
+            .catch(error =>{
+                console.error('error');
+            })
+        })
+    })
+</script>
+
+
+<!-- for rejecting the return request-->
+<script>
+     document.querySelectorAll('.reject-btn').forEach(button =>{
+        button.addEventListener('click',function (){
+            const gameId = this.getAttribute('data-game-id')
+            const orderId = this.getAttribute('data-order-id')
+
+            fetch('/admin/rejectRequest', {
+                method : "POST",
+                headers : {
+                    "Content-Type" : 'application/json'
+                },
+                body : JSON.stringify({orderId : orderId , gameId : gameId})
+            })
+            .then(response => response.json())
+            .then(data =>{
+                if(data.success){
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Return Rejected!',
+                        text: 'The return request has been rejected',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        location.reload();
+                    });
+                }else{
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: data.message
+                    });
+                }
+            })
+            .catch(error =>{
+                console.error('error');
+            })
+        })
+    })
+</script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <%-include('../layouts/adminFooter.ejs')%>

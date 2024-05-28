@@ -77,17 +77,20 @@
 .icon-container {
     border: 1px solid white;
     border-radius: 50%; /* To make the border round */
-    width: 50px; /* Adjust the width and height as needed */
-    height: 50px;
-    line-height: 50px; /* Center the icon vertically */
+    width: 40px; /* Adjust the width and height as needed */
+    height: 40px;
+    line-height: 40px; /* Center the icon vertically */
     margin: 0 auto; /* Center the container horizontally */
 }
 
 .icon-container i {
     color: white; /* Icon color */
-    font-size: 24px; /* Adjust the icon size as needed */
+    font-size: 15px; /* Adjust the icon size as needed */
 }
-
+.icon {
+    width: 30px; /* Adjust the width and height as needed */
+    height: 40px;
+}
 </style>
 
 
@@ -164,12 +167,30 @@
                                     </div>
                                     <p>Wishlist</p>
                                 </a>
-                            </div><!-- End .compare-dropdown -->
+                            </div>
+                            <div class="wishlist">
+                                <a href="/cart" title="Cart">
+                                    <div class="icon">
+                                        <i class="fas fa-shopping-cart"></i>
+                                        
+                                        
+                                    </div>
+                                    <p>Cart</p>
+                                </a>
+                            </div>
+                            <div class="wishlist">
+                                <a href="/notification" title="notification">
+                                    <div class="icon">
+                                        <i class="fas fa-bell"></i>
+                                        
+                                        
+                                    </div>
+                                    <p>Notification</p>
+                                </a>
+                            </div>
+                            
 
-                            <a href="/cart">
-                                <i class="icon-shopping-cart" style="font-size: 40px; padding-left: 10px; padding-bottom: 20px; color: white;"></i>
-                                
-                            </a>
+                            
                             <!-- End .cart-dropdown -->
                         </div>
                     </div><!-- End .header-right -->

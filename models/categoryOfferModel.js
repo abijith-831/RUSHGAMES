@@ -3,7 +3,7 @@ const Category = require('./categoryModel')
 
 
 const categoryOfferSchema = new mongoose.Schema ({
-    category : {
+    categoryId : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "Category",
         required : true

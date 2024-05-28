@@ -9,6 +9,7 @@ const Wallet = require('../models/walletModel')
 const Coupon = require('../models/couponModel')
 
 
+
 const instance = new Razorpay({
   key_id : 'rzp_test_v7eXLfL0Wt6Ws9',
   key_secret : 'AYLcwjPi06hnNEvNPogTv4lf'
@@ -23,6 +24,8 @@ const loadCheckOut = async (req,res)=>{
       let errmsg = req.flash('errmsg')
       const userData = await User.findOne({_id: userId})
       const addresses = await Address.find({userId : userId})
+      const count = addresses.length > 0 ? addresses[0].addresses.length  : 0 ;
+
       const cartData = await Cart.findOne({userId : userId})
       if(!cartData || cartData.games.length === 0){
         return res.json({message:"There is Nothing in Cart to Purchase"})
@@ -33,7 +36,7 @@ const loadCheckOut = async (req,res)=>{
       const gameIds = cartData.games.map(game => game.gameId);
       const gameDetailsPromises = gameIds.map(gameId => Games.findOne({_id: gameId}));
       const gameDetails = await Promise.all(gameDetailsPromises); 
-      res.render('checkOut',{user : userData , addresses , cartData , gameDetails,errmsg ,coupon})
+      res.render('checkOut',{user : userData , addresses , cartData , gameDetails,errmsg ,coupon , count})
     } catch (error) {
       console.log(error);
     }
@@ -160,7 +163,7 @@ const placeOrder = async (req,res)=>{
             await wallet.save()
             await Cart.findOneAndDelete({userId:userId});
            
-            await User.updateOne({_id : userId} , {$pull : {coupons : {_id : coupon._id}}})
+            
             await giveCoupon(userId,cart.totalCartPrice)
             
 
@@ -178,7 +181,7 @@ const placeOrder = async (req,res)=>{
             const savedOrder = await orderInstance.save()
             await Cart.findOneAndDelete({userId : userId})
 
-            await User.updateOne({_id : userId} , {$pull : {coupons : {_id : coupon._id}}})
+            
             await giveCoupon(userId , cart.totalCartPrice);
             
             res.json({Razorpay : response ,})
@@ -188,7 +191,7 @@ const placeOrder = async (req,res)=>{
           await orderInstance.save()
           await Cart.findOneAndDelete({userId : userId})
           
-          await giveCoupon(userId, cart.totalCartPrice);
+          await giveCoupon(userId, cart.totalCartPrice , couponId);
           
 
           res.json({success: true})
@@ -202,9 +205,10 @@ const placeOrder = async (req,res)=>{
         } 
 
         if (coupon) {
-
-          await User.updateOne({ _id: userId }, { $unset: { coupons: "" } });
-
+          await User.updateOne(
+            { _id: userId },
+            { $pull: { coupons: coupon._id } }
+          );
         }
         
   } catch (error) {
@@ -227,7 +231,7 @@ const giveCoupon = async (userId , totalCartPrice)=>{
     for(const item of coupons){
       if(totalCartPrice >= item.minimum){
         await User.findByIdAndUpdate({_id:userId},{$push:{coupons : item._id}});
-        break;
+      
       }
     }
   } catch (error) {

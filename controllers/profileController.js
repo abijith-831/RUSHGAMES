@@ -7,6 +7,7 @@ const Wallet = require('../models/walletModel')
 const Coupon = require('../models/couponModel')
 const Cart = require('../models/cartModel')
 
+
 // ********** FOR LOADING USER PROFILE PAGE  **********
 const loadUserProfile = async (req,res)=>{
     try {
@@ -81,9 +82,10 @@ const loadAddresses = async (req,res)=>{
     let user = req.session.user_id;
     const userData = await User.findOne({_id:user})
     const addresses = await Address.find({userId : user})
+    const count = addresses.length>0 ? addresses[0].addresses.length : 0;
     
     
-    res.render('addresses',{user:userData,addresses})
+    res.render('addresses',{user:userData,addresses , count})
     
   } catch (error) {
     console.log(error);
@@ -91,12 +93,57 @@ const loadAddresses = async (req,res)=>{
 }
 
  
+// ********** FOR RENDERING EDIT ADDRESS PAGE  **********
+const editAddress = async (req,res)=>{
+  try {
+    const user = req.session.user_id;
+    const userData = await User.findOne({_id : user})
+    const addressData = await Address.findOne({userId : user})
+    const addressId = req.query.addressId
+    const address = addressData.addresses.find(item=> item._id.toString() === addressId)
+    
+    res.render('editAddress',{user : userData , address})
+  } catch (error) {
+    console.log(error);
+  } 
+}
+ 
+
+// ********** FOR SUBMITTING THE EDIT ADDRESS FORM  **********
+const submitEditAddress = async (req,res)=>{
+  try {
+    const userId = req.session.user_id ;
+    const userData = await User.findOne({_id : userId})
+    const addressId = req.body.addressId;
+    const addressData = await Address.findOne({userId : userId})
+    const address = addressData.addresses.find(item=> item._id.toString() === addressId)
+    
+    address.name = req.body.name ; 
+    address.mobile = req.body.mobile ; 
+    address.pincode = req.body.pincode ; 
+    address.district = req.body.district ; 
+    address.state = req.body.state ; 
+    address.city = req.body.city ; 
+    address.area = req.body.area ; 
+    address.houseNo = req.body.houseNo ; 
+
+    
+    await addressData.save();
+
+    res.redirect('/addresses')
+  } catch (error) { 
+    console.log(error);
+  } 
+}
+
+
 // ********** FOR ADDING NEW ADDRESS  **********
 const addNewAddress = async (req,res)=>{
   try {
     const user =req.session.user_id
     const { name , mobile, pincode ,district,state,city,area,houseNo} = req.body
     const verifyData = await Address.findOne({userId:user})
+    
     
      let obj={
       name: name,
@@ -110,8 +157,11 @@ const addNewAddress = async (req,res)=>{
       }
     
       if(verifyData){
-        verifyData.addresses.push(obj)
-        await verifyData.save()
+        if(verifyData.addresses.length >= 3){
+          return res.json({ success: false, message: "You can only add up to 3 addresses." });
+        }
+        verifyData.addresses.push(obj);
+        await verifyData.save();
       }else{
         let newAddress=new Address({
           userId:user,
@@ -163,8 +213,10 @@ const loadOrderHistory = async (req,res)=>{
         .reduce((acc,curr)=>acc+curr.totalAmount,0)
         totalAmountSums.push(totalAmountSum)
     })
+
     totalAmountSums = totalAmountSums.reverse()
     orders = orders.reverse()
+    
     res.render('orderHistory',{user:userData , order:orders , totalAmountSums}) 
   } catch (error) {
     console.log(error);
@@ -180,7 +232,7 @@ const loadOrderDetailsPage = async (req,res)=>{
     const {orderId} = req.query;
     const userData = await User.findOne({_id:userId})
     const order = await Order.findOne({orderId:orderId}).populate('games.gameId')
-    console.log(order+'order');
+    
     let total = 0
     if (order) {
       total = order.games
@@ -201,16 +253,60 @@ const loadOrderDetailsPage = async (req,res)=>{
 // ********** FOR CANCEL ORDER  **********
 const cancelOrder = async (req,res)=>{
   try {
+    console.log('bcbd');
     const userId = req.session.user_id;
-    const {reason,orderId,gameId} = req.body;
+    const wallet = await Wallet.findOne({userId : userId})
+    const { reason,orderId,gameId } = req.body;
     const order = await Order.findOne({_id:orderId })
     const game = order.games.find(item =>item.gameId.equals(gameId))
+    if(order.paymentMethod !== 'cashOnDelivery'){
+      const previousBalance = wallet.balance
+      wallet.balance = wallet.balance + game.price
+      wallet.history.push({
+          amount : game.price,
+          method : 'Purchase Return',
+          transactionType : 'credit',
+          date : Date.now(),
+          previousBalance,
+          currBalance : wallet.balance
+      })
+      await wallet.save()
+  }
     game.reason = reason ; 
+    order.totalCartPrice = order.totalCartPrice - game.totalAmount
     game.Status = 'Cancelled';
     await order.save()
     res.json({success:true})
   } catch (error) {
     console.log('error');
+  }
+} 
+
+
+
+// ********** FOR RETURNING ORDER  **********
+const returnOrder = async (req,res)=>{
+  try {
+    if(req.body){
+      res.json({success : true})
+    }
+    const { gameId , orderId , reason} = req.body;
+    
+    const order = await Order.findById(orderId)
+    if(!order){
+      return res.status(404).json({success : false , message : "Order not Found"})
+    }
+
+    const game = order.games.find(item => item.gameId.toString()===gameId)
+    if ( game ){
+      game.Status = "Return";
+      game.reason = reason;
+    } 
+
+    order.approval = 1 
+    await order.save();
+  } catch (error) {
+    console.log(error);
   }
 }
 
@@ -369,6 +465,8 @@ module.exports = {
 
 
     loadAddresses,
+    editAddress,
+    submitEditAddress,
     addNewAddress,
     deleteAddress,
 
@@ -376,6 +474,7 @@ module.exports = {
     loadOrderHistory,
     loadOrderDetailsPage,
     cancelOrder ,
+    returnOrder,
 
 
     loadWallet,

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Category = require('./categoryModel')
 
+
 const gameSchema = mongoose.Schema({
     name : {
         type:String,
@@ -15,6 +16,14 @@ const gameSchema = mongoose.Schema({
         type : Number,
         required : true,
         min :0
+    },
+    gameOfferPrice : {
+        type : Number,
+        min : 0
+    },
+    categoryOfferPrice : {
+        type : Number , 
+        min : 0
     },
     stock : {
         type : Number,
@@ -47,10 +56,15 @@ const gameSchema = mongoose.Schema({
     is_listed : {
         type : Boolean,
         default : true
+    },
+    finalPrice : {
+        type : Number , 
+        min : 0
     }
 
     
 })
+
 
 function arrayLimit (val){
     return val.length <=4

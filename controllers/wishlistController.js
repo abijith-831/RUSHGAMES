@@ -19,7 +19,7 @@ const loadWishlist = async (req,res)=>{
         console.log(error);
     }
 }
- 
+  
 
 // ********** FOR ADDING GAME TO THE WISHLIST **********
 const addToWishlist = async (req,res)=>{
@@ -135,6 +135,7 @@ const addToCartAndRemove = async (req, res) => {
         res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
+
 
 
 module.exports = {

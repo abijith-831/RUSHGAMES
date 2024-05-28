@@ -109,10 +109,21 @@
                                                 <div class="col-md-2 " style="color: black; font-size: 50px; text-decoration: line-through;" >
                                                     <a class="btn change-btn" style="border: 2px solid rgb(0, 0, 0); " >Cancelled</a>
                                                 </div>
-                                            <%  }else if(game.Status ==="Delivered") { %>  
-                                                <div class="col-md-2 " style="color: black; font-size: 50px; border-color: rgb(17, 16, 16); " >
-                                                    <a class="btn change-btn" style="border: 2px solid rgb(5, 5, 5);" data-toggle="modal" data-target="#cancelOrderModa" data-game-id="<%= game.gameId._id %>" data-order-id="<%= order._id %>">Return </a>
-                                                </div>
+                                            <%  }else if(game.Status ==="Delivered" || game.Status === "Return") { %>  
+                                                <% if(game.approval === 'Waiting') { %>
+                                                    <div class="col-md-2 " style="color: black; font-size: 50px; border-color: rgb(17, 16, 16); " >
+                                                        <a class="btn change-btn" style="border: 2px solid rgb(5, 5, 5);" data-toggle="modal" data-target="#returnOrderModal" data-game-id="<%= game.gameId._id %>" data-order-id="<%= order._id %>">Return </a>
+                                                    </div>
+                                                <% }else if (game.approval === 'Accepted') { %>
+                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                        <p class="text-muted mb-0 ">Accepted</p>
+                                                    </div>
+                                                <% }else if(game.approval === 'Rejected'){  %>
+                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                        <p class="text-muted mb-0 " style="color: red;">Rejected</p>
+                                                    </div>
+                                                <%  } %>
+                                                
                                             <%  }else { %>
                                                 <div class="col-md-2 " style="color: black; font-size: 50px; border-color: red; " >
                                                     <a class="btn change-btn" style="border: 2px solid red;" data-toggle="modal" data-target="#cancelOrderModal" data-game-id="<%= game.gameId._id %>" data-order-id="<%= order._id %>">Cancel Order</a>
@@ -141,7 +152,7 @@
                         <% } %>
                         <div class="row mt-3" style="font-weight: bold;">
                             <div class="col-md-12">
-                                <p class="text-muted mb-0" style="font-weight: bold;">Total Cart Price: <%= total %></p>
+                                <p class="text-muted mb-0" style="font-weight: bold;">Total Cart Price: <%= order.totalCartPrice %></p>
                             </div>
                         </div>
                     </div>
@@ -168,7 +179,6 @@
           <div class="form-group">
             <label for="reasonSelect" style="font-size: 16px; color: black;">Reason for Cancellation</label>
             <select class="form-control" id="reasonSelect">
-              <option style="font-size: 16px; color: black;" selected >Choose...</option>
               <option style="font-size: 16px; color: black;" value="Order created by Mistake">Order created by Mistake</option>
               <option style="font-size: 16px; color: black;" value="Item will not Arrive on Time">Item will not Arrive on Time</option>
               <option style="font-size: 16px; color: black;" value="More Expensive ">More Expensive </option>
@@ -187,29 +197,112 @@
 </div>
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- reason asking modal for return order -->
+<div class="modal fade" id="returnOrderModal" tabindex="-1" role="dialog" aria-labelledby="returnOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="returnOrderModalLabel">Return Order</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size: 20px; color: black;"> Are you sure you want to return this order?</p>
+          <div class="form-group">
+            <label for="returnReason" style="font-size: 20px; color: black;">Reasons for Return Game</label>
+            <select class="form-control" id="returnReason">
+              
+              <option style="font-size: 20px; color: black;" value="Defective or Damaged Game">Defective or Damaged Game</option>
+              <option style="font-size: 20px; color: black;" value="Wrong Game received">Wrong Game received</option>
+              <option style="font-size: 20px; color: black;" value="Compatibility Issues">Compatibility Issues </option>
+              <option style="font-size: 20px; color: black;" value="Change of Mind">Change of Mind</option>
+              <option style="font-size: 20px; color: black;" value="Other Reasons">Other Reasons</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-warning" id="confirmReturnOrder">Return</button>
+        </div>
+      </div>
+    </div>
+</div>
 
 
+
+
+
+
+<!-- cancel order reason passing to backend -->
 <script>
-    let game
-    let order
-    $('.change-btn').click(function() {
-     game = $(this).data('game-id');
-     order = $(this).data('order-id');
+    document.addEventListener("DOMContentLoaded", function() {
+    const cancelOrderModal = document.getElementById('cancelOrderModal');
+    const confirmCancelOrderBtn = document.getElementById('confirmCancelOrder');
+    let selectedGameId;
+    let selectedOrderId;
+
+    $('#cancelOrderModal').on('show.bs.modal', function(event) {
+        const button = $(event.relatedTarget);
+        selectedGameId = button.data('game-id');
+        selectedOrderId = button.data('order-id');
+    });
+
+    confirmCancelOrderBtn.addEventListener('click', function() {
+        const reasonSelect = document.getElementById('reasonSelect');
+        const selectedReason = reasonSelect.value;
+
+        const data = {
+            reason: selectedReason,
+            orderId: selectedOrderId,
+            gameId: selectedGameId
+        };
+
+        fetch('/cancelOrder', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(data => {
+          
+            $('#cancelOrderModal').modal('hide');
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
 });
 
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelector('#confirmCancelOrder').addEventListener('click', function() {
-            const reason = document.getElementById('reasonSelect').value;
-            const gameId = game;
-            const orderId = order;
-      
-            fetch('/cancelOrder', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
+</script>
+
+
+
+<!-- Return order reason passing to backend -->
+<script>
+    let gameId , orderId , selectedButton
+    
+   document.querySelectorAll('.change-btn').forEach(button =>{
+    button.addEventListener('click',function(){
+        gameId = this.getAttribute('data-game-id');
+        orderId = this.getAttribute('data-order-id');
+        selectedButton = this;
+    })
+   })
+
+    document.addEventListener('DOMContentLoaded',function(){
+        document.getElementById('confirmReturnOrder').addEventListener('click',function(){
+            const reason = document.getElementById('returnReason').value;
+            
+            fetch('/returnOrder',{
+                method : 'POST',
+                headers : {
+                    'Content-type' : 'application/json'
                 },
-                body: JSON.stringify({ reason: reason, orderId: orderId, gameId: gameId })
+                body : JSON.stringify({reason : reason , orderId : orderId , gameId , gameId})
             })
             .then(response => {
                 if (!response.ok) {
@@ -221,29 +314,31 @@
                 if (data.success) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Cancelled!',
-                        text: 'Successfully Cancelled your Order',
+                        title: 'Request Send!',
+                        text: 'Your return request has been successfully sent',
                         showConfirmButton: false,
                         timer: 1500
                     }).then(() => {
-                        window.location.reload();
+                        selectedButton.innerText = 'Request Sent';
+                        selectedButton.classList.remove('btn-warning');
+                        selectedButton.classList.add('btn-success');
+                        selectedButton.disabled = true;
                     });
                 } 
                 
-                document.getElementById('cancelOrderModal').style.display = 'none'; // Close the modal
+                document.getElementById('returnOrderModal').style.display = 'none'; 
             })
             .catch(error => {
                 console.error('There has been a problem with your fetch operation:', error);
             });
-            $('#cancelOrderModal').modal('hide');
-        });
-    });
+            $('#returnOrderModal').modal('hide');
+        })
+    })
 </script>
 
 
-
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/6en8XCp+HHAAK5GSLf2xlYtvJ8U2Q4U+9cuEnJoa3" crossorigin="anonymous">
 

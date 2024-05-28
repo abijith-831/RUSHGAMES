@@ -280,36 +280,39 @@ p {
               </div>
           </div>
           <div class="col-md-8 ml-5">
-    <div class="card mb-3">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-4">
-                    <% if (coupons && coupons.length >= 1) { %>
-                        <% coupons.forEach(item => { %>
-                            <div class="card coupon-card">
-                                <div class="card-body">
-                                    <h5 class="card-title"><%= item.couponName %></h5><br>
-                                    <h6 class="card-title">
-                                        <%= item.couponCode %>
-                                        <button class="copy-button" onclick="copyToClipboard('<%= item.couponCode %>')">Copy Code</button>
-                                    </h6><br>
-                                    <p class="card-text"><%= item.description %></p>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row">
+                        <% if (coupons && coupons.length >= 1) { %>
+                            <% coupons.forEach(item => { %>
+                                <div class="col-md-4">
+                                    <div class="card coupon-card">
+                                        <div class="card-body">
+                                            <h5 class="card-title"><%= item.couponName %></h5><br>
+                                            <h6 class="card-title">
+                                                <%= item.couponCode %>
+                                                <button class="copy-button" onclick="copyToClipboard('<%= item.couponCode %>')">Copy Code</button>
+                                            </h6><br>
+                                            <p class="card-text"><%= item.description %></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        <% } else { %>
+                            <div class="col-md-12">
+                                <div class="empty-wishlist">
+                                    <div class="empty-message">
+                                        <p>Your Coupon List is empty.</p>
+                                        <p>Buy some Games to get Coupons!</p>
+                                    </div>
                                 </div>
                             </div>
-                        <% }) %>
-                    <% } else { %>
-                        <div class="empty-wishlist">
-                            <div class="empty-message">
-                                <p>Your Coupon List is empty.</p>
-                                <p>Buy some Games to get Coupons!</p>
-                            </div>
-                        </div>
-                    <% } %>
+                        <% } %>
+                    </div>
+                    <div class="row mt-3"></div>
                 </div>
             </div>
-            <div class="row mt-3"></div>
-        </div>
-    </div>
+            
 </div>
 
       </div>

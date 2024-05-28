@@ -131,7 +131,28 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                                                  
+                                        <% categoryOffer.forEach ((item , index)=> { %>
+                                            <tr style="width: 100%;">
+                                            <th><%= index +1 %></th>
+                                            <th><%= item.categoryId.name %></th>
+                                            <th><%= item.discount %>%</th>
+                                            <th><%= new Date(item.startDate).toLocaleString('en-IN',{year : 'numeric',month:'numeric',day : '2-digit',hour : '2-digit',minute :'2-digit'}) %></th>
+                                            <th><%= new Date(item.expiryDate).toLocaleString('en-IN',{year : 'numeric',month:'numeric',day : '2-digit',hour : '2-digit',minute :'2-digit'}) %></th>
+                                            <td class="text-right align-middle">
+                                        
+                                                <% if (item.is_active===false) { %>
+                                                  <a>
+                                                    <button id="Hide-<%= item._id %>" onclick="confirmAction('<%= item._id %>' , 'Show')"  class="btn btn-danger ml-5">Hide</button>
+                                                  </a>
+                                                <%  }else{ %>
+                                                  <a >
+                                                    <button id="Show-<%= item._id %> " onclick="confirmAction('<%= item._id %>' , 'Hide')" class="btn btn-success ml-5">Show</button>
+                                                  </a>
+                                                <%  } %>
+                                                    
+                                            </td>
+                                        </tr>
+                                        <%  })  %>                   
                                 </tbody>
                             </table>
 
@@ -164,9 +185,11 @@
                     
                 <div class="form-group">
                     <label for="categoryName">Category Name</label>
-                    <select class="form-control" id="categoryName" required>
+                    <select class="form-control" id="categoryId" required>
                         <option value="">Select a Category</option>
-                        
+                        <% categories.forEach(function(category) { %>
+                            <option value="<%= category._id%>"><%= category.name %></option>
+                        <%  })  %>
                     </select>
                     <p id="categoryNameError" style="color: red;"></p>
                 </div>
@@ -199,13 +222,13 @@
         document.querySelector('#submitCategoryOfferModal').addEventListener('click',function(event){
             event.preventDefault();
               if(validation()){
-                const gameId = document.getElementById('gameName').value.trim();
+                const categoryId = document.getElementById('categoryId').value.trim();
                 const discount = document.getElementById('discount').value.trim();
                 const expiryDate = document.getElementById('expiryDate').value.trim();
 
-                const formData = { gameId , discount , expiryDate }
+                const formData = { categoryId , discount , expiryDate }
 
-                fetch('/admin/addGameOffer',{
+                fetch('/admin/addCategoryOffer',{
                     method : 'POST',
                     headers : {
                         "Content-type":"application/json"
@@ -218,7 +241,7 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Success!',
-                                text: 'Coupon Added Successfully',
+                                text: 'Category Offer Added Successfully',
                                 showConfirmButton: false,
                                 timer: 1500
                             })
@@ -234,7 +257,7 @@
                             });
                             }
 
-                            $('#addCouponModal').modal('hide');
+                            $('#addCategoryOfferModal').modal('hide');
                         })
                         .catch(error => {
                             console.log(error);
@@ -244,7 +267,7 @@
                             text: 'An error occurred while processing your request.',
                             confirmButtonText: 'OK'
                             });
-                            $('#addCouponModal').modal('hide');
+                            $('#addCategoryOfferModal').modal('hide');
                         });
               }
                 
@@ -274,6 +297,48 @@ function validation(){
 
 </script>
 
+
+<!----------- category offer hide & show functionality  ----------- -->
+<script>
+    function confirmAction (categoryOfferId){
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'You are about to change this category Offer?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, Change it!',
+          cancelButtonText: 'Cancel'
+      }).then((result) => {
+          if (result.isConfirmed) { 
+              fetch('/admin/categoryOfferStatus', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ categoryOfferId : categoryOfferId })
+              })
+             .then(response => response.json()) 
+             .then(data => {
+                  if (data.success) { 
+                      let action = data.newStatus? 'Hiding' : 'Showing'; 
+                      Swal.fire({
+                          title: `${action}`,
+                          text: `The Category offer has been ${action}`,
+                          icon: 'success',
+                          showConfirmButton: false,
+                          timer: 1500,
+                          timerProgressBar: true
+                      }).then(() => {
+                          window.location.reload();
+                      });
+                  }
+              });
+          }
+      });
+    }
+</script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>

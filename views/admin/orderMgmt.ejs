@@ -76,7 +76,7 @@
                                             <td><%= order.userId.name %></td>
                                             <td><%= order.orderId %></td>
                                             <td><%= order.totalCartPrice %></td>
-                                            <td><%= order.orderDate %></td>
+                                            <td><%= new Date (order.orderDate).toLocaleString('en-IN',{ year : 'numeric',month : '2-digit',day : '2-digit' , hour : '2-digit',minute : '2-digit'}) %></td>
                                             <td><%= order.paymentMethod %></td>
                                             <td class="text-right align-middle">
                                             <button class="btn btn-primary" onclick="showOrderDetailsPage('<%= order._id%>')">Details</button>                                                                                                      

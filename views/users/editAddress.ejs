@@ -1,0 +1,251 @@
+<%-include('../layouts/header.ejs')%>
+<%-include('../layouts/navbar.ejs')%>
+
+<style>
+    .text-red {
+        color: red;
+    }
+    .small-text {
+        font-size: 12px; /* Adjust the font size as needed */
+    }
+
+    .password-wrapper {
+        position: relative;
+        
+    }
+    .btn-outline-primary-2 {
+    border: 1px solid black; /* Black border */
+    color: black; /* Black text */
+    background-color: transparent; /* Transparent background */
+}
+.form-control {
+    border: 1px solid #000;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+    .password-icon {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        cursor: pointer;
+    }
+
+    .password-rules {
+        display: none;
+        margin-top: 5px;
+        font-size: 12px;
+        color: #999;
+    }
+    .text-center {
+        text-align: center;
+    }
+    
+    .font-weight-bold {
+        font-weight: bold;
+        color: black; /* Set text color to black */
+    }
+    .form-box1 {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #fff;
+    padding: 2.2rem 2rem 4.4rem;
+    box-shadow:0 3px 16px rgba(51, 51, 51 , 0.1);
+    }
+</style>
+
+<div class="page-wrapper">
+    <main class="main">
+
+        <div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17" style="background-image: url('assets/images/backgrounds/login-bg.jpg')">
+            <div class="container">
+                <div class="form-box1" style="width: 1000px;">
+                    <div class="form-tab">
+                        
+                        <ul class="nav nav-pills nav-fill" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="register-tab-2" data-toggle="tab" href="#register-2" role="tab" aria-controls="register-2" aria-selected="true">Edit Address</a>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
+                                <form method="post" action="/submitEditAddress" onsubmit="return validation()">
+                                    <input type="hidden" name="addressId" value="<%= address._id %>">
+                                   <div class="row">
+                                    <div class="form-group col-lg-6">
+                                        <label for="name">Name *</label>
+                                        <input type="text" class="form-control" id="name" name="name" value="<%= address.name %>">
+                                        <p id="errorName" style="color: coral;"></p>
+                                    </div>                                
+                                    <div class="form-group col-lg-6">
+                                        <label for="mobile">Your Mobile Number *</label>
+                                        <input type="text" class="form-control" id="mobile" name="mobile" value="<%= address.mobile %>" >
+                                        <p id="errorMobile" style="color: coral;"></p>
+                                    </div>
+                                   </div> 
+                                   <div class="row">
+                                    <div class="form-group col-lg-6">
+                                        <label for="pincode">Pincode *</label>
+                                        <input type="text" class="form-control" id="pincode" name="pincode" value="<%= address.pincode %>">
+                                        <p id="errorPincode" style="color: coral;"></p>
+                                    </div>                                
+                                    <div class="form-group col-lg-6">
+                                        <label for="district">District *</label>
+                                        <input type="text" class="form-control" id="district" name="district" value="<%= address.district %>">
+                                        <p id="errorDistrict" style="color: coral;"></p>
+                                    </div>
+                                   </div> 
+                                   <div class="row">
+                                    <div class="form-group col-lg-6">
+                                        <label for="state">State *</label>
+                                        <input type="text" class="form-control" id="state" name="state" value="<%= address.state %>">
+                                        <p id="errorState" style="color: coral;"></p>
+                                    </div>                                
+                                    <div class="form-group col-lg-6">
+                                        <label for="city">City *</label>
+                                        <input type="text" class="form-control" id="city" name="city" value="<%= address.city %>" >
+                                        <p id="errorCity" style="color: coral;"></p>
+                                    </div>
+                                   </div> 
+
+                                    
+                                
+                                    
+                                
+                                    <div class="form-group">
+                                        <label for="area">Area *</label>
+                                        <div class="password-wrapper">
+                                            <input type="text" class="form-control" id="area" name="area" value="<%= address.area %>">
+                                            <p id="errorArea" style="color: coral;"></p>
+                                           
+                                        </div>
+                                        
+                                    </div>
+                                
+                                    <div class="form-group">
+                                        <label for="houseNo">House No .  *</label>
+                                        <input type="text" class="form-control" id="houseNo" name="houseNo" value="<%= address.houseNo %>">
+                                        <p id="errorHouseNo" style="color: coral;"></p>
+                                    </div>
+                                        <br><br>
+                                    <div class="form-footer d-flex justify-content-center">
+                                        <div id="validation-message"></div>
+                                        <button type="submit" class="btn btn-outline-primary-2 " >
+                                            <span>save Changes</span>
+                                            
+                                        </button>
+                                
+                                        
+                                    </div>
+                                </form>
+                                
+                                
+                            </div><!-- .End .tab-pane -->
+                        </div>
+                    </div><!-- End .form-tab -->
+                </div><!-- End .form-box -->
+            </div><!-- End .container -->
+        </div><!-- End .login-page section-bg -->
+    </main><!-- End .main -->
+</div>
+
+<button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+
+
+<!-- edit address validation -->
+<script>
+    function validation(){
+        let name = document.getElementById("name").value.trim();
+        let mobile = document.getElementById("mobile").value.trim();
+        let pincode = document.getElementById("pincode").value.trim();
+        let district = document.getElementById("district").value.trim();
+        let state = document.getElementById("state").value.trim();
+        let city = document.getElementById("city").value.trim();
+
+        let nameRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)*$/;
+        let mobileRegex = /^(?:(?!0{10})\d{10})$/;
+        let pincodeRegex = /^\d{6}$/;
+        let districtRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)*$/;
+        let stateRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)*$/;
+        let cityRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)*$/;
+
+        let errorName = document.getElementById("errorName");
+        let errorMobile = document.getElementById("errorMobile");
+        let errorPincode = document.getElementById("errorPincode");
+        let errorDistrict = document.getElementById("errorDistrict");
+        let errorState = document.getElementById("errorState");
+        let errorCity = document.getElementById("errorCity");
+
+        errorName.innerText = "";
+        errorMobile.innerText = "";
+        errorPincode.innerText = "";
+        errorDistrict.innerText = "";
+        errorState.innerText = "";
+        errorCity.innerText = "";
+
+
+        // ****** VALIDATE NAME ******
+        if (name === "") {
+            errorName.innerText = "Name cannot be empty";
+            return false;
+        }else if (!nameRegex.test(name)) {
+             errorName.innerText = 'Name can only contain letters and spaces';
+            return false;
+        }
+
+        // ****** VALIDATE MOBILE NUMBER ******
+        if (mobile === "") {
+            errorMobile.innerText = "Mobile number cannot be empty";
+            return false;
+        } else if (!mobileRegex.test(mobile)) {
+            errorMobile.innerText = "Please enter a valid 10-digit mobile number";
+            return false;
+        }
+
+        // ****** VALIDATE PINCODE ******
+        if (pincode === "") {
+            errorPincode.innerText = "pincode cannot be empty";
+            return false;
+        } else if (!pincodeRegex.test(pincode)) {
+            errorPincode.innerText = "Please enter a valid 6 - digit Pincode";
+            return false;
+        }
+
+        // ****** VALIDATE DISTRICT ******
+        if (district === "") {
+            errorDistrict.innerText = "district cannot be empty";
+            return false;
+        }else if (!districtRegex.test(district)) {
+            errorDistrict.innerText = 'district can only contain letters and spaces';
+            return false;
+        }
+
+        // ****** VALIDATE STATE ******
+        if (state === "") {
+            errorState.innerText = "state cannot be empty";
+            return false;
+        }else if (!stateRegex.test(state)) {
+            errorState.innerText = 'state can only contain letters and spaces';
+            return false;
+        }
+
+
+        // ****** VALIDATE CITY ******
+        if (city === "") {
+            errorCity.innerText = "city cannot be empty";
+            return false;
+        }else if (!cityRegex.test(city)) {
+            errorCity.innerText = 'city can only contain letters and spaces';
+            return false;
+        }
+
+
+        return true
+    }
+</script>
+
+<%-include('../layouts/footbar.ejs')%>
+<%-include('../layouts/footer.ejs')%>   

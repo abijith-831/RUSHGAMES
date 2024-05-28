@@ -71,7 +71,8 @@ admin_route.get('/categoryStatus',categoryController.categoryStatus)
 admin_route.get('/orderHistory',orderController.loadOrderHistory)
 admin_route.get('/adminOrderDetailsPage',orderController.loadAdminOrderDetails)
 admin_route.post('/changeStatus',orderController.changeStatus)
-
+admin_route.post('/approveRequest',orderController.approveRequest)
+admin_route.post('/rejectRequest',orderController.rejectRequest)
 
 // ****** COUPON HANDINLING SECTION ******
 admin_route.get('/couponList',couponController.loadCouponList)
@@ -84,6 +85,8 @@ admin_route.post('/addGameOffer',offerController.addGameOffer)
 admin_route.post('/gameOfferStatus',offerController.gameOfferStatus)
 
 admin_route.get('/categoryOfferList',offerController.loadCategoryOfferList)
+admin_route.post('/addCategoryOffer',offerController.addCategoryOffer)
+admin_route.post('/categoryOfferStatus',offerController.categoryOfferStatus)
 
 
 module.exports = admin_route; 
