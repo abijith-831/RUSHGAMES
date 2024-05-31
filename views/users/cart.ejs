@@ -54,12 +54,12 @@
 										
 									<% if (cartData && cartData.length > 0) { %>  	
 										<% cartData.forEach(gameItem => { %>
-											
+												
 												<tr>
 													<td class="product-col col-lg-4">
 														<div class="product">
 															<a href="#">
-																<img src="<%=gameItem.mainImage.path%>" alt="<%= gameItem.name %>" style="width: 100px; height: 100px;">>
+																<img src="<%=gameItem.mainImage.path%>" alt="<%= gameItem.name %>" style="width: 100px; height: 100px; margin-right: 30px; margin-left: 30px;">>
 															</a>	
 																													
 															<h3 class="product-title  ">
@@ -68,7 +68,7 @@
 															
 														</div>
 													</td>
-													<td class="price-col"><%= gameItem.price %></td>
+													<td class="price-col"><%= gameItem.gameId.finalPrice ? gameItem.gameId.finalPrice : gameItem.price %></td>
 													<td class="quantity-col">
 														<div class="cart-product-quantity">
 															<input 
@@ -84,7 +84,7 @@
 														</div>
 
 													</td>
-													<td class="total-col" style="color: black; font-weight: bold;" ><%= gameItem.totalAmount%></td>
+													<td class="total-col" style="color: black; font-weight: bold;" ><%= gameItem.gameId.finalPrice ? gameItem.gameId.finalPrice : gameItem.price %></td>
 													<td class="remove-col">
 														<button class="btn-remove" onclick="confirmDelete('<%= gameItem.name %>' , '<%= gameItem.gameId._id %> ')">
 															<i class="icon-close"></i>
@@ -105,22 +105,12 @@
 												
 										
 									</tbody>
-								</table><!-- End .table table-wishlist -->
+								</table>
+								<% if (errmsg) { %>
+									<h6 style="text-align: center; color: red;"><%= errmsg %></h6>
+								<% } %>
 
-	                			<div class="cart-bottom">
-			            			<div class="cart-discount">
-			            				<form action="#">
-			            					<div class="input-group">
-				        						<input type="text" class="form-control" required placeholder="coupon code">
-				        						<div class="input-group-append">
-													<button class="btn btn-outline-primary-2" type="submit"><i class="icon-long-arrow-right"></i></button>
-												</div><!-- .End .input-group-append -->
-			        						</div><!-- End .input-group -->
-			            				</form>
-			            			</div><!-- End .cart-discount -->
-
-			            			
-		            			</div><!-- End .cart-bottom -->
+	                			
 	                		</div><!-- End .col-lg-9 -->
 	                		<aside class="col-lg-2.9 ml-5  content-container">
 	                			<div class="summary summary-cart">
@@ -279,24 +269,6 @@ document.querySelectorAll('.quantity-input').forEach(input => {
 
 </script>
 	
-
-<!-- sweetalert message for cart is empty while pressing proceed to checkout -->
-<script>
-	// function proceedToCheckOut() {
-	// 	fetch('/checkOut')
-	// 	   .then(response => response.json())
-	// 	   .then(data => {
-	// 			if (data.message === "There is Nothing in Cart to Purchase") {
-	// 				Swal.fire({
-	// 					title: 'Info',
-	// 					text: data.message,
-	// 					icon: 'info',
-	// 					confirmButtonText: 'OK'
-	// 				});
-	// 			} 
-	// 		})
-	// 	}
-</script>
 	
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>

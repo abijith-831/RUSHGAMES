@@ -270,12 +270,20 @@
                                                     </div>
                                                 <%   }  %> 
                                             <% }) %>
-                                        </div>
+                                        </div> 
                                         <div class="row mt-3" style="font-weight: bold;">
-                                          
-                                            <div class="col-md-4">
+                                          <% if (orderItem.discount) { %>
+                                              <% const discountedPrice = orderItem.totalCartPrice - (orderItem.totalCartPrice * orderItem.discount/100) %>
+                                              <div class="col-md-4">
+                                                <p class="text-muted mb-0" style="font-weight: bold;">Total Price: <%= discountedPrice %></p>
+                                              </div>
+                                          <% }else { %>
+                                              <div class="col-md-4">
                                                 <p class="text-muted mb-0" style="font-weight: bold;">Total Price: <%= orderItem.totalCartPrice %></p>
-                                            </div>
+                                              </div>
+                                          <% } %> 
+                                          
+                                            
                                             <div class="col-md-4">
                                               
                                                 <p class="text-muted mb-0" style="font-weight: bold;">

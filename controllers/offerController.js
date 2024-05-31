@@ -41,9 +41,17 @@ const addGameOffer = async (req,res)=>{
 const gameOfferStatus = async (req , res)=>{
     try {
         const { gameOfferId } = req.body;
+        const games = await Games.find({is_listed : true})
+        
         const gameOffer = await GameOffer.findOne({_id : gameOfferId})
         
         gameOffer.is_active = !gameOffer.is_active;
+
+        
+            await Games.updateMany(
+                {$set : {gameOffer : null}}
+            )
+        
         await gameOffer.save();
         res.json({success : true , newStatus : gameOffer.is_active})
     } catch (error) {
@@ -91,15 +99,24 @@ const categoryOfferStatus= async (req,res)=>{
     try {
         const { categoryOfferId } = req.body;
         const categoryOffer = await CategoryOffer.findOne({_id : categoryOfferId});
+        const games = await Games.find({is_listed : true})
+          
 
         categoryOffer.is_active = !categoryOffer.is_active;
+
+        
+            await Games.updateMany(
+                
+                { $set: { categoryOffer: null } }
+            );
+        
         await categoryOffer.save();
         res.json ({success : true , newStatus : categoryOffer.is_active})
     } catch (error) {
         console.log(error);
     }
-}
-
+} 
+ 
 
 module.exports = {
     loadgameOfferList,

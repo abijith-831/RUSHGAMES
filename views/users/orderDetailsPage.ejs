@@ -36,7 +36,7 @@
        
         <div class="col-md-4">
             <h4 class="text-center headings " style="font-weight: bold;" >Order Info <i class="fas fa-info-circle"></i></h4>
-            <p> <strong>Date: <%= order.orderDate %></strong> <span id="orderDate"></span></p>
+            <p> <strong>Date & Time: <%= new Date(order.orderDate).toLocaleString('en-IN',{year :'numeric' , month : 'numeric', day : '2-digit' , hour : '2-digit',minute : '2-digit'}) %></strong> <span id="orderDate"></span></p>
             <p><strong>Order ID: <%= order.orderId%></strong> <span id="orderId"></span></p>
             <p><strong>Payment Method : <%=order.paymentMethod %></strong> <span id="customerName"></span></p>
             <p><strong>Phone: <%=    user.mobile %></strong> <span id="customerPhone"></span></p>
@@ -47,6 +47,11 @@
         </div>
         <div class="col-md-4">
             <h4 class="text-center headings">Your Rewards</h4>
+            <% if (order.discount) { %> 
+                <h3><strong>Discount : <%=    order.discount %></strong> </h3>
+            <% }else { %>
+                <h3><strong>No Offers Received</strong> </h3>
+            <% } %> 
             
         </div>
     </div>
@@ -151,9 +156,17 @@
                             <% }) %>
                         <% } %>
                         <div class="row mt-3" style="font-weight: bold;">
-                            <div class="col-md-12">
-                                <p class="text-muted mb-0" style="font-weight: bold;">Total Cart Price: <%= order.totalCartPrice %></p>
-                            </div>
+                            <% if(order.discount) { %> 
+                                <% const discountedPrice = order.totalCartPrice - (order.totalCartPrice * order.discount/100) %>
+                                <div class="col-md-12">
+                                    <p class="text-muted mb-0" style="font-weight: bold;">Total Cart Price: <%= discountedPrice %></p>
+                                </div>
+                            <% }else { %>
+                                <div class="col-md-12">
+                                    <p class="text-muted mb-0" style="font-weight: bold;">Total Cart Price: <%= order.totalCartPrice %></p>
+                                </div>
+                            <%} %>
+                            
                         </div>
                     </div>
                 </div>

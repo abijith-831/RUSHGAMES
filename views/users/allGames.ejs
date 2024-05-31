@@ -22,7 +22,9 @@
 .product-image.with-border {
     border: 2px solid #000;
 }
-
+.label-news{
+	background-color: rgb(8, 171, 247);
+}
 
 
 </style>
@@ -80,10 +82,16 @@
 								<div class="row justify-content-center" id="gameList">
 									
 										<% games.forEach(game => { %> 
-										
+											
 											<div class="col-md-4">
 												<div class="product product-7 text-center">
-													<figure class="product-media">										
+													<figure class="product-media">
+														<% if (game.gameOffer) { %>
+															<span class="product-label label-new"><%= game.gameOffer %> % OFF</span>
+														<% }else if (game.categoryOffer){ %>
+															<span class="product-label label-news"><%= game.categoryOffer %> % OFF</span>
+														<% } %>	
+																							
 														<input type="hidden" class="system-req" value="<%= game.systemReq %>">
 														
 														<input type="hidden" id="mainImage" name="mainImage" value="<%= JSON.stringify(game.image)%>">
@@ -128,9 +136,17 @@
 															<a href="/gameDetails?id=<%=game._id%>"><%= game.categoryName %></a>
 														</div>
 														<h3 class="product-title"><a href="/gameDetails?id=<%=game._id%>"><%= game.name %></a></h3><!-- End .product-title -->
-														<div class="product-price">
-															<%= game.price %>
-															<p style="font-weight: bold;">   -Rs</p>
+														<div class="product-price "> 
+															<% if (game.gameOffer) { %>
+																<span style="text-decoration: line-through; margin-right: 20px; color: grey;"><%= game.price %> -Rs</span>
+																<span style="color: rgb(0, 0, 0); font-weight: bold;"><%= Math.round(game.price - (game.price * game.gameOffer / 100)) %> Rs</span>
+															<% } else if (game.categoryOffer) { %>
+																<span style="text-decoration: line-through; margin-right: 20px; color: grey;"><%= game.price %> -Rs</span>
+																<span style="color: rgb(5, 5, 5); font-weight: bold;"><%= Math.round(game.price - (game.price * game.categoryOffer / 100)) %> Rs</span>
+															<% }else { %>
+																<%= game.price %> -Rs
+															<% } %>
+															
 														</div><!-- End .product-price -->
 													</div><!-- End .product-body -->
 												</div><!-- End .product -->

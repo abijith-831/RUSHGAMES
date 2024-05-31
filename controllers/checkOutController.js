@@ -14,7 +14,7 @@ const instance = new Razorpay({
   key_id : 'rzp_test_v7eXLfL0Wt6Ws9',
   key_secret : 'AYLcwjPi06hnNEvNPogTv4lf'
 })
-
+ 
 
 // ********** FOR RENDERING CHECKOUT PAGE **********
 const loadCheckOut = async (req,res)=>{
@@ -27,12 +27,14 @@ const loadCheckOut = async (req,res)=>{
       const count = addresses.length > 0 ? addresses[0].addresses.length  : 0 ;
 
       const cartData = await Cart.findOne({userId : userId})
-      if(!cartData || cartData.games.length === 0){
-        return res.json({message:"There is Nothing in Cart to Purchase"})
-      }
+      if (!cartData || cartData.games.length === 0) {
+        
+        req.flash('errmsg', 'Your cart is empty. Please add items to proceed to checkout.');
+        return res.redirect('/cart');
+    }
       
       const coupon = await Coupon.find({is_active:false})
-     
+      
       const gameIds = cartData.games.map(game => game.gameId);
       const gameDetailsPromises = gameIds.map(gameId => Games.findOne({_id: gameId}));
       const gameDetails = await Promise.all(gameDetailsPromises); 
@@ -141,7 +143,7 @@ const placeOrder = async (req,res)=>{
     }
           
     const orderInstance = new Order(newOrder);
-
+    
         if(selectedPayment === 'wallet'){// wallet payment
           const wallet = await Wallet.findOne({userId:userId})
           if(!wallet){
@@ -150,11 +152,20 @@ const placeOrder = async (req,res)=>{
           else if(cart.totalCartPrice>wallet.balance){
             return res.json({success:false , message:"Insufficient"})
           }else{
- 
+            
             await orderInstance.save();
-            wallet.balance = wallet.balance - cart.totalCartPrice;
+            
+            let discountedPrice = cart.totalCartPrice;
+            if(orderInstance.discount){
+              
+              discountedPrice =orderInstance.totalCartPrice - ( orderInstance.totalCartPrice * orderInstance.discount/100)
+              wallet.balance = wallet.balance - discountedPrice;
+            }else{
+              wallet.balance = wallet.balance - cart.totalCartPrice;
+            }
+            
             wallet.history.push({
-              amount : cart.totalCartPrice,
+              amount : discountedPrice,
               method : 'Purchase',
               transactionType : 'debit',
               date : Date.now(),
@@ -166,7 +177,7 @@ const placeOrder = async (req,res)=>{
             
             await giveCoupon(userId,cart.totalCartPrice)
             
-
+            
             return res.json({success : true})
 
           }
@@ -193,7 +204,7 @@ const placeOrder = async (req,res)=>{
           
           await giveCoupon(userId, cart.totalCartPrice , couponId);
           
-
+          
           res.json({success: true})
         }
        
@@ -209,8 +220,9 @@ const placeOrder = async (req,res)=>{
             { _id: userId },
             { $pull: { coupons: coupon._id } }
           );
-        }
-        
+      }
+      console.log('ftyfvbjn');
+      
   } catch (error) {
     console.log(error);
   }
@@ -225,7 +237,7 @@ const giveCoupon = async (userId , totalCartPrice)=>{
     if(user.coupons && user.coupons.length>0){
       return;
     }
-    console.log('fghjht');
+    
     const coupons = await Coupon.find({is_active : false})
   
     for(const item of coupons){

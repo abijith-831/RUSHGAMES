@@ -9,6 +9,8 @@ const loadCart = async (req, res) => {
   try {
     const userId = req.session.user_id;
     const userData = await User.findOne({ _id: userId });
+    let errmsg = req.flash ('errmsg')
+
     const cart = await Cart.findOne({ userId: userId }).populate({
       path: 'games.gameId',
       model: 'Games'
@@ -16,19 +18,19 @@ const loadCart = async (req, res) => {
     
     if (!cart || cart.games.length === 0) {
       const totalCartPrice = 0;
-      res.render('cart', { user: userData, cartData: [], totalCartPrice, cartId: null, isEmpty: true });
+      res.render('cart', { user: userData, cartData: [], totalCartPrice, cartId: null, isEmpty: true , errmsg });
     } else {
       const cartData = cart.games.map(item => ({
         gameId: item.gameId,
         name: item.gameId.name,
         price: item.price,
         quantity: item.quantity,
-        totalAmount: item.totalAmount,
+        totalAmount: item.finalPrice,
         mainImage: item.gameId.mainImage[0]
       }));
-  
-      const totalCartPrice = cart.totalCartPrice;
-        res.render('cart', { user: userData, cartData, totalCartPrice, cartId: cart._id, isEmpty: false });
+        
+        const totalCartPrice = cart.totalCartPrice;
+        res.render('cart', { user: userData, cartData, totalCartPrice, cartId: cart._id, isEmpty: false ,errmsg });
     }
   } catch (error) {
     console.error('Error fetching cart:', error);
@@ -47,16 +49,17 @@ const addGameToCart = async (req, res) => {
       const userId = req.session.user_id;
       let userCart = await Cart.findOne({ userId: userId });
       const game = await Games.findById(gameId);
-
+      console.log('sbhdfsd'+game);
+ 
       if (!userCart) {
-        const gamePrice = quantity * game.price;
+        const gamePrice = quantity * game.finalPrice;
         const cart = new Cart({
           userId: userId,
           games: [
             {
               gameId: game._id,
               quantity: quantity,
-              price: game.price,
+              price: game.finalPrice,
               totalAmount: gamePrice,
             },
           ],
@@ -73,13 +76,13 @@ const addGameToCart = async (req, res) => {
       const exists = userCart.games.find((games) => String(games.gameId) === gameId);
       if (exists) {
         exists.quantity += parseInt(quantity);
-        exists.totalAmount = exists.quantity * game.price;
+        exists.totalAmount = exists.quantity * game.finalPrice;
       } else {
-        const gamePrice = quantity * game.price;
+        const gamePrice = quantity * game.finalPrice;
         userCart.games.push({
           gameId: game._id,
           quantity: quantity,
-          price: game.price,
+          price: game.finalPrice,
           totalAmount: gamePrice,
         });
       }
@@ -102,6 +105,7 @@ const removeFromCart = async (req, res) => {
   try {
     const gameId = req.query.gameId;
     const userId = req.session.user_id;
+    
     
     if (
       await Cart.updateOne({ userId }, { $pull: { games: { gameId: gameId } } })
@@ -127,7 +131,7 @@ const updateCartQuantity = async (req, res) => {
     const userId = req.session.user_id;
     const { quantity, gameId, cartId } = req.body;
     const game = await Games.findById(gameId)
-    const gamePrice = game.price;
+    const gamePrice = game.finalPrice;
     const exists = await Cart.findById(cartId)
 
     if(!exists){

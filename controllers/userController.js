@@ -5,6 +5,8 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const UserOTPVerification = require("../models/userOTPVerification");
 const Coming = require('../models/comingSoonModel')
+const GameOffers = require('../models/gameOfferModel')
+const CategoryOffers = require('../models/categoryOfferModel')
 
 
 // ********** PASSWORD HASHING FUNCTION **********
@@ -324,21 +326,68 @@ const loadAllGames = async (req, res) => {
 
     const games = await Games.find({ category: { $in: categoryIds }, is_listed:true})
       .skip(skip).limit(limit)
+
+
+    const gameOffers = await GameOffers.find({is_active : false})
+    const categoryOffers = await CategoryOffers.find({is_active : false})
+    
     
     const totalGames = await Games.countDocuments({ category : { $in : categoryIds},is_listed:true});
     const totalPages = Math.ceil(totalGames/limit);
+ 
+        
 
     let prevPage = page-1;
     let nextPage = page+1;
     if(prevPage < 1) prevPage = 1;
     if(nextPage > totalPages) nextPage = totalPages
+
+
+
+    for(let category of categories){
+      const categoryOffer = categoryOffers.find(item => item.categoryId.equals(category._id));
+
+      if(categoryOffer){
+        await Games.updateMany(
+          {category : category._id},
+          { $set : { categoryOffer : categoryOffer.discount ?  categoryOffer.discount : null}}    
+        )
+      }
+    }
+    
+
     for(let game of games){
+      const gameOffer = gameOffers.find(item => item.gameId.equals(game._id));
+      const categoryDiscount = game.categoryOffer;
+      const gameDiscount = game.gameOffer;
+      
+      let finalPrice = game.price;
+      
+
+      if (gameDiscount && !categoryDiscount){
+        finalPrice = Math.round(game.price - (game.price * gameDiscount / 100))
+      }
+
+      if(!gameDiscount && categoryDiscount >0){
+        finalPrice = Math.round(game.price - (game.price * categoryDiscount / 100))
+      }
+
+      if(gameDiscount && categoryDiscount){
+        let bigDiscount = gameDiscount > categoryDiscount ? gameDiscount : categoryDiscount ;
+        finalPrice = Math.round(game.price - (game.price * bigDiscount / 100)) 
+      }  
+      
+      await Games.findByIdAndUpdate(
+        game._id,
+        {$set : { gameOffer : gameOffer ? gameOffer.discount : null , finalPrice : finalPrice}},
+        {new : true}
+      )
       const gameCategory = await Category.findById(game.category);
       if(gameCategory){
         game.categoryName = gameCategory.name
       }
-    }
-    
+    } 
+     
     res.render("allGames",{categories , games:games,user:userData,errmsg , totalPages , prevPage , nextPage , page , number});
   } catch (error) {
     console.log(error);

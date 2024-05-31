@@ -197,7 +197,7 @@ const deleteAddress = async (req,res)=>{
     return res.status(500).json({success : false,message : "Internal server Error"})
   }
 }
-
+ 
 
 // ********** FOR RENDERING ORDER HISTORY PAGE **********
 const loadOrderHistory = async (req,res)=>{
@@ -260,17 +260,36 @@ const cancelOrder = async (req,res)=>{
     const order = await Order.findOne({_id:orderId })
     const game = order.games.find(item =>item.gameId.equals(gameId))
     if(order.paymentMethod !== 'cashOnDelivery'){
-      const previousBalance = wallet.balance
-      wallet.balance = wallet.balance + game.price
-      wallet.history.push({
-          amount : game.price,
-          method : 'Purchase Return',
-          transactionType : 'credit',
-          date : Date.now(),
-          previousBalance,
-          currBalance : wallet.balance
+      if(wallet){
+        const previousBalance = wallet.balance
+        wallet.balance = wallet.balance + game.price
+        wallet.history.push({
+            amount : game.price,
+            method : 'Order Cancelled',
+            transactionType : 'credit',
+            date : Date.now(),
+            previousBalance,
+            currBalance : wallet.balance
+        })
+        await wallet.save()
+      }else{
+        const walletData = new Wallet({
+          userId:userId,
+          balance : game.price,
+          history : [{
+            amount : game.price,
+            method : 'Order Cancelled',
+            transactionType:'credit',
+            date : Date.now(),
+            previousBalance : 0,
+            currBalance : game.price
+          }] 
+
+
       })
-      await wallet.save()
+      await walletData.save();
+    }
+      
   }
     game.reason = reason ; 
     order.totalCartPrice = order.totalCartPrice - game.totalAmount
@@ -377,7 +396,6 @@ const addMoneyToWallet = async (req , res)=>{
     console.log(error);
   }
 }
-
 
 
 //********** FOR WITHDRAWING MONEY TO WALLET **********

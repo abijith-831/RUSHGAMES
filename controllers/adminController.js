@@ -12,7 +12,7 @@ const loadAdminLogin = async (req,res)=>{
     }
 }
 
-
+  
 // ********** FOR VERIFYING ADMIN EMAIL AND PASSWORD **********
 const adminVerifyLogin = async (req, res) => {
     try {

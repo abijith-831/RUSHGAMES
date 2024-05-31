@@ -1,6 +1,6 @@
 const Users = require('../models/userModel')
-
-
+ 
+ 
 const isLogin = async (req,res,next)=>{
     try {
         const status = await Users.findOne({_id:req.session.user_id})
@@ -21,7 +21,7 @@ const isLogout = async (req,res,next)=>{
             next();
         }else{ 
             res.redirect('/')
-        }
+        } 
     } catch (error) {
         console.log(error.message);
     }

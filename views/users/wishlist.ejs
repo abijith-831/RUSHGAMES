@@ -133,7 +133,7 @@
 												</h3>
 											</div><!-- End .product -->
 										</td>
-										<td class="price-col" style="font-weight: bold;"><%= gameItem.gameId.price %> Rs </td>
+										<td class="price-col" style="font-weight: bold;"><%= gameItem.gameId.finalPrice %> Rs </td>
 										<!--<td class="stock-col" style="font-weight: bold;"><span class="in-stock">In stock</span></td>-->
 										<td class="action-col">
 											<button onclick="addToCartAndRemove('<%= gameItem.gameId.id %>')" class="btn btn-block btn-outline-primary-2"><i class="icon-cart-plus"></i>Add to Cart</button>
@@ -229,6 +229,7 @@ function confirmDelete(gameName , gameId){
 </script>
 
 
+
 <!--  MOVE GAME TO CART -->
 <script>
     function addToCartAndRemove(gameId) {
@@ -245,11 +246,19 @@ function confirmDelete(gameName , gameId){
                     }).then(() => {
                         window.location.reload();
                     });
-                } else {
+                }else if (data.message === 'already'){
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Warning!',
+                        text: 'Game is already in Cart.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }else {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error!',
-                        text: data.error || 'Failed to add game to Wishlist.',
+                        text: data.error || 'Failed to add game to cart.',
                         showConfirmButton: false,
                         timer: 1500
                     });
@@ -267,6 +276,7 @@ function confirmDelete(gameName , gameId){
             });
     }
 </script>
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>

@@ -1137,16 +1137,58 @@
 //     console.log(num1)
 //     console.log(num2)
 
-let nums = [8,5,7,7]
-let sl = 10
-let fl = 10
-for(let i=0 ;i<nums.length;i++){
-    if(nums[i]<fl){
-        sl = fl
-        fl = nums[i];     
-    }else if( nums [i] <sl && nums[i] > fl){
-        sl = nums[i]
-    }
-}
-console.log(sl);
-console.log(fl);
+// let nums = [8,5,7,7]
+// let sl = 10
+// let fl = 10
+// for(let i=0 ;i<nums.length;i++){
+//     if(nums[i]<fl){
+//         sl = fl
+//         fl = nums[i];     
+//     }else if( nums [i] <sl && nums[i] > fl){
+//         sl = nums[i]
+//     }
+// }
+// console.log(sl);
+// console.log(fl);
+// let word = 'sdknjsndff'
+// console.log(word[0]);
+
+// if (cart && wishlist) {
+    
+//     const remove = wishlist.games.findIndex(item => item.gameId.toString()===gameId.toString())
+//     if(remove !== -1){
+//         wishlist.games.splice(remove , 1)
+//         await wishlist.save()
+//     }
+//     let gameExists = false;
+//     cart.games.forEach(cartGame => {
+//         if (cartGame.gameId.toString() === gameId.toString()) {
+//             cartGame.quantity++;
+//             gameExists = true;
+//         }
+//     });
+
+//     if (!gameExists) {
+//         const newCartItem = {
+//             gameId: gameId,
+//             quantity: 1,
+//             price: game.price
+//         };
+//         cart.games.push(newCartItem);
+//     }
+
+//     await cart.save();
+//     res.json({ success: true });
+// } else {
+//     const newCart = new Cart({
+//         userId: userId,
+//         games: [{
+//             gameId: gameId,
+//             quantity: 1,
+//             price: game.price
+//         }]
+//     });
+
+//     await newCart.save();
+//     res.json({ success: true });
+// }

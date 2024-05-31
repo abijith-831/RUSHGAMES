@@ -12,14 +12,17 @@ const loadWishlist = async (req,res)=>{
         const userData = await User.findOne({_id : userId})
         const wishlistData = await Wishlist.findOne({userId:userId}).populate('games.gameId');
         
-        const count = wishlistData.games.length
+        let count = 0;
+        if (wishlistData && wishlistData.games) {
+            count = wishlistData.games.length;
+        }
         
         res.render('wishlist',{ user : userData , wishlistData : wishlistData , count : count})
     } catch (error) {
         console.log(error);
     }
 }
-  
+   
 
 // ********** FOR ADDING GAME TO THE WISHLIST **********
 const addToWishlist = async (req,res)=>{
@@ -29,21 +32,26 @@ const addToWishlist = async (req,res)=>{
             const gameId = req.query.gameId;
             const game = await Games.findById(gameId)
             
+            
+            
+
             const wishlist = await Wishlist.findOne({ userId : userId })
             if(wishlist){
                 const exists = wishlist.games.find(item => item.gameId.toString()===gameId)
                 if (exists){
                     return res.json({ success: false, error: 'Game already exists in the Wishlist' });
                 }else{
-                    wishlist.games.push({ gameId : gameId , price : game.price})
+                    wishlist.games.push({ gameId : gameId , price : game.finalPrice})
                     await wishlist.save()
                 }
+                
                 
             }else{
                 const newWishlist = new Wishlist({
                     userId : userId,
-                    games : [{ gameId : gameId , price : game.price}]
+                    games : [{ gameId : gameId , price : game.finalPrice}]
                 })
+                
                 await newWishlist.save()              
             }
             res.json({success : true})
@@ -62,8 +70,7 @@ const removeFromWishlist = async (req,res)=>{
     try {
         const gameId = req.query.gameId;
         const userId = req.session.user_id;
-        console.log('id'+gameId);
-        console.log('user'+userId)
+        
         if(await Wishlist.updateOne({userId} , {$pull:{games:{gameId : gameId}}})){
             res.status(200).json({ success: true });
         }else{
@@ -80,58 +87,59 @@ const removeFromWishlist = async (req,res)=>{
 // ********** FOR ADDING GAME TO THE CART AND REMOVE FROM THE WISHLIST **********
 const addToCartAndRemove = async (req, res) => {
     try {
+        const userId = req.session.user_id;
+        const gameId = req.query.gameId;
+        const game = await Games.findById(gameId);
         
-            const userId = req.session.user_id;
-            const gameId = req.query.gameId;
-            const game = await Games.findById(gameId);
+        if (!game) {
+            return res.status(404).json({ success: false, error: 'Game not found' });
+        }
 
-            const cart = await Cart.findOne({ userId: userId });
-            const wishlist = await Wishlist.findOne({ userId : userId})
+        let cart = await Cart.findOne({ userId: userId });
+        let wishlist = await Wishlist.findOne({ userId: userId });
 
+        if (!cart) {
+            
+            cart = new Cart({ userId: userId, games: [] });
+        }
 
+        if (!wishlist) {
+            return res.status(404).json({ success: false, error: 'Wishlist not found' });
+        }
 
-            if (cart && wishlist) {
-                const remove = wishlist.games.findIndex(item => item.gameId.toString()===gameId.toString())
-                if(remove !== -1){
-                    wishlist.games.splice(remove , 1)
-                    await wishlist.save()
-                }
-                let gameExists = false;
-                cart.games.forEach(cartGame => {
-                    if (cartGame.gameId.toString() === gameId.toString()) {
-                        cartGame.quantity++;
-                        gameExists = true;
-                    }
-                });
-
-                if (!gameExists) {
-                    const newCartItem = {
-                        gameId: gameId,
-                        quantity: 1,
-                        price: game.price
-                    };
-                    cart.games.push(newCartItem);
-                }
-
-                await cart.save();
-                res.json({ success: true });
-            } else {
-                const newCart = new Cart({
-                    userId: userId,
-                    games: [{
-                        gameId: gameId,
-                        quantity: 1,
-                        price: game.price
-                    }]
-                });
-
-                await newCart.save();
-                res.json({ success: true });
+        
+        let gameExists = false;
+        cart.games.forEach(cartGame => {
+            if (cartGame.gameId.toString() === gameId.toString()) {         
+                gameExists = true;
             }
+        });
+
+        if(gameExists){
+            return res.json({ success: false, message: 'Game already in cart' });
+             
+        }
+        console.log('sdnjnfs');
+        if (!gameExists) {
+            const newCartItem = {
+                gameId: gameId,
+                quantity: 1,
+                price: game.price,
+                totalAmount :  game.price
+            };
+            cart.games.push(newCartItem);
+        }
+        wishlist.games = wishlist.games.filter(wishlistGame => wishlistGame.gameId.toString() !== gameId.toString());
+        await wishlist.save();
+
+        await cart.save();
+
         
-           
+       
+
+        res.json({ success: true });
     } catch (error) {
-        console.error(error);
+        console.error('Error:', error);
         res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };

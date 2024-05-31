@@ -17,14 +17,7 @@ const gameSchema = mongoose.Schema({
         required : true,
         min :0
     },
-    gameOfferPrice : {
-        type : Number,
-        min : 0
-    },
-    categoryOfferPrice : {
-        type : Number , 
-        min : 0
-    },
+
     stock : {
         type : Number,
         required : true,
@@ -56,6 +49,14 @@ const gameSchema = mongoose.Schema({
     is_listed : {
         type : Boolean,
         default : true
+    },
+    gameOffer : {
+        type: Number,
+        min : 0
+    },
+    categoryOffer : {
+        type : Number , 
+        min : 0
     },
     finalPrice : {
         type : Number , 
