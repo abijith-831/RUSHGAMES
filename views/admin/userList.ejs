@@ -58,6 +58,7 @@
                             <table class="table">
                                 <thead class="custom-table-header">
                                     <tr>
+                                        <th scope="col">SL. NO</th>
                                         <th scope="col">Users</th>
                                         <th scope="col">Email</th>
                                         <th scope="col">Phone Number</th>
@@ -75,9 +76,10 @@
                                         %>
                              
                                         <tr >
-                                            <td class="px-3"><%= users[i].name %></td>
-                                            <td class="px-3"><%= users[i].email %></td>
-                                            <td class="px-3"><%= users[i].mobile %></td>
+                                            <td class="px-3" style="font-size: 15px;"><%= i+1 %></td>
+                                            <td class="px-3" style="font-size: 15px;"><%= users[i].name %></td>
+                                            <td class="px-3" style="font-size: 15px;"><%= users[i].email %></td>
+                                            <td class="px-3" style="font-size: 15px;"><%= users[i].mobile %></td>
                                             <td class="px-5">
                                              <% if (users[i].is_blocked) { %>
                          

@@ -87,9 +87,9 @@
                                     <% if (categories.length > 0) { %>
                                         <% categories.forEach((category, index) => { %>
                                             <tr>
-                                                <td><%= index + 1 %></td> <!-- Index starts from 0, so adding 1 for display -->
-                                                <td><%= category.name %></td>
-                                                <td class="text-right align-middle">
+                                                <td style="font-size: 15px;"><%= index + 1 %></td> <!-- Index starts from 0, so adding 1 for display -->
+                                                <td style="font-size: 15px;"><%= category.name %></td>
+                                                <td class="text-right align-middle" style="font-size: 15px;">
                                                     <a href="/admin/editCategory?categoryId=<%= category._id %>" class="btn-status-toggle" data-categoryid="<%= category._id %>">
                                                     
                                                         <span class="btn btn-info ml-2">EDIT</span>                                                                                                         
@@ -113,10 +113,12 @@
                                     <% } %>
                                 </tbody>
                             </table>
+                            <br>
 
                             <div class="text-center mt-4">
                                 <a href="/admin/addCategory" class="purple-button">+ Add Category</a>
                             </div>
+                            <br>
                             <% if (errmsg) { %> 
                                 <div class="alert  text-center" role="alert" style="color: blueviolet; background: white;">
                                     <%= errmsg %>

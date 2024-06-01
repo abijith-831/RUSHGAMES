@@ -1192,3 +1192,52 @@
 //     await newCart.save();
 //     res.json({ success: true });
 // }
+
+// let num = [2,4,6,3,0,5,7,0]
+// let arr = []
+// let index = 0
+// for(let i = 0;i<num.length;i++){
+//     if(num[i]==0){
+//         arr.unshift(num[i])
+//     }
+//     else{
+//         arr.push(num[i])
+//     }
+// }
+
+// console.log(arr);
+
+// const str='Find the longest word in the sentence'
+// const arr=str.split(' ')
+// console.log(arr);
+// const res=arr.reduce((acc,curr)=>{
+//     return acc.length>curr.length?acc:curr
+// },0)
+// console.log(res);
+// let nums1 = [3] 
+// let nums2 = [-2,-1]
+
+// let sum = [...nums1,...nums2].sort((a,b)=>a-b)
+// console.log(sum);
+ 
+//         if(sum.length%2 ===1){
+//             console.log( sum[Math.floor(sum.length/2)])
+//         }else{
+//             let a = sum[(sum.length/2)-1]
+//             let b = sum[(sum.length)/2]
+//             console.log(a+b);
+//         }
+let nums= [0,1,0,3,12]
+nums.sort((a,b)=>a-b)
+console.log(nums)
+for(let i=0;i<nums.length;i++){
+    if(nums[i]===0){
+        if(nums[nums.length]==0){
+            break;
+            nums.s
+            nums.push(0)
+        }
+        
+    }
+}
+console.log(nums)

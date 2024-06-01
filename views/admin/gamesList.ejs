@@ -109,9 +109,9 @@
                                     <% const indexPage = (page-1)*limit %>
                                     <% games.forEach((game,index) => { %>
                                         <tr>
-                                            <td><%= index +1 +indexPage %></td>
-                                            <td><%= game.name %></td>
-                                            <td>
+                                            <td style="font-size: 13px;"><%= index +1 +indexPage %></td>
+                                            <td style="font-size: 13px;"><%= game.name %></td>
+                                            <td style="font-size: 13px;">
                                                 <% if (game.mainImage && game.mainImage.length > 0) { %>
                                                     <% game.mainImage.forEach(image => { %>
                                                         <img style="height: 50px; width: 50px;" src="<%= image.path %>" alt="<%= game.name %> main image" class="img-fluid">
@@ -120,10 +120,10 @@
                                                     <span>No Image Available</span>
                                                 <% } %>
                                             </td>
-                                            <td><%= game.price %></td>
-                                            <td><%= game.categoryName %></td>
-                                            <td><%= game.stock %></td>
-                                            <td class="text-right align-middle">
+                                            <td style="font-size: 13px;"><%= game.price %></td>
+                                            <td style="font-size: 13px;"><%= game.categoryName %></td>
+                                            <td style="font-size: 13px;"><%= game.stock %></td>
+                                            <td class="text-right align-middle" style="font-size: 13px;">
                                                 <a href="/admin/editGames?gameId=<%= game._id %>" class="btn-status-toggle" data-gameid="<%= game._id %>">
                                                 
                                                     <span class="btn btn-info ml-2">EDIT</span>                                                                                                         

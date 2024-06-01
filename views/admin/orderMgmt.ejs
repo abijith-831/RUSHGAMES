@@ -72,19 +72,19 @@
                                 <tbody>
                                     <% orders.forEach( (order , index) => { %> 
                                         <tr>
-                                            <td><%= index+1 %></td>
-                                            <td><%= order.userId.name %></td>
-                                            <td><%= order.orderId %></td>
+                                            <td style="font-size: 15px;"><%= index+1 %></td>
+                                            <td style="font-size: 15px;"><%= order.userId.name %></td>
+                                            <td style="font-size: 15px;"><%= order.orderId %></td>
                                             <% if (order.discount) { %>
                                                 <% const discountedPrice = order.totalCartPrice - (order.totalCartPrice * order.discount / 100) %>
-                                                <td><%= discountedPrice %></td>
+                                                <td style="font-size: 15px;"><%= discountedPrice %></td>
                                             <% }else{ %>
-                                                <td><%= order.totalCartPrice %></td>
+                                                <td style="font-size: 15px;"><%= order.totalCartPrice %></td>
                                             <% } %>
                                             
-                                            <td><%= new Date (order.orderDate).toLocaleString('en-IN',{ year : 'numeric',month : '2-digit',day : '2-digit' , hour : '2-digit',minute : '2-digit'}) %></td>
-                                            <td><%= order.paymentMethod %></td>
-                                            <td class="text-right align-middle">
+                                            <td style="font-size: 15px;"><%= new Date (order.orderDate).toLocaleString('en-IN',{ year : 'numeric',month : '2-digit',day : '2-digit' , hour : '2-digit',minute : '2-digit'}) %></td>
+                                            <td style="font-size: 15px;"> <%= order.paymentMethod %></td>
+                                            <td class="text-right align-middle" style="font-size: 15px;">
                                             <button class="btn btn-primary" onclick="showOrderDetailsPage('<%= order._id%>')">Details</button>                                                                                                      
                                                
                                                 

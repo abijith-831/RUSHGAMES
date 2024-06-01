@@ -1,0 +1,333 @@
+<%-include('../layouts/adminHeader.ejs')%>
+
+
+<style>
+    .toolbox-right {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .toolbox-sort {
+        display: flex;
+        align-items: center;
+    }
+
+    .toolbox-sort label {
+        margin-right: 10px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .select-custom {
+        position: relative;
+        display: inline-block;
+    }
+
+    .form-control {
+        height: calc(1.5em + 0.75rem + 2px);
+        padding: 0.375rem 1.75rem 0.375rem 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 0.25rem;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background: url('data:image/svg+xml;charset=US-ASCII,%3csvg xmlns%3d%27http%3a//www.w3.org/2000/svg%27 width%3d%2716%27 height%3d%2716%27 fill%3d%27%23333%27 class%3d%27bi bi-caret-down-fill%27 viewBox%3d%270 0 16 16%27%3e%3cpath d%3d%27M7.247 11.14l-4.796-5.481C1.785 5.206 1.992 4.5 2.5 4.5h11c.508 0 .715.706.34 1.159l-4.796 5.481a1 1 0 0 1-1.518 0z%27/%3e%3c/svg%3e') no-repeat right 0.75rem center/8px 10px;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .select-custom::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        width: 0;
+        height: 0;
+        border: 5px solid transparent;
+        border-top-color: #333;
+        pointer-events: none;
+        transform: translateY(-50%);
+    }
+    .purple-header-box {
+    background-color: #936dd1; /* Purple color */
+    color: #ffffff; /* White text color */
+    padding: 15px; /* Adjust padding as needed */
+    border-radius: 5px; /* Optional: Add rounded corners */
+    margin-bottom: 20px; /* Optional: Add space below the box */
+    text-align: center;
+}
+.search-bar {
+    margin-bottom: 10px; /* Adjust spacing between search bar and heading */
+}
+.search-btn {
+        width: 100px; /* Adjust the width of the button as needed */
+        height: 40px; /* Adjust the height of the button as needed */
+        border: 2px solid #000; /* Black border */
+        border-radius: 5px; /* Make it round */
+        background-color: #936dd1; /* Black background */
+        color: #050404; /* White text color */
+        font-size: 14px; /* Adjust font size */
+        padding: 0; /* Remove padding */
+    }
+
+
+.search-bar {
+    width: calc(100% - 80px); /* Adjust the width of the search bar */
+    margin-right: 10px; /* Adjust spacing between search bar and button */
+}
+.btn-primary {
+    border-radius: 5px; /* Slight curve */
+    background-color: #936dd1; /* Purple background */
+    border-color: #0a0a0a; /* Border color same as background for a consistent look */
+    color: #050404; /* Black text color */
+    font-size: 14px; /* Adjust font size */
+    padding: 8px 20px; /* Adjust padding */
+}
+.custom-table-header {
+    background-color: grey;
+    color: black;
+}
+.page-wrapper>.container-fluid {
+    padding: 0px;
+    min-height: calc(100vh - 210px);
+}
+</style>
+
+
+
+
+<div class="preloader">
+    <div class="lds-ripple">
+        <div class="lds-pos"></div>
+        <div class="lds-pos"></div>
+    </div>
+</div>
+
+<div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+    <header class="topbar" data-navbarbg="skin6">
+        <nav class="navbar top-navbar navbar-expand-md">
+            <div class="navbar-header" data-logobg="skin6">
+                <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)"><i
+                        class="ti-menu ti-close"></i></a>
+                               
+                <a class="topbartoggler d-block d-md-none waves-effect waves-light" href="javascript:void(0)"
+                    data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i
+                        class="ti-more"></i></a>
+            </div>
+            <div class="navbar-collapse collapse" id="navbarSupportedContent">
+                <div class="col-lg-3">
+                </div>
+               
+                <ul class="navbar-nav float-right">                      
+                    <li class="nav-item dropdown"> 
+                                                
+                       
+                    </li>                      
+                </ul>
+            </div>
+        </nav>
+    </header>  
+    <aside class="left-sidebar" data-sidebarbg="skin6">
+        <div class="scroll-sidebar" data-sidebarbg="skin6">
+            <nav class="sidebar-nav">
+                <ul id="sidebarnav">
+                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/dashboard" aria-expanded="false"><i data-feather="home" class="feather-icon"></i><span class="hide-menu">Dashboard</span></a></li>
+                                          
+                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/userList" aria-expanded="false"><i data-feather="users" class="feather-icon"></i><span class="hide-menu">Customers</span></a></li>                     
+                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/categoryList" aria-expanded="false"><i data-feather="grid" class="feather-icon"></i><span class="hide-menu">Category</span></a></li>                    
+                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/orderHistory" aria-expanded="false"><i data-feather="list" class="feather-icon"></i><span class="hide-menu">Order History</span></a></li>                        
+                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/gamesList" aria-expanded="false"><i data-feather="box" class="feather-icon"></i><span class="hide-menu">Games</span></a></li>
+                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/comingSoonList" aria-expanded="false"><i data-feather="box" class="feather-icon"></i><span class="hide-menu">Coming Soon Games</span></a></li>    
+                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/loadSalesReport" aria-expanded="false"><i data-feather="bar-chart" class="feather-icon"></i><span class="hide-menu">Sales Report</span></a></li>                      
+                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/couponList" aria-expanded="false"><i data-feather="percent" class="feather-icon"></i><span class="hide-menu">Coupons</span></a></li> 
+                      
+                    <li class="sidebar-item"> 
+                        <a class="sidebar-link sidebar-link" href="#" aria-expanded="false" data-toggle="dropdown">
+                            <i data-feather="percent" class="feather-icon"></i>
+                            <span class="hide-menu">Offers</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/admin/gameOfferList">Game Offer</a></li>
+                            <li><a class="dropdown-item" href="/admin/categoryOfferList">Category Offer</a></li>
+                            <li><a class="dropdown-item" href="/admin/offers/referral">Referral Offer</a></li>
+                          </ul>
+                    </li>                                              
+                </ul>
+            </nav>
+            <br><br><br><br><br><br><br><br>
+            <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/logout" aria-expanded="false"><i data-feather="log-out" class="feather-icon"></i><span class="hide-menu">Logout</span></a></li>
+        </div>
+    </aside>
+
+
+
+
+
+<div class="page-wrapper">
+
+    <div class="container-fluid">
+        
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        
+                        
+                        <div class="purple-header-box d-flex justify-content-between align-items-center"> 
+                            
+                            <h4 class="card-title">SALES REPORT</h4>
+
+                            <div class="form-group mb-3">
+                                <label for="startDate">Start Date:</label>
+                                <input type='date' class="form-control" id="startDate" placeholder="YYYY-MM-DD">
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="endDate">End Date:</label>
+                                <input type='date' class="form-control" id="endDate" placeholder="YYYY-MM-DD">
+                            </div>
+                          
+                            <div class="dropdown">
+                                
+                                <select name="sortby" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" id="sortby" aria-haspopup="true" class="form-control" aria-expanded="false">
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                    
+                
+                                </select>
+                            </div>
+                            <div class="form-group mb-3">
+                                <button class="btn btn-primary" id="filterButton">Filter</button>
+                            </div>
+                            
+                        </div>
+                         <!-- <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Sort by Status
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="#">Confirmed</a>
+                                  <a class="dropdown-item" href="#">Delivered</a>
+                                  <a class="dropdown-item" href="#">Cancelled</a>
+                                  <a class="dropdown-item" href="#">Return</a>
+                                </div>
+                            </div>-->
+                            <!-- Dropdown Button -->
+                        <br>
+                        <div class="table-responsive">
+                            
+                            <table class="table ">
+                                <thead class="custom-table-header">
+                                    <tr>
+                                        
+                                        <th scope="col">SL.NO</th>
+                                        <th scope="col">DATE</th> 
+                                        <th scope="col">CUSTOMER</th>
+                                        <th scope="col">ORDER-ID</th>
+                                        <th scope="col">PRODUCT</th> 
+                                        <th scope="col">PRICE</th> 
+                                        <th scope="col">OFFER</th> 
+                                        <th scope="col">FINAL PRICE</th>                                                                              
+                                        <th scope="col">STATUS</th>                                              
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% let index = 1 %>
+                                    <% let sumPrice = 0 %>
+                                    <% let sumOffer = 0 %>
+                                    <% let sumFinalPrice = 0 %>
+                                    <% orders.forEach(( order )=> { %>
+                                        
+                                        <% order.games.forEach((item)=>{ %>
+
+                                            <tr>
+                                                <td style="font-size: 13px;"><%= index ++ %></td>
+                                                <td style="font-size: 13px;"><%= new Date(order.orderDate).toLocaleString('en-IN',{year : 'numeric',month:'2-digit',day:'2-digit',hour :'2-digit',minute:'2-digit'}) %></td>
+                                                <td style="font-size: 13px;"><%= order.userId.name %></td>
+                                                <td style="font-size: 13px;"><%= order.orderId %></td>
+                                                <td style="font-size: 13px;"><%= item.gameId.name %></td>
+                                                <td style="font-size: 13px;"><%= item.gameId.price %></td>
+                                                <td style="font-size: 13px;"><%= item.gameId.price - item.price %></td>
+                                                <td style="font-size: 13px;"><%= item.price %></td>
+                                                <td style="font-size: 13px;"><%= item.Status %></td>
+                                            </tr>
+                                            <% sumPrice = sumPrice + item.gameId.price %>
+                                            <% sumOffer = sumOffer + (item.gameId.price - item.price) %>
+                                            <% sumFinalPrice = sumFinalPrice + item.price %>
+                                        <% }) %>
+                                        
+                                    <% }) %>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="5" style="text-align:right; font-size: 13px;"><strong>Total:</strong></td>
+                                        <td id="totalPrice" style="font-size: 13px; font-weight: bold;"><%= sumPrice %></td>
+                                        <td id="totalOffer" style="font-size: 13px; font-weight: bold;"><%= sumOffer %></td>
+                                        <td id="totalFinalPrice" style="font-size: 13px; font-weight: bold;"><%= sumFinalPrice %></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            <div class="d-flex justify-content-center">
+                                <button class="btn btn-success" style="margin-right: 20px;" onclick="window.location.href='admin/downloadExcel'">Download Excel</button>
+                                <button class="btn btn-danger" onclick="window.location.href='admin/downloadPdf'">Download PDF</button>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+</div>
+   
+
+
+<!--  for passinng startdate enddate and sort option to backend   -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    const dropdown = document.getElementById('sortby')
+    const filterButton = document.getElementById('filterButton');
+
+    // console.log('wfwf'+dropdown);
+    filterButton.addEventListener('click', function() {
+      const sortOption = dropdown.value; 
+      const startDate = startDateInput.value;
+      const endDate = endDateInput.value;
+
+      if (!sortOption) { 
+        alert("Please select a sort option.");
+        return; 
+      }
+
+      if (!startDate || !endDate) {
+        alert("Please select both start and end dates.");
+        return;
+      }
+
+      const url = `/admin/filterSalesReport?startDate=${startDate}&endDate=${endDate}&sort=${sortOption}`;
+      window.location.href = url;
+    });
+  });
+
+</script>
+
+
+
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
+
+
+<%-include('../layouts/adminFooter.ejs')%>

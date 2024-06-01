@@ -80,13 +80,20 @@ admin_route.post('/addCoupon',couponController.addCoupon)
 admin_route.post('/couponStatus',couponController.couponStatus)
 
 
+// ****** GAME OFFER HANDINLING SECTION ******
 admin_route.get('/gameOfferList',adminAuth.isLogin,offerController.loadgameOfferList)
 admin_route.post('/addGameOffer',offerController.addGameOffer)
 admin_route.post('/gameOfferStatus',offerController.gameOfferStatus)
 
+// ****** CATEGORY OFFER HANDINLING SECTION ******
 admin_route.get('/categoryOfferList',adminAuth.isLogin,offerController.loadCategoryOfferList)
 admin_route.post('/addCategoryOffer',offerController.addCategoryOffer)
 admin_route.post('/categoryOfferStatus',offerController.categoryOfferStatus)
+
+
+// ****** SALES REPORT SECTION ******
+admin_route.get('/loadSalesReport',adminController.loadSalesReport)
+admin_route.get('/filterSalesReport',adminController.filterSalesReport)
 
 
 module.exports = admin_route; 

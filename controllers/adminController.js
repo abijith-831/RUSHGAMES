@@ -1,4 +1,6 @@
 const Users = require('../models/userModel')
+const Order = require('../models/orderModel')
+
 
 
 // ********** FOR RENDERING ADMIN LOGIN PAGE **********
@@ -89,13 +91,69 @@ const userStatus = async (req,res)=>{
 }
 
 
+
+// ********** FOR RENDERING SALES REPORT PAGE **********
+const loadSalesReport = async (req,res)=>{
+    try {
+        const order = await Order.find().populate('games.gameId').populate('userId')
+        let orders = [...order].reverse()
+        
+        
+        res.render('salesReport',{orders})
+    } catch (error) {
+        console.log(error);
+    }
+} 
+
+
+// ********** FOR FILERTING ORDERS ON THE BASIS OF PERIOD AND SPECIFIC DATE **********
+const filterSalesReport = async (req,res)=>{
+    try {
+        const { startDate, endDate, sortField } = req.query;
+
+        if (!startDate ||!endDate) {
+            return res.status(400).send('Both startDate and endDate are required.');
+        }
+
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+
+       
+        const query = {
+            orderDate: {
+                $gte: start,
+                $lte: end,
+            },
+        };
+
+        
+        let sortOption = {};
+        if (sortField) {
+            sortOption = {[sortField]: 1}; 
+        }
+
+       
+        const orders = await Order.find(query).sort(sortOption).populate('games.gameId').populate('userId')
+        
+        res.render('salesReport',{orders})
+    } catch (error) {
+        console.log(error);
+    } 
+}
+
+
+
 module.exports = {
     loadAdminLogin,
     adminVerifyLogin,
     adminLogout,
     loadUserList,
-    userStatus , 
-    
+    userStatus, 
+
+
+    loadSalesReport,
+    filterSalesReport
 }
 
 

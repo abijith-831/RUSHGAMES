@@ -1,6 +1,16 @@
 
 <%-include('../layouts/adminHeader.ejs')%>
 <%-include('../layouts/adminSidebar.ejs')%>
+
+
+<style>
+    .card-body{
+        background-color: #fffefe;
+    }
+    .container-fluid{
+        background-color: #dddada;
+    }
+</style>
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
 
@@ -8,35 +18,10 @@
         </header>
         
         <div class="page-wrapper">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <div class="page-breadcrumb">
-                <div class="row">
-                    <div class="col-7 align-self-center">
-                        <h3 class="page-title text-truncate text-dark font-weight-medium mb-1">Good Morning Admin</h3>
-                        <div class="d-flex align-items-center">
-                            <nav aria-label="breadcrumb">
-                                <ol class="breadcrumb m-0 p-0">
-                                    <li class="breadcrumb-item"><a href="index.html">Dashboard</a>
-                                    </li>
-                                </ol>
-                            </nav>
-                        </div>
-                    </div>
-                    
-                </div>
-            </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Container fluid  -->
+            
             <!-- ============================================================== -->
             <div class="container-fluid">
-                <!-- *************************************************************** -->
-                <!-- Start First Cards -->
-                <!-- *************************************************************** -->
+                
                 <div class="row">
                     <div class="col-sm-6 col-lg-3">
                         <div class="card border-end">
@@ -97,15 +82,18 @@
                         </div>
                     </div>
                     <div class="col-sm-6 col-lg-3">
+                        
                         <div class="card ">
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <div>
-                                        <h2 class="text-dark mb-1 font-weight-medium">864</h2>
-                                        <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">Games</h6>
+                                        <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">Go to </h6>
+                                        <a href="/admin/loadSalesReport" style="text-decoration: none;">SALES REPORT</a>
+                                        
+                                        
                                     </div>
-                                    <div class="ms-auto mt-md-3 mt-lg-0">
-                                        <span class="opacity-7 text-muted"><i data-feather="globe"></i></span>
+                                    <div class="ms-auto mt-md-3 mt-lg-4">
+                                        <span class="opacity-7 text-muted"><i data-feather="bar-chart"></i></span>
                                     </div>
                                 </div>
                             </div>

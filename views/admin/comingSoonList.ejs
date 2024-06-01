@@ -72,16 +72,16 @@
                                     <%= console.log('sdfhbf'+comings) %>
                                     <% comings.forEach((game,index) => { %>
                                         <tr>
-                                            <td><%= index+1 %></td>
-                                            <td><%= game.name %></td>
-                                            <td>
+                                            <td style="font-size: 13px;"><%= index+1 %></td>
+                                            <td style="font-size: 13px;"><%= game.name %></td>
+                                            <td style="font-size: 13px;">
                                                 
                                                     <% game.image.forEach(image => { %>
                                                         <img style="height: 50px; width: 50px;" src="<%= image.path %>" alt="<%= game.name %> main image" class="img-fluid">
                                                     <% }); %>        
                                             </td>
-                                            <td><%= game.categoryName %></td>
-                                            <td><%= game.expectedArrival %></td>
+                                            <td style="font-size: 13px;"><%= game.categoryName %></td>
+                                            <td style="font-size: 13px;"><%= game.expectedArrival %></td>
                                             
                                             
                                             
