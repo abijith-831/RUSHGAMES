@@ -1227,17 +1227,27 @@
 //             let b = sum[(sum.length)/2]
 //             console.log(a+b);
 //         }
-let nums= [0,1,0,3,12]
-nums.sort((a,b)=>a-b)
-console.log(nums)
-for(let i=0;i<nums.length;i++){
-    if(nums[i]===0){
-        if(nums[nums.length]==0){
-            break;
-            nums.s
-            nums.push(0)
-        }
+// let nums= [0,1,0,3,12]
+// nums.sort((a,b)=>a-b)
+// console.log(nums)
+// for(let i=0;i<nums.length;i++){
+//     if(nums[i]===0){
+//         if(nums[nums.length]==0){
+//             break;
+//             nums.s
+//             nums.push(0)
+//         }
         
-    }
-}
-console.log(nums)
+//     }
+// }
+// console.log(nums)
+
+// let arr1= [1,2,3,4]
+// let arr2 = [5,7,9,3]
+// let a = []
+// for(let i =0;i<arr1.length;i++){
+//     if(arr1.includes(arr2[i])){
+//         a.push(arr2[i])
+//     }
+// }
+// console.log(a);

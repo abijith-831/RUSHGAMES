@@ -277,8 +277,8 @@
                                 </tfoot>
                             </table>
                             <div class="d-flex justify-content-center">
-                                <button class="btn btn-success" style="margin-right: 20px;" onclick="window.location.href='admin/downloadExcel'">Download Excel</button>
-                                <button class="btn btn-danger" onclick="window.location.href='admin/downloadPdf'">Download PDF</button>
+                                <button class="btn btn-success" id="downloadExcel" style="margin-right: 20px;" >Download Excel</button>
+                                <button class="btn btn-danger" id="downloadPDF" >Download PDF</button>
                             </div>
                             
                             
@@ -324,7 +324,63 @@
 </script>
 
 
+<!--  for passing orders to backend when clicking excel and pdf   -->
+<script>
+    document.getElementById('downloadExcel').addEventListener('click', function() {
+        let orders = <%- JSON.stringify(orders) %>;
 
+        fetch('/admin/downloadExcel', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: JSON.stringify({ orders: orders })
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'RG-SalesReport.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
+
+    document.getElementById('downloadPDF').addEventListener('click', function() {
+        let orders = <%- JSON.stringify(orders) %>;
+
+        fetch('/admin/downloadPDF', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: JSON.stringify({ orders: orders })
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'orders.pdf';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
+</script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 

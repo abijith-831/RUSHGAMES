@@ -94,6 +94,8 @@ admin_route.post('/categoryOfferStatus',offerController.categoryOfferStatus)
 // ****** SALES REPORT SECTION ******
 admin_route.get('/loadSalesReport',adminController.loadSalesReport)
 admin_route.get('/filterSalesReport',adminController.filterSalesReport)
+admin_route.post('/downloadExcel',adminController.downloadExcel)
+admin_route.post('/downloadPDF',adminController.downloadPDF)
 
 
 module.exports = admin_route; 
