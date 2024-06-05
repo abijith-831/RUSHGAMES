@@ -40,7 +40,7 @@ admin_route.get('/dashboard',adminAuth.isLogin,adminDashboardController.loadDash
 // ****** USER DETAILS ******
 admin_route.get('/userList',adminAuth.isLogin,adminController.loadUserList)
 admin_route.get('/blockUser',adminController.userStatus)
- 
+  
 
 // ****** PRODUCT / GAMES SECTION ******
 admin_route.get('/gamesList',adminAuth.isLogin,gameController.loadGamesList)
@@ -74,6 +74,7 @@ admin_route.post('/changeStatus',orderController.changeStatus)
 admin_route.post('/approveRequest',orderController.approveRequest)
 admin_route.post('/rejectRequest',orderController.rejectRequest)
 
+
 // ****** COUPON HANDINLING SECTION ******
 admin_route.get('/couponList',adminAuth.isLogin,couponController.loadCouponList)
 admin_route.post('/addCoupon',couponController.addCoupon)
@@ -85,6 +86,7 @@ admin_route.get('/gameOfferList',adminAuth.isLogin,offerController.loadgameOffer
 admin_route.post('/addGameOffer',offerController.addGameOffer)
 admin_route.post('/gameOfferStatus',offerController.gameOfferStatus)
 
+
 // ****** CATEGORY OFFER HANDINLING SECTION ******
 admin_route.get('/categoryOfferList',adminAuth.isLogin,offerController.loadCategoryOfferList)
 admin_route.post('/addCategoryOffer',offerController.addCategoryOffer)
@@ -92,8 +94,8 @@ admin_route.post('/categoryOfferStatus',offerController.categoryOfferStatus)
 
 
 // ****** SALES REPORT SECTION ******
-admin_route.get('/loadSalesReport',adminController.loadSalesReport)
-admin_route.get('/filterSalesReport',adminController.filterSalesReport)
+admin_route.get('/loadSalesReport',adminAuth.isLogin , adminController.loadSalesReport)
+admin_route.get('/filterSalesReport',adminAuth.isLogin,adminController.filterSalesReport)
 admin_route.post('/downloadExcel',adminController.downloadExcel)
 admin_route.post('/downloadPDF',adminController.downloadPDF)
 

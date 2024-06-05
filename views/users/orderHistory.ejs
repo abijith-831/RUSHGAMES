@@ -274,24 +274,27 @@
                                         <div class="row mt-3" style="font-weight: bold;">
                                           <% if (orderItem.discount) { %>
                                               <% const discountedPrice = orderItem.totalCartPrice - (orderItem.totalCartPrice * orderItem.discount/100) %>
-                                              <div class="col-md-4">
+                                              <div class="col-md-3">
                                                 <p class="text-muted mb-0" style="font-weight: bold;">Total Price: <%= discountedPrice %></p>
                                               </div>
                                           <% }else { %>
-                                              <div class="col-md-4">
+                                              <div class="col-md-3">
                                                 <p class="text-muted mb-0" style="font-weight: bold;">Total Price: <%= orderItem.totalCartPrice %></p>
                                               </div>
                                           <% } %> 
                                           
+                                          
                                             
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                               
                                                 <p class="text-muted mb-0" style="font-weight: bold;">
                                                   Ordered Date: <%= new Date(orderItem.orderDate).toLocaleString('en-IN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true }) %></p>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <button class="btn btn-primary" onclick="showOrderDetailsPage('<%= orderItem.orderId%>')">Order Details</button>
                                             </div>
+                                            
+                                            
                                         </div>
                                     </div>
                                 </div>

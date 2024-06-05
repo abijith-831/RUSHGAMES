@@ -41,6 +41,7 @@
             <p><strong>Payment Method : <%=order.paymentMethod %></strong> <span id="customerName"></span></p>
             <p><strong>Phone: <%=    user.mobile %></strong> <span id="customerPhone"></span></p>
             <p><strong>Email: <%=    user.email %></strong> <span id="customerEmail"></span></p>
+            <p><strong>Delivery Charge :</strong> <span id="customerEmail"></span></p>
             <div id="orderItems">
                 <!-- Products will be dynamically populated here -->
             </div><!-- Order items will be dynamically populated here -->
@@ -81,29 +82,29 @@
                                                 <img src="<%= game.gameId.mainImage[0].path %>" class=" " style="height: 75px; width: 75px" alt="<%= game.gameId.name %>" />
                                             </div>
                                             <% if (game.Status==='Cancelled') { %>
-                                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
                                                     <p class="text-muted mb-0" style="text-decoration: line-through;"><%= game.gameId.name %></p>
                                                 </div>
                                             <%  }else { %>
-                                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
                                                     <p class="text-muted mb-0"><%= game.gameId.name %></p>
                                                 </div>
                                             <%   }  %>   
                                             <% if (game.Status==='Cancelled') { %>
-                                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
                                                     <p class="text-muted mb-0 " style="text-decoration: line-through;">Qty: <%= game.quantity %></p>
                                                 </div>
                                             <%  }else { %>
-                                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
                                                     <p class="text-muted mb-0 ">Qty: <%= game.quantity %></p>
                                                 </div>
                                             <%   }  %>  
                                             <% if (game.Status==='Cancelled') { %>
-                                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
                                                     <p class="text-muted mb-0 " style="text-decoration: line-through;"><%= game.totalAmount %></p>
                                                 </div>                                            
                                             <%  }else { %>
-                                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                                <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
                                                     <p class="text-muted mb-0 "><%= game.totalAmount %></p>
                                                 </div> 
                                             <%   }  %> 
@@ -134,7 +135,12 @@
                                                     <a class="btn change-btn" style="border: 2px solid red;" data-toggle="modal" data-target="#cancelOrderModal" data-game-id="<%= game.gameId._id %>" data-order-id="<%= order._id %>">Cancel Order</a>
                                                 </div>  
                                             <%   }  %>
-                                            
+                                            <div class="col-md-2 " style="color: black; font-size: 50px; border-color: red; " >
+                                                <a class="btn change-btn download-invoice-btn" 
+                                                style="border: 2px solid rgb(0, 123, 238); margin-left: 15px;" 
+                                                data-game-id="<%= game.gameId._id %>" data-name="<%= game.gameId.name %>"
+                                                data-order-id="<%= order._id %>">Download Invoice</a>                                           
+                                             </div>  
                                                                                    
                                             
                                         </div>
@@ -348,6 +354,58 @@
         })
     })
 </script>
+
+
+
+<!-- for passing gamedatas to backend for downloading invoice -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.download-invoice-btn').forEach(function(button) {
+            button.addEventListener('click', function() {
+                const gameId = this.getAttribute('data-game-id');
+                const orderId = this.getAttribute('data-order-id');
+                const name = this.getAttribute('data-name')
+
+                button.disabled = true;
+                button.textContent = "Downloading...";
+
+                fetch('/downloadInvoice', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ orderId: orderId, gameId: gameId , name : name })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'RG-invoice.pdf'; 
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+
+                    button.disabled = false;
+                    button.textContent = "Download Invoice";
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert(error.message || 'Failed to download. Please try again later.');
+                    button.disabled = false;
+                    button.textContent = "Download Invoice";
+                });
+            });
+        });
+    });
+</script>
+
 
 
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>

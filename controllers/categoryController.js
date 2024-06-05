@@ -11,6 +11,7 @@ const loadCategoryList = async (req, res) => {
     res.render("categoryList", {success,errmsg, categories });
   } catch (error) {
     console.log(error);
+    
   }
 }; 
 
@@ -23,6 +24,7 @@ const loadAddCategory = async (req, res) => {
     res.render("addCategory", { errmsg, success });
   } catch (error) {
     console.log(error);
+    
   }
 };
 
@@ -65,6 +67,7 @@ const loadEditCategory = async(req,res)=>{
     res.render('editCategory',{errmsg,categoryDetails,categoryId:id})
   } catch (error) {
     console.log(error);
+    
   }
 }
 
@@ -72,7 +75,7 @@ const loadEditCategory = async(req,res)=>{
 // ********** FOR MODIFYING THE CATEGORY **********
 const modifyCategory = async (req,res)=>{
   try {
-    const categoryId = req.body.categoryId ; 
+    const {categoryId} = req.body ; 
     const newName = req.body.categoryName.toUpperCase();
     
 
@@ -93,6 +96,7 @@ const modifyCategory = async (req,res)=>{
     }
   } catch (error) {
     console.log(error)
+    
   }
 }
 
@@ -107,6 +111,7 @@ const deleteCategory = async (req,res)=>{
     res.redirect('/admin/categoryList')
   } catch (error) {
     console.log(error);
+    
   }
 }
 
@@ -132,6 +137,7 @@ const categoryStatus = async (req,res)=>{
 
    } catch (error) {
       console.log(error);
+      
    }
 }
 

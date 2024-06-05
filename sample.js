@@ -1251,3 +1251,23 @@
 //     }
 // }
 // console.log(a);
+// let s = "   fly me   to   the moon  "
+// let word = s.split(' ').map(item=>item.trim()).filter(item=>item !== '')
+//     console.log(word)
+    
+let nums = [2,7,9,6,4,6]
+let sort = nums.sort((a,b)=>a-b)
+console.log(sort);
+
+
+    let arr= []
+    for(let i=0;i<sort.length;i++){
+        let f = sort[0]
+        let s = sort[1]
+        arr.push(s)
+        arr.push(f)
+        sort.splice(0,2)
+       
+    }
+    console.log(sort);
+    console.log(arr);

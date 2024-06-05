@@ -95,17 +95,121 @@ const userStatus = async (req,res)=>{
 
 
 // ********** FOR RENDERING SALES REPORT PAGE **********
-const loadSalesReport = async (req,res)=>{
+
+const loadSalesReport = async (req, res) => {
     try {
-        const order = await Order.find().populate('games.gameId').populate('userId')
-        let orders = [...order].reverse()
+
+        const page = parseInt(req.query.page)||1;
+        const limit = 10 ;
+        const skip = (page-1)*limit;
+
+        const orderData = await Order.find().populate('games.gameId').populate('userId');
+        const pageData = await Order.find().populate('games.gameId').populate('userId')
+        let orders = [...orderData].reverse();
+        let pagesOrders = [...pageData].reverse();
         
-        res.render('salesReport',{orders})
+
+        let sumPrice = 0;
+        let sumOffer = 0;
+        let sumFinalPrice = 0;
+
+        
+        const forEachedOrders = orders.map(order => {
+            return order.games.map(item => {
+                const gamePrice = item.gameId.price;
+                const offerPrice = gamePrice - item.price;
+                const finalPrice = item.price;
+
+             
+                sumPrice += gamePrice;
+                sumOffer += offerPrice;
+                sumFinalPrice += finalPrice;
+
+                return {
+                    
+                    orderDate: new Date(order.orderDate).toLocaleString('en-IN', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }),
+                    userName: order.userId.name,
+                    orderId: order.orderId,
+                    gameName: item.gameId.name,
+                    gamePrice: gamePrice,
+                    offerPrice: offerPrice,
+                    finalPrice: finalPrice,
+                    status: item.Status
+                }; 
+            });
+        }).flat();
+
+        let sumPagePrice = 0
+        let sumPageOffer = 0
+        let sumPageFinalPrice = 0
+        
+        const pagedData = pagesOrders.map(order=>{
+            return order.games.map(item=>{
+                const pageGamePrice = item.gameId.price;
+                const pageOfferPrice = pageGamePrice - item.price;
+                const pageFinalPrice = item.price;
+
+                sumPagePrice += pageGamePrice;
+                sumPageOffer += pageOfferPrice;
+                sumPageFinalPrice += pageFinalPrice;
+
+                return {
+                    
+                    orderDate: new Date(order.orderDate).toLocaleString('en-IN', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }),
+                    userName: order.userId.name,
+                    orderId: order.orderId,
+                    gameName: item.gameId.name,
+                    pageGamePrice: pageGamePrice,
+                    pageOfferPrice: pageOfferPrice,
+                    pageFinalPrice: pageFinalPrice,
+                    status: item.Status
+                }; 
+            })
+        }).flat();
+        
+        const paginatedOrders = pagedData.slice(skip, skip + limit);
+        
+        const totalGames = forEachedOrders.length;
+        
+        const totalPages = Math.ceil(totalGames/limit)
+        
+        let prevPage = page - 1;
+        let nextPage = page + 1;
+        if(prevPage < 1) prevPage = 1;
+        if(nextPage > totalPages) nextPage = totalPages
+
+        res.render('salesReport', {
+            orders: paginatedOrders,
+            forEachedOrders,
+            sumPrice,
+            sumOffer,
+            sumFinalPrice,
+            prevPage,
+            nextPage,
+            totalPages,
+            currentPage: page,
+            limit,
+            page,
+            filterParams : req.query.filterParams || ''
+        });
     } catch (error) {
         console.log(error);
     }
-} 
+};   
 
+ 
 
 // ********** FOR FILERTING ORDERS ON THE BASIS OF PERIOD AND SPECIFIC DATE **********
 const filterSalesReport = async (req,res)=>{
@@ -115,7 +219,11 @@ const filterSalesReport = async (req,res)=>{
         if (!startDate ||!endDate) {
             return res.status(400).send('Both startDate and endDate are required.');
         }
-
+        const filter = (startDate && endDate);
+        let filterParams = '';
+        if(filter){
+            filterParams = `&startDate=${startDate}&endDate=${endDate}`;
+        }
         const start = new Date(startDate);
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
@@ -127,7 +235,7 @@ const filterSalesReport = async (req,res)=>{
                 $lte: end,
             },
         };
-
+ 
         
         let sortOption = {};
         if (sortField) {
@@ -137,190 +245,235 @@ const filterSalesReport = async (req,res)=>{
        
         const orders = await Order.find(query).sort(sortOption).populate('games.gameId').populate('userId')
         
-        res.render('salesReport',{orders})
+        let sumPrice = 0;
+        let sumOffer = 0;
+        let sumFinalPrice= 0;
+        
+        const forEachedOrders = orders.map(order=> {
+            return order.games.map(item=>{
+                const gamePrice = item.gameId.price;
+                const offerPrice = gamePrice - item.price;
+                const finalPrice = item.price
+
+                sumPrice += gamePrice;
+                sumOffer += offerPrice;
+                sumFinalPrice += finalPrice;
+
+                return {
+                    orderDate: new Date(order.orderDate).toLocaleString('en-IN', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }),
+                    userName: order.userId.name,
+                    orderId: order.orderId,
+                    gameName: item.gameId.name,
+                    gamePrice: gamePrice,
+                    offerPrice: offerPrice,
+                    finalPrice: finalPrice,
+                    status: item.Status
+                }
+            })
+        }).flat();
+        
+        const page = parseInt(req.query.page)||1;
+        const limit = 10 ;
+        const skip = (page-1)*limit;
+        
+        const paginatedOrders = forEachedOrders.slice(skip, skip + limit);
+        
+        const totalGames = forEachedOrders.length;
+        
+        const totalPages = Math.ceil(totalGames/limit)
+
+        let prevPage = page - 1;
+        let nextPage = page + 1;
+        if(prevPage < 1) prevPage = 1;
+        if(nextPage > totalPages) nextPage = totalPages
+
+        res.render('salesReport',{orders:paginatedOrders ,
+            forEachedOrders,
+            filterParams: filterParams,
+            sumPrice ,
+            sumFinalPrice ,
+            sumOffer,
+            prevPage,
+            nextPage,
+            totalPages,
+            currentPage: page,
+            limit,
+            page
+        })
     } catch (error) {
         console.log(error);
     } 
 }
-
+ 
 
 
 // ********** FOR DOWNLOADING SALES REPORT AS EXCEL FORMAT **********
-const downloadExcel = async(req,res)=>{
+const downloadExcel = async (req, res) => {
     try {
+        const { forEachedOrders } = req.body;
+        console.log('Orders:', JSON.stringify(forEachedOrders, null, 2));
+
         
-        const { orders } = req.body
-        console.log('Orders:', JSON.stringify(orders , null ,2));
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Sales Report');
 
-        const workbook = new ExcelJS.Workbook()
-        const worksheet = workbook.addWorksheet('orders')
-
+        
         worksheet.columns = [
             { header: 'SL.NO', key: 'slNo', width: 10 },
-            { header: 'DATE', key: 'date', width: 20 },
-            { header: 'CUSTOMER', key: 'customer', width: 30 },
-            { header: 'ORDER-ID', key: 'orderId', width: 20 },
-            { header: 'PRODUCT', key: 'product', width: 30 },
-            { header: 'PRICE', key: 'price', width: 15 },
-            { header: 'OFFER', key: 'offer', width: 15 },
-            { header: 'FINAL PRICE', key: 'finalPrice', width: 15 },
-            { header: 'STATUS', key: 'status', width: 15 },
+            { header: 'Order Date', key: 'orderDate', width: 20 },
+            { header: 'User Name', key: 'userName', width: 20 },
+            { header: 'Order ID', key: 'orderId', width: 20 },
+            { header: 'Game Name', key: 'gameName', width: 30 },
+            { header: 'Game Price', key: 'gamePrice', width: 15 },
+            { header: 'Offer Price', key: 'offerPrice', width: 15 },
+            { header: 'Final Price', key: 'finalPrice', width: 15 },
+            { header: 'Status', key: 'status', width: 15 },
         ];
 
-        let index = 1 ;
+
         let sumPrice = 0;
         let sumOffer = 0;
         let sumFinalPrice = 0;
-
-        orders.forEach(order =>{
-            order.games.forEach(item =>{
-                worksheet.addRow({
-                    slNo: index++,
-                    date: new Date(order.orderDate).toLocaleString('en-IN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
-                    customer: order.userId.name,
-                    orderId: order.orderId,
-                    product: item.gameId.name,
-                    price: item.gameId.price,
-                    offer: item.gameId.price - item.price,
-                    finalPrice: item.price,
-                    status: item.Status
-                })
-                sumPrice += item.gameId.price;
-                sumOffer += (item.gameId.price - item.price);
-                sumFinalPrice += item.price;
-            })
-            
-        })
+        
+        forEachedOrders.forEach((order, index) => {
+            worksheet.addRow({
+                slNo: index + 1,
+                orderDate: order.orderDate,
+                userName: order.userName,
+                orderId: order.orderId,
+                gameName: order.gameName,
+                gamePrice: order.gamePrice,
+                offerPrice: order.offerPrice,
+                finalPrice: order.finalPrice,
+                status: order.status,
+            });
+            sumPrice += order.gamePrice
+            sumOffer += (order.finalPrice - order.gamePrice);
+            sumFinalPrice += order.finalPrice
+        });
         
         worksheet.addRow({});
         worksheet.addRow({
             slNo: '',
-            date: '',
-            customer: '',
+            orderDate: '',
+            userName: '',
             orderId: '',
-            product: '',
-            price: 'Total',
-            offer: '',
-            finalPrice: '',
-            status: ''
-        });
-
-        worksheet.addRow({
-            slNo: '',
-            date: '',
-            customer: '',
-            orderId: '',
-            product: '',
-            price: sumPrice,
-            offer: sumOffer,
+            gameName: 'Totals',
+            gamePrice: sumPrice,
+            offerPrice: sumOffer,
             finalPrice: sumFinalPrice,
             status: ''
         });
 
-        const buffer = await workbook.xlsx.writeBuffer();
         
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        res.setHeader('Content-Disposition', 'attachment; filename=RGorders.xlsx');
-        res.send(buffer);
+        res.setHeader('Content-Disposition', 'attachment; filename=sales_report.xlsx');
+
+        
+        await workbook.xlsx.write(res);
+        res.status(200).end();
+
     } catch (error) {
-        console.log(error);
+        console.error('Error generating Excel file:', error);
+        res.status(500).send('Error generating Excel file');
     }
-} 
- 
+};
  
 
 // ********** FOR DOWNLOADING SALES REPORT AS PDF FORMAT *********
 const downloadPDF = async (req, res) => {
     try {
-        const { orders } = req.body;
+        const { forEachedOrders } = req.body;
 
-        const doc = new PDFDocument();
+        const doc = new PDFDocument({ margin: 30 });
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'attachment; filename=RGorders.pdf');
 
         doc.pipe(res);
 
-        // Title
         doc.fontSize(20).text('RUSH GAMES - SALES REPORT', { align: 'center' });
         doc.moveDown();
 
-
-         const columnWidths = {
-            slNo: 50,
-            date: 100,
-            customer: 100,
-            orderId: 80,
-            product: 150,
-            price: 80,
-            offer: 80,
-            finalPrice: 100,
-            status: 80,
-        };
-        
-        const tableHeader = ['NO', 'DATE', 'USER', 'ORDER-ID', 'PRODUCT', 'PRICE', 'OFFER', 'FINAL', 'STATUS'];
-        const cellWidth = 60;
+        const tableHeader = ['SL.NO', 'Order Date', 'User Name', 'Order ID', 'Game Name', 'Game Price', 'Offer Price', 'Final Price', 'Status'];
+        const cellWidths = [30, 60, 60, 60, 80, 50, 50, 60, 50];
         const tableStartX = 10;
-        let currentX = tableStartX;
         const startY = doc.y;
         const rowHeight = 20;
 
-        tableHeader.forEach(header => {
-            doc.fontSize(12).font('Helvetica-Bold').text(header, currentX, startY);
-            currentX += cellWidth;
+
+        let currentX = tableStartX;
+        tableHeader.forEach((header, index) => {
+            doc.fontSize(10).font('Helvetica-Bold').text(header, currentX, startY, { width: cellWidths[index], align: 'left' });
+            currentX += cellWidths[index];
         });
 
-        
-        let index = 1;
         let sumPrice = 0;
         let sumOffer = 0;
         let sumFinalPrice = 0;
-
         let currentY = startY + rowHeight;
-        orders.forEach(order => {
-            order.games.forEach(item => {
-                currentX = tableStartX;
-                const rowData = [
-                    index++,
-                    new Date(order.orderDate).toLocaleString('en-IN', { year: 'numeric', month: '2-digit', day: '2-digit' }),
-                    order.userId.name,
-                    order.orderId,
-                    item.gameId.name,
-                    item.gameId.price,
-                    item.gameId.price - item.price,
-                    item.price,
-                    item.Status
-                ];
-                sumPrice += item.gameId.price;
-                sumOffer += (item.gameId.price - item.price);
-                sumFinalPrice += item.price;
 
-                rowData.forEach(data => {
-                    doc.fontSize(10).font('Helvetica').text(data.toString(), currentX, currentY);
-                    currentX += cellWidth;
+
+        forEachedOrders.forEach((order, index) => {
+            currentX = tableStartX;
+            const rowData = [
+                index + 1,
+                new Date(order.orderDate).toLocaleString('en-IN', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+                order.userName,
+                order.orderId,
+                order.gameName,
+                order.gamePrice.toFixed(2),
+                order.offerPrice.toFixed(2),
+                order.finalPrice.toFixed(2),
+                order.status
+            ];
+            sumPrice += order.gamePrice;
+            sumOffer += order.offerPrice;
+            sumFinalPrice += order.finalPrice;
+
+            rowData.forEach((data, i) => {
+                doc.fontSize(8).font('Helvetica').text(data.toString(), currentX, currentY, { width: cellWidths[i], align: 'left' });
+                currentX += cellWidths[i];
+            });
+
+            currentY += rowHeight;
+
+
+            if (currentY > doc.page.height - doc.page.margins.bottom) {
+                doc.addPage();
+                currentY = startY;
+
+                currentX = tableStartX;
+                tableHeader.forEach((header, index) => {
+                    doc.fontSize(10).font('Helvetica-Bold').text(header, currentX, currentY, { width: cellWidths[index], align: 'left' });
+                    currentX += cellWidths[index];
                 });
 
                 currentY += rowHeight;
-            });
+            }
         });
 
-        
-
-        const totalRowData = ['', '', '', '', 'Total', sumPrice, sumOffer, sumFinalPrice, ''];
+        const totalRowData = ['', '', '', '', 'Total', sumPrice.toFixed(2), sumOffer.toFixed(2), sumFinalPrice.toFixed(2), ''];
         currentX = tableStartX;
-        totalRowData.forEach(data => {
-            doc.fontSize(10).font('Helvetica-Bold').text(data.toString(), currentX, currentY);
-            currentX += cellWidth;
+        totalRowData.forEach((data, i) => {
+            doc.fontSize(8).font('Helvetica-Bold').text(data.toString(), currentX, currentY, { width: cellWidths[i], align: 'left' });
+            currentX += cellWidths[i];
         });
 
         doc.end();
     } catch (error) {
-        console.log(error);
+        console.error('An error occurred while generating the PDF:', error);
         res.status(500).send('An error occurred while generating the PDF.');
     }
 };
 
-
-
+ 
+ 
 module.exports = {
     loadAdminLogin,
     adminVerifyLogin,

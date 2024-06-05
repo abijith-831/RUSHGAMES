@@ -285,18 +285,21 @@ p {
                     <div class="row">
                         <% if (coupons && coupons.length >= 1) { %>
                             <% coupons.forEach(item => { %>
-                                <div class="col-md-4">
-                                    <div class="card coupon-card">
-                                        <div class="card-body">
-                                            <h5 class="card-title"><%= item.couponName %></h5><br>
-                                            <h6 class="card-title">
-                                                <%= item.couponCode %>
-                                                <button class="copy-button" onclick="copyToClipboard('<%= item.couponCode %>')">Copy Code</button>
-                                            </h6><br>
-                                            <p class="card-text"><%= item.description %></p>
+                                <% if(item.eligible ==="usable") { %> 
+                                    <div class="col-md-4">
+                                        <div class="card coupon-card">
+                                            <div class="card-body">
+                                                <h5 class="card-title"><%= item.couponName %></h5><br>
+                                                <h6 class="card-title">
+                                                    <%= item.couponCode %>
+                                                    <button class="copy-button" onclick="copyToClipboard('<%= item.couponCode %>')">Copy Code</button>
+                                                </h6><br>
+                                                <p class="card-text"><%= item.description %></p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                <% } %>
+                                
                             <% }) %>
                         <% } else { %>
                             <div class="col-md-12">

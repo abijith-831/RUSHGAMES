@@ -6,6 +6,10 @@ const Games = require('../models/gameModel')
 const Wallet = require('../models/walletModel')
 const Coupon = require('../models/couponModel')
 const Cart = require('../models/cartModel')
+const PDFDocument = require('pdfkit');
+
+
+
 
 
 // ********** FOR LOADING USER PROFILE PAGE  **********
@@ -22,6 +26,7 @@ const loadUserProfile = async (req,res)=>{
       
     } catch (error) {
       console.log(error);
+      
     }
 }
 
@@ -105,6 +110,7 @@ const editAddress = async (req,res)=>{
     res.render('editAddress',{user : userData , address})
   } catch (error) {
     console.log(error);
+    
   } 
 }
  
@@ -133,6 +139,7 @@ const submitEditAddress = async (req,res)=>{
     res.redirect('/addresses')
   } catch (error) { 
     console.log(error);
+    
   } 
 }
 
@@ -240,27 +247,124 @@ const loadOrderDetailsPage = async (req,res)=>{
         .reduce((acc, curr) => acc + curr.totalAmount, 0);
     }
     
-   
     res.render('orderDetailsPage',{user:userData , order : order , total})
     
     
   } catch (error) {
     console.log(error);
+    
   }
 }
+
+ 
+
+
+// ********** FOR DOWNLOADING INVOICE AS PDF **********
+const downloadInvoice = async (req, res) => {
+  try {
+    const { orderId, gameId, name } = req.body;
+
+    const order = await Order.findOne({ _id: orderId });
+
+    if (!order) {
+      return res.status(404).send('Order not found');
+    }
+
+    const game = order.games.find(item => item.gameId.toString() === gameId);
+
+    if (!game) {
+      return res.status(404).send('Game not found in the order');
+    }
+
+    const doc = new PDFDocument({ margin: 80 });
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=invoice_' + orderId + '.pdf');
+
+    doc.pipe(res);
+
+    doc.fontSize(30).text('ORDER-INVOICE', { align: 'center' });
+    doc.fontSize(20).text('RUSH GAMES', { align: 'center' });
+    doc.moveDown();
+
+    doc.fontSize(12).text(`Order ID: ${order.orderId}`, { align: 'left' });
+    doc.text(`Order Date: ${new Date(order.orderDate).toLocaleDateString('en-IN')}`, { align: 'left' });
+    doc.text(`User Name: ${order.addresses.name}`, { align: 'left' });
+    doc.text(`Address: ${order.addresses.houseNo}, ${order.addresses.area}, ${order.addresses.city}, ${order.addresses.district}, ${order.addresses.state}, ${order.addresses.pincode}`, { align: 'left' });
+    doc.moveDown();
+
+    const tableHeader = ['Game Name', 'Quantity', 'Price', 'Total Amount', 'Status'];
+    const cellWidths = [250, 60, 80, 100, 150]; 
+    let startY = doc.y;
+    const rowHeight = 20;
+    let currentX = 30;
+    
+    tableHeader.forEach((header, index) => {
+      doc.fontSize(10).font('Helvetica-Bold').text(header, currentX, startY, { width: cellWidths[index], align: 'left' });
+      currentX += cellWidths[index] + 10; 
+    });
+    
+    let currentY = startY + rowHeight;
+
+    const gameDetails = [
+      name,
+      game.quantity,
+      game.price.toFixed(2),
+      game.totalAmount.toFixed(2),
+      game.Status
+    ];
+
+    
+    currentX = 10;
+    gameDetails.forEach((data, index) => {
+      doc.fontSize(10).font('Helvetica').text(data.toString(), currentX, currentY, { width: cellWidths[index], align: 'left' });
+      currentX += cellWidths[index] + 10; 
+    });
+
+    currentY += rowHeight;
+
+    if (currentY > doc.page.height - doc.page.margins.bottom) {
+      doc.addPage();
+      currentY = startY;
+
+      currentX = 10;
+      tableHeader.forEach((header, index) => {
+        doc.fontSize(10).font('Helvetica-Bold').text(header, currentX, currentY, { width: cellWidths[index], align: 'left' });
+        currentX += cellWidths[index] + 10; 
+      });
+
+      currentY += rowHeight;
+    }
+
+    currentY += 50
+
+    doc.fontSize(12).font('Helvetica-Bold').text('Total Amount:', 350, currentY);
+    doc.text(game.totalAmount.toFixed(2), 450, currentY);
+
+    doc.end();
+
+  } catch (error) {
+    console.error('An error occurred while generating the PDF:', error);
+    res.status(500).send('An error occurred while generating the PDF.');
+  }
+};
+
 
 
 // ********** FOR CANCEL ORDER  **********
 const cancelOrder = async (req,res)=>{
   try {
-    console.log('bcbd');
+   
     const userId = req.session.user_id;
     const wallet = await Wallet.findOne({userId : userId})
     const { reason,orderId,gameId } = req.body;
     const order = await Order.findOne({_id:orderId })
     const game = order.games.find(item =>item.gameId.equals(gameId))
+    
+    const gameData = await Games.findOne({_id  : game.gameId})
+    
     if(order.paymentMethod !== 'cashOnDelivery'){
       if(wallet){
+  
         const previousBalance = wallet.balance
         wallet.balance = wallet.balance + game.price
         wallet.history.push({
@@ -272,7 +376,9 @@ const cancelOrder = async (req,res)=>{
             currBalance : wallet.balance
         })
         await wallet.save()
+
       }else{
+
         const walletData = new Wallet({
           userId:userId,
           balance : game.price,
@@ -291,13 +397,18 @@ const cancelOrder = async (req,res)=>{
     }
       
   }
+
     game.reason = reason ; 
+    gameData.stock = gameData.stock + game.quantity;
     order.totalCartPrice = order.totalCartPrice - game.totalAmount
     game.Status = 'Cancelled';
+    await gameData.save();
     await order.save()
     res.json({success:true})
+
   } catch (error) {
     console.log('error');
+    
   }
 } 
 
@@ -326,6 +437,7 @@ const returnOrder = async (req,res)=>{
     await order.save();
   } catch (error) {
     console.log(error);
+    
   }
 }
 
@@ -344,6 +456,7 @@ const loadWallet = async (req,res)=>{
         
   } catch (error) {
     console.log(error);
+    
   }
 }
 
@@ -394,6 +507,7 @@ const addMoneyToWallet = async (req , res)=>{
     
   } catch (error) {
     console.log(error);
+    
   }
 }
 
@@ -428,6 +542,7 @@ const withdrawMoney = async (req,res)=>{
     
   } catch (error) {
     console.log(error);
+    
   }
 }
 
@@ -437,15 +552,18 @@ const loadCoupons = async (req,res)=>{
   try {
     const userId = req.session.user_id;
     const userData = await User.findOne({_id : userId}).populate('coupons')
-    const coupons = userData.coupons
+    console.log('hbugyh'+userData);
+    const coupons = userData.coupons;
+    
   
     res.render('coupons',{user : userData , coupons : coupons})
     
   } catch (error) {
     console.log(error);
+    
   }
-}
-
+} 
+ 
 
 // ********** CHECK COUPON IS AVAILABLE OR NOT  **********
 const checkCoupon = async (req,res)=>{
@@ -463,8 +581,15 @@ const checkCoupon = async (req,res)=>{
     
       const exists = user.coupons.find(item=>item.couponCode === code)
       const cart = await Cart.findOne({userId:userId})
+      
+      const couponPrice = cart.totalCartPrice * (exists.discount /100)
+      console.log('cnsfjf'+couponPrice);
+
       if(exists){
-        res.json({success:true , discountPercentage: exists.discount , cart:cart })
+        res.json({success:true ,
+          discountPercentage: exists.discount ,
+          cart:cart  ,
+          couponPrice : couponPrice })
       }else{
         res.json({success:false , message: 'Invalid or expired coupon.'})
       }
@@ -491,6 +616,7 @@ module.exports = {
 
     loadOrderHistory,
     loadOrderDetailsPage,
+    downloadInvoice,
     cancelOrder ,
     returnOrder,
 

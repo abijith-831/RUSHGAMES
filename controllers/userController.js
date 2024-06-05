@@ -55,6 +55,7 @@ const loadLogin = async (req, res) => {
     res.render("login", { errmsg, succmsg });
   } catch (error) {
     console.log(error);
+    
   }
 };
 
@@ -78,11 +79,7 @@ const registerUser = async (req, res) => {
         is_blocked: false,
       });
 
-      // ********** SETTING EXPIRATION TIME OF REGISTERED DATAS IN ONE MINUTE **********
-      // const expTime = new Date()
-      // expTime.setMinutes(expTime.getMinutes()+1)
-
-      // newUser.expiresAt = expTime
+     
 
       await newUser.save();
 
@@ -90,6 +87,7 @@ const registerUser = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    
   }
 };
 
@@ -130,6 +128,7 @@ const verifyLogin = async (req, res) => {
         res.redirect("/login");
   } catch (error) {
     console.log(error);
+    
   }
 };
 
@@ -146,6 +145,7 @@ const resendOTP = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    
   }
 };
 
@@ -196,6 +196,7 @@ const sendOTPVerifymail = async ({ email }, res) => {
     res.redirect(`/otp?email=${email}`);
   } catch (error) {
     console.log(error.message);
+    
   }
 };
  
@@ -209,6 +210,7 @@ const loadOTP = async (req, res) => {
     res.render("otpVerification", { errmsg, success, email: email });
   } catch (error) {
     console.log(error.message);
+    
   }
 };
 
@@ -259,6 +261,7 @@ const verifyOTP = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    
   }
 };
 
@@ -271,6 +274,7 @@ const userLogout = async (req, res) => {
     res.redirect("/login");
   } catch (error) {
     console.log(error);
+    
   }
 };
 
@@ -282,6 +286,7 @@ const loadRegister = async (req, res) => {
     res.render("registration", { errmsg });
   } catch (error) {
     console.log(error);
+    
   }
 };
 
@@ -294,6 +299,7 @@ const loadAboutUs = async (req, res) => {
     res.render("aboutUs",{user:userData});
   } catch (error) {
     console.log(error);
+    
   }
 };
 
@@ -306,6 +312,7 @@ const loadContactUs = async (req, res) => {
     res.render("contactUs",{user:userData});
   } catch (error) {
     console.log(error);
+    
   }
 };
 
@@ -391,6 +398,7 @@ const loadAllGames = async (req, res) => {
     res.render("allGames",{categories , games:games,user:userData,errmsg , totalPages , prevPage , nextPage , page , number});
   } catch (error) {
     console.log(error);
+    
   }
 };
 
@@ -407,6 +415,7 @@ const loadGameDetails = async (req,res)=>{
     res.render('gameDetailsPage',{gameDetails,game,gameItem,user:userData})
   } catch (error) {
     console.log(error);
+    
   }
 }
 
@@ -473,6 +482,7 @@ const searchName = async (req,res)=>{
     
   } catch (error) {
     console.log(error);
+    
   }
 }
 
@@ -498,6 +508,7 @@ const filterGames = async (req,res)=>{
     
   } catch (error) {
     console.log(error);
+    
   }
 }  
 
@@ -509,6 +520,7 @@ const loadComingSoon = async (req ,res)=>{
     res.render('comingSoon',{comings})
   } catch (error) {
     console.log(error);
+    
   }
 }
 
@@ -521,6 +533,7 @@ const loadComingSoonDetails = async (req,res)=>{
     res.render('comingSoonDetails',{game})
   } catch (error) {
     console.log(error);
+    
   }
 }
 
@@ -538,6 +551,7 @@ module.exports = {
   loadLogin,
   loadRegister,
   verifyOTP,
+
 
   registerUser,
   verifyLogin,

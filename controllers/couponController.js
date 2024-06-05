@@ -10,6 +10,7 @@ const loadCouponList = async (req,res)=>{
         res.render('couponList',{coupons:coupons})
     } catch (error) {
         console.log(error);
+        
     }
 }
 
@@ -28,12 +29,14 @@ const addCoupon = async (req,res)=>{
             discount,
             StartDate : Date.now(),
             expiry : expiryDate,
+            eligible : 'usable'
 
         })
         await coupon.save()
         res.json({success:true})
     } catch (error) {
         console.log(error);
+        
     }
 }
 
@@ -57,6 +60,7 @@ const couponStatus = async (req,res)=>{
         res.json({success:true , newStatus : coupon.is_active})
     } catch (error) {
         console.log(error);
+        
     }
 }
 

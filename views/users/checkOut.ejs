@@ -233,7 +233,7 @@ input[type="radio"]:checked + label {
 		 
 		                		<aside class="col-lg-3  ml-5">
 		                			<div class="summary content-container">
-		                				<h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
+		                				<h3 class="summary-title">Your Order</h3>
 
 		                				<table class="table table-summary">
 		                					<thead>
@@ -244,13 +244,16 @@ input[type="radio"]:checked + label {
 		                					</thead>
 
 		                					<tbody>
+												
 												<% cartData.games.forEach((item, index) => { %>
 													<tr>
 														<td><a href="#"><%= gameDetails[index].name %></a></td>
 														<td><%= (item.price * item.quantity).toFixed(2) %> Rs</td>
 													</tr>
+													
 												<% }); %>
-											
+												
+													
 												
 												<tr class="summary-subtotal">
 													<td>Subtotal:</td>
@@ -261,16 +264,23 @@ input[type="radio"]:checked + label {
 													<td>Discount :</td>
 													<td id="discount-value"><%= cartData.discount ? cartData.discount : 0 %>%</td>
 												</tr>
+												<tr id="deducted-price-row">
+													<td>Deducted Price:</td>
+													<td id="deducted-price"><%= cartData.discountedPrice ? cartData.discountedPrice : 0 %> Rs</td>
+												</tr>
+												<tr id="delivery-charge-row">
+													<td>Delivery Charge:</td>
+													<td id="delivery-charge-value"><%= cartData.deliveryCharge? cartData.deliveryCharge : 0 %> Rs</td>
+												</tr>
 												
-												
-												
-												
-
 												<tr class="summary-total">
 													<td>Total : </td>
-													<td id="total-price"><%= cartData.discountedPrice? cartData.discountedPrice.toFixed(2) : cartData.totalCartPrice.toFixed(2) %> Rs</td>
+													<td id="total-price">
+														<%= Number(cartData.discountedPrice? cartData.discountedPrice.toFixed(2) : cartData.totalCartPrice.toFixed(2)) + 
+														   Number(cartData.deliveryCharge) %> Rs
+													</td>
 												</tr>
-			
+												
 											</tbody>
 											
 		                				</table>
@@ -338,7 +348,7 @@ input[type="radio"]:checked + label {
 	                </div><!-- End .container -->
                 </div><!-- End .checkout -->
             </div><!-- End .page-content -->
-        </main><!-- End .main -->
+        </main>
 
 
 
@@ -419,12 +429,6 @@ input[type="radio"]:checked + label {
 	</div>
 </div>		
 	
-
-
-
-
-
-
 
 <!-- Add Address functionality -->
 <script>
@@ -631,7 +635,15 @@ input[type="radio"]:checked + label {
 								}, 2000);
 							}
 						
-					} else if(data.Razorpay){
+					}else if(data.message==='nocod'){
+						Swal.fire({
+								icon : 'error',
+								title : 'Not Available',
+								text : 'Cash on Delivery not Available for Purchases Below 1000 Rs',
+								confirmButtonText : 'OK'
+							});
+					}
+					 else if(data.Razorpay){
 						
 						
 						const options = {
@@ -708,9 +720,11 @@ input[type="radio"]:checked + label {
 });
 
 function verifyPayment(payment,order){
+	console.log('njsnfsnf');
+	window.location.href = `/orderHistory`;
     console.log(payment);
   $.ajax({
-    url:'/verifypayment',
+    url:'/orderHistory',
     data:{
         payment,
         order
@@ -728,9 +742,9 @@ function verifyPayment(payment,order){
             });
             const orderid=order.receipt
             setTimeout(()=>{
-
-                    window.location.href = `/vieworder/${orderid}`;
-            },2000)
+				console.log('lnjinfnj');
+                    window.location.href = `/orderHistory`;
+            },1000)
         }else{
 			Swal.fire({
                         title: 'Payment Failed',
@@ -782,12 +796,14 @@ function verifyPayment(payment,order){
 				const cart = data.cart;
 
 				const originalTotal = parseFloat(cart.totalCartPrice);
-				const discountAmount = originalTotal * (data.discountPercentage / 100)
+				const discountAmount = data.couponPrice
 				const discountedTotal = originalTotal - discountAmount;
 
 				document.getElementById('subtotal-price').textContent = `${originalTotal.toFixed(2)} Rs`;
 				document.getElementById('discount-value').textContent = `${data.discountPercentage}%`;
+				document.getElementById('deducted-price').textContent = `${discountAmount.toFixed(2)} Rs`;
 				document.getElementById('total-price').textContent = `${discountedTotal.toFixed(2)} Rs`;
+
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
@@ -827,6 +843,7 @@ function verifyPayment(payment,order){
 		discountInput.disabled = false;
 
 		document.getElementById('discount-value').textContent = '0%';
+		document.getElementById('deducted-price').textContent = '0 Rs';
 		document.getElementById('total-price').textContent = document.getElementById('subtotal-price').textContent;
 
 		applyButton.textContent = 'Apply';

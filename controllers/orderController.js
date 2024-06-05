@@ -12,6 +12,7 @@ const loadOrderHistory = async (req,res)=>{
         res.render('orderMgmt',{orders})
     } catch (error) {
         console.log(error);
+        
     }
 } 
 
@@ -29,6 +30,7 @@ const loadAdminOrderDetails = async (req,res)=>{
         
     }catch(error){
         console.log(error);
+        
     }
 }
 
@@ -48,6 +50,7 @@ const changeStatus = async (req,res)=>{
    
     }catch(error){
         console.log(error);
+        
     }
 }
  
@@ -91,6 +94,7 @@ const approveRequest = async (req,res)=>{
         res.json({success : true})
     } catch (error) {
         console.log(error);
+        
     }  
 }
 
@@ -111,6 +115,7 @@ const rejectRequest = async(req,res)=>{
         res.json ({success : true})
     } catch (error) {
         console.log(error);
+        
     }
 }
  

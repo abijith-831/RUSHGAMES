@@ -20,6 +20,7 @@ const loadWishlist = async (req,res)=>{
         res.render('wishlist',{ user : userData , wishlistData : wishlistData , count : count})
     } catch (error) {
         console.log(error);
+        
     }
 }
    
@@ -61,6 +62,7 @@ const addToWishlist = async (req,res)=>{
         }
     } catch (error) {
         console.log(error);
+        
     }
 }
 
@@ -79,6 +81,7 @@ const removeFromWishlist = async (req,res)=>{
             
         
     } catch (error) {
+        console.log(error);
         
     }
 }
@@ -116,17 +119,17 @@ const addToCartAndRemove = async (req, res) => {
         });
 
         if(gameExists){
-            return res.json({ success: false, message: 'Game already in cart' });
-             
+            return res.json({ success: false, message: 'Game already in cart' });    
         }
-        console.log('sdnjnfs');
+        
         if (!gameExists) {
             const newCartItem = {
                 gameId: gameId,
                 quantity: 1,
-                price: game.price,
-                totalAmount :  game.price
+                price: game.finalPrice,
+                totalAmount :  game.finalPrice
             };
+            cart.totalCartPrice += game.finalPrice;
             cart.games.push(newCartItem);
         }
         wishlist.games = wishlist.games.filter(wishlistGame => wishlistGame.gameId.toString() !== gameId.toString());
@@ -146,9 +149,23 @@ const addToCartAndRemove = async (req, res) => {
 
 
 
+// ********** FOR RENDERING NOTIFICATION PAGE **********
+const loadNotification = async (req,res)=>{
+    try {
+        res.render('notification')
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+
 module.exports = {
     loadWishlist,
     addToWishlist,
     removeFromWishlist,
-    addToCartAndRemove
+    addToCartAndRemove,
+
+
+    loadNotification
 }

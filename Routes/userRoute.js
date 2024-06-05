@@ -42,6 +42,7 @@ user_route.post('/editUserPassword',profileController.editUserPassword)
 //----------------
 user_route.get('/orderHistory', userAuth.isLogin , profileController.loadOrderHistory)
 user_route.get('/orderDetailsPage', userAuth.isLogin, profileController.loadOrderDetailsPage)
+user_route.post('/downloadInvoice',profileController.downloadInvoice) 
 user_route.post('/cancelOrder',profileController.cancelOrder)
 user_route.post('/returnOrder',profileController.returnOrder)
 //---------------- 
@@ -64,6 +65,9 @@ user_route.get('/wishlist' , userAuth.isLogin , wishlistController.loadWishlist)
 user_route.post('/addToWishlist' , wishlistController.addToWishlist) 
 user_route.put('/removeFromWishlist' , userAuth.isLogin , wishlistController.removeFromWishlist)
 user_route.post('/addToCartAndRemove',wishlistController.addToCartAndRemove)
+//-----------------------
+user_route.get('/loadNotification',wishlistController.loadNotification)
+
 
 
 //******   CHECKOUT SECTION ******  
@@ -94,10 +98,11 @@ user_route.get('/sort/:criteria',userController.sortGames);
 user_route.post('/search',userController.searchName)
 user_route.post('/filterGames',userController.filterGames)
 
-user_route.get('*', (req, res) => {
-    res.render('404');
-});
 
+
+// user_route.get('*', (req, res) => {
+//     res.render('404');
+// });
 
 
 module.exports = user_route;

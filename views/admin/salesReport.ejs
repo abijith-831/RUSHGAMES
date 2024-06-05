@@ -240,46 +240,64 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% let index = 1 %>
-                                    <% let sumPrice = 0 %>
-                                    <% let sumOffer = 0 %>
-                                    <% let sumFinalPrice = 0 %>
-                                    <% orders.forEach(( order )=> { %>
-                                        
-                                        <% order.games.forEach((item)=>{ %>
-
-                                            <tr>
-                                                <td style="font-size: 13px;"><%= index ++ %></td>
-                                                <td style="font-size: 13px;"><%= new Date(order.orderDate).toLocaleString('en-IN',{year : 'numeric',month:'2-digit',day:'2-digit',hour :'2-digit',minute:'2-digit'}) %></td>
-                                                <td style="font-size: 13px;"><%= order.userId.name %></td>
-                                                <td style="font-size: 13px;"><%= order.orderId %></td>
-                                                <td style="font-size: 13px;"><%= item.gameId.name %></td>
-                                                <td style="font-size: 13px;"><%= item.gameId.price %></td>
-                                                <td style="font-size: 13px;"><%= item.gameId.price - item.price %></td>
-                                                <td style="font-size: 13px;"><%= item.price %></td>
-                                                <td style="font-size: 13px;"><%= item.Status %></td>
-                                            </tr>
-                                            <% sumPrice = sumPrice + item.gameId.price %>
-                                            <% sumOffer = sumOffer + (item.gameId.price - item.price) %>
-                                            <% sumFinalPrice = sumFinalPrice + item.price %>
-                                        <% }) %>
-                                        
+                                    <% const indexPage = (page-1)*limit %>
+                                    <% orders.forEach((order,index) => { %>
+                                        <tr>
+                                            <td style="font-size: 13px;"><%=index+1 + indexPage %></td>
+                                            <td style="font-size: 13px;"><%= order.orderDate %></td>
+                                            <td style="font-size: 13px;"><%= order.userName %></td>
+                                            <td style="font-size: 13px;"><%= order.orderId %></td>
+                                            <td style="font-size: 13px;"><%= order.gameName %></td>
+                                            <td style="font-size: 13px;"><%= order.pageGamePrice? order.pageGamePrice : order.gamePrice %></td>
+                                            <td style="font-size: 13px;"><%= order.pageOfferPrice? order.pageOfferPrice : order.offerPrice %></td>
+                                            <td style="font-size: 13px;"><%= order.pageFinalPrice? order.pageFinalPrice : order.finalPrice %></td>
+                                            <td style="font-size: 13px;"><%= order.status %></td>
+                                        </tr>
                                     <% }) %>
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="5" style="text-align:right; font-size: 13px;"><strong>Total:</strong></td>
-                                        <td id="totalPrice" style="font-size: 13px; font-weight: bold;"><%= sumPrice %></td>
-                                        <td id="totalOffer" style="font-size: 13px; font-weight: bold;"><%= sumOffer %></td>
-                                        <td id="totalFinalPrice" style="font-size: 13px; font-weight: bold;"><%= sumFinalPrice %></td>
+                                        <td colspan="5" style="font-size: 13px;">Total</td>
+                                        <td style="font-size: 13px;"><%= sumPrice %></td>
+                                        <td style="font-size: 13px;"><%= sumOffer %></td>
+                                        <td style="font-size: 13px;"><%= sumFinalPrice %></td>
                                         <td></td>
                                     </tr>
                                 </tfoot>
+                                
                             </table>
+                             
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+                                    <% if (currentPage > 1) { %>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=<%= prevPage %><%= filterParams %>" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                    <% } %>
+                                    <% for (let i = 1; i <= totalPages; i++) { %>
+                                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                            <a class="page-link" href="?page=<%= i %><%= filterParams %>"><%= i %></a>
+                                        </li>
+                                    <% } %>
+                                    <% if (currentPage < totalPages) { %>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=<%= nextPage %><%= filterParams %>" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    <% } %>
+                                </ul>
+                            </nav>
+                            
                             <div class="d-flex justify-content-center">
                                 <button class="btn btn-success" id="downloadExcel" style="margin-right: 20px;" >Download Excel</button>
                                 <button class="btn btn-danger" id="downloadPDF" >Download PDF</button>
                             </div>
+                            <br>
+
+                            
                             
                             
                         </div>
@@ -327,14 +345,14 @@
 <!--  for passing orders to backend when clicking excel and pdf   -->
 <script>
     document.getElementById('downloadExcel').addEventListener('click', function() {
-        let orders = <%- JSON.stringify(orders) %>;
+        let forEachedOrders = <%- JSON.stringify(forEachedOrders) %>;
 
         fetch('/admin/downloadExcel', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
             },
-            body: JSON.stringify({ orders: orders })
+            body: JSON.stringify({ forEachedOrders: forEachedOrders })
         })
         .then(response => response.blob())
         .then(blob => {
@@ -353,14 +371,14 @@
     });
 
     document.getElementById('downloadPDF').addEventListener('click', function() {
-        let orders = <%- JSON.stringify(orders) %>;
+        let forEachedOrders = <%- JSON.stringify(forEachedOrders) %>;
 
         fetch('/admin/downloadPDF', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
             },
-            body: JSON.stringify({ orders: orders })
+            body: JSON.stringify({ forEachedOrders: forEachedOrders })
         })
         .then(response => response.blob())
         .then(blob => {

@@ -38,13 +38,21 @@ const loadCheckOut = async (req,res)=>{
       const gameIds = cartData.games.map(game => game.gameId);
       const gameDetailsPromises = gameIds.map(gameId => Games.findOne({_id: gameId}));
       const gameDetails = await Promise.all(gameDetailsPromises); 
+
+      let deliveryCharge = 0
+      if(cartData.totalCartPrice < 2500){
+        cartData.deliveryCharge = 80
+        await cartData.save();
+      }
+
       res.render('checkOut',{user : userData , addresses , cartData , gameDetails,errmsg ,coupon , count})
     } catch (error) {
       console.log(error);
+      
     }
 }
 
-
+ 
 // ********** FOR ADDING NEW ADDRESS  **********
 const addNewAddress = async (req,res)=>{
   try {
@@ -84,151 +92,145 @@ const addNewAddress = async (req,res)=>{
 
 
 // ********** FOR ORDER PLACEMENT  **********
-const placeOrder = async (req,res)=>{
+const placeOrder = async (req, res) => {
   try {
-    
     const userId = req.session.user_id;
-    const userData = await User.findOne({_id : userId}).populate('coupons')
     const selectedPayment = req.body.paymentMethod;
     const couponId = req.body.couponId;
-
-    const coupon = userData.coupons.find(item => item.couponCode === couponId)
- 
-
     const addressId = req.body.addressId;
-   
-    const abc= await Address.findOne({'addresses._id':addressId})
-    
-    const addressData = abc.addresses.find(address => address._id.equals(addressId))
-    
-    
+
+    const userData = await User.findOne({ _id: userId }).populate('coupons');
+    const coupon = userData.coupons.find(item => item.couponCode === couponId);
+    const addressData = await Address.findOne({ 'addresses._id': addressId }, { 'addresses.$': 1 });
+
+    if (!addressData) {
+      return res.status(400).json({ message: "Address not found." });
+    }
+
     const cart = await Cart.findOne({ userId: userId });
+    if(cart.deliveryCharge){
+      cart.totalCartPrice += cart.deliveryCharge;
+      await cart.save();
+    }
     if (!cart) {
       return res.status(400).json({ message: "Cart not found for this user." });
     }
-    
-    
-    const orderId = generateOrderId()
-  
-    const newOrder = new Order ({
-      userId : userId ,
-      games : cart.games.map(item => ({
-        gameId : item.gameId ,
-        quantity :item.quantity , 
-        Status : 'Confirmed',
-        reason : '',
-        price : item.price,
-        totalAmount : item.totalAmount
-      })), 
-      totalCartPrice : cart.totalCartPrice,
+
+    const orderId = generateOrderId();
+
+    const newOrderData = {
+      userId: userId,
+      games: cart.games.map(item => ({
+        gameId: item.gameId,
+        quantity: item.quantity,
+        Status: 'Confirmed',
+        reason: '',
+        price: item.price,
+        totalAmount: item.totalAmount
+      })),
+      totalCartPrice: cart.totalCartPrice ,
       addresses: {
-        name : addressData.name,
-        mobile : addressData.mobile,
-        pincode : addressData.pincode,
-        district : addressData.district,
-        state : addressData.state,
-        city : addressData.city,
-        area : addressData.area,
-        houseNo : addressData.houseNo,
+        name: addressData.addresses[0].name,
+        mobile: addressData.addresses[0].mobile,
+        pincode: addressData.addresses[0].pincode,
+        district: addressData.addresses[0].district,
+        state: addressData.addresses[0].state,
+        city: addressData.addresses[0].city,
+        area: addressData.addresses[0].area,
+        houseNo: addressData.addresses[0].houseNo,
       },
-      paymentMethod : selectedPayment,
-      paymentStatus : 'Pending' , 
-      orderId : orderId,
-      orderDate : new Date(),
-      
-    })
+      paymentMethod: selectedPayment,
+      paymentStatus: 'Pending',
+      orderId: orderId,
+      orderDate: new Date(),
+    };
 
     if (coupon) {
-      newOrder.discount = coupon.discount;
+      newOrderData.discount = coupon.discount;
     }
-          
-    const orderInstance = new Order(newOrder);
-    
-        if(selectedPayment === 'wallet'){// wallet payment
-          const wallet = await Wallet.findOne({userId:userId})
-          if(!wallet){
-            return res.json({success:false , message:"nowallet"})
-          }
-          else if(cart.totalCartPrice>wallet.balance){
-            return res.json({success:false , message:"Insufficient"})
-          }else{
-            
-            await orderInstance.save();
-            
-            let discountedPrice = cart.totalCartPrice;
-            if(orderInstance.discount){
-              
-              discountedPrice =orderInstance.totalCartPrice - ( orderInstance.totalCartPrice * orderInstance.discount/100)
-              wallet.balance = wallet.balance - discountedPrice;
-            }else{
-              wallet.balance = wallet.balance - cart.totalCartPrice;
-            }
-            
-            wallet.history.push({
-              amount : discountedPrice,
-              method : 'Purchase',
-              transactionType : 'debit',
-              date : Date.now(),
-              currBalance: wallet.balance
-            })
-            await wallet.save()
-            await Cart.findOneAndDelete({userId:userId});
-           
-            
-            await giveCoupon(userId,cart.totalCartPrice)
-            
-            
-            return res.json({success : true})
 
-          }
-          
-          
-        }else if(selectedPayment === 'onlinePayment'){// razorpay online payment 
-          const totalCartPrice = Math.round(newOrder.totalCartPrice * 100)
-          const minimumAmount = 100;
-          const adjustedAmount = Math.max(totalCartPrice , minimumAmount)
-          
-          generateRazorpay(orderInstance._id , adjustedAmount).then(async(response)=>{
-            const savedOrder = await orderInstance.save()
-            await Cart.findOneAndDelete({userId : userId})
+    const orderInstance = new Order(newOrderData);
 
-            
-            await giveCoupon(userId , cart.totalCartPrice);
-            
-            res.json({Razorpay : response ,})
-          })
-          
-        }else if(selectedPayment === 'cashOnDelivery'){// cash on delivery 
-          await orderInstance.save()
-          await Cart.findOneAndDelete({userId : userId})
-          
-          await giveCoupon(userId, cart.totalCartPrice , couponId);
-          
-          
-          res.json({success: true})
+    let isOrderSaved = false;
+    let discountedPrice = cart.totalCartPrice;
+
+    if (selectedPayment === 'wallet') {
+      const wallet = await Wallet.findOne({ userId: userId });
+      if (!wallet) {
+        return res.json({ success: false, message: "nowallet" });
+      } else if (cart.totalCartPrice > wallet.balance) {
+        return res.json({ success: false, message: "Insufficient" });
+      } else {
+        if (orderInstance.discount) {
+          discountedPrice = orderInstance.totalCartPrice - (orderInstance.totalCartPrice * orderInstance.discount / 100);
         }
-       
-        for (const item of cart.games){
-          await Games.updateOne(
-            {_id:item.gameId},
-            {$inc : {stock : - item.quantity}}
-          )
-        } 
+        wallet.balance -= discountedPrice;
 
-        if (coupon) {
-          await User.updateOne(
-            { _id: userId },
-            { $pull: { coupons: coupon._id } }
-          );
+        wallet.history.push({
+          amount: discountedPrice,
+          method: 'Purchase',
+          transactionType: 'debit',
+          date: Date.now(),
+          currBalance: wallet.balance
+        });
+
+        await wallet.save();
+        await orderInstance.save();
+        await Cart.findOneAndDelete({ userId: userId });
+        await giveCoupon(userId, cart.totalCartPrice);
+
+        res.json({ success: true });
+       
       }
-      console.log('ftyfvbjn');
+    } else if (selectedPayment === 'onlinePayment') {
+      if (orderInstance.discount) {
+        const discount = orderInstance.discount;
+        discountedPrice = orderInstance.totalCartPrice - (orderInstance.totalCartPrice * discount / 100);
+      }
+      const totalCartPrice = Math.round(discountedPrice * 100);
+      const minimumAmount = 100;
+      const adjustedAmount = Math.max(totalCartPrice, minimumAmount);
+
+      generateRazorpay(orderInstance._id, adjustedAmount).then(async (response) => {
+        await orderInstance.save();
+        await Cart.findOneAndDelete({ userId: userId });
+        await giveCoupon(userId, cart.totalCartPrice);
+
+        isOrderSaved = true;
+        res.json({ Razorpay: response });
+      });
+    } else if (selectedPayment === 'cashOnDelivery') {
+      if(cart.totalCartPrice < 1000){
+          return res.json({success:false,message:'nocod'})
+      }
+      await orderInstance.save();
+      await Cart.findOneAndDelete({ userId: userId });
+      await giveCoupon(userId, cart.totalCartPrice);
+
       
+      res.json({ success: true });
+    }
+    for (const item of cart.games){
+      await Games.updateOne(
+        {_id:item.gameId},
+        {$inc : {stock : - item.quantity}}
+      )
+    } 
+
+    if (coupon) {
+      await User.updateOne(
+        { _id: userId },
+        { $pull: { coupons: coupon._id } }
+      );
+  } 
+
   } catch (error) {
     console.log(error);
+    res.status(500).json({ message: "An error occurred during order placement." });
   }
-}
+};
 
-
+   
 // ********** GIVE COUPONS FUCNTION **********
 const giveCoupon = async (userId , totalCartPrice)=>{
   try {
@@ -243,21 +245,21 @@ const giveCoupon = async (userId , totalCartPrice)=>{
     for(const item of coupons){
       if(totalCartPrice >= item.minimum){
         await User.findByIdAndUpdate({_id:userId},{$push:{coupons : item._id}});
-      
       }
     }
   } catch (error) {
     console.log(error);
+    
   } 
 }
 
 
 // ********** RAZORPAY SETTINGS  **********
-const generateRazorpay = (orderId , adjustedAmount)=>{
+const generateRazorpay = (orderId , totalCartPrice)=>{
   return new Promise((resolve , reject)=>{
 
     const options = {
-      amount : adjustedAmount,
+      amount : totalCartPrice,
       currency : 'INR',
       receipt : ""+orderId
     };

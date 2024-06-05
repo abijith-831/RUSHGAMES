@@ -16,7 +16,7 @@ const loadGamesList = async (req, res) => {
 
     
     const page = parseInt(req.query.page)||1;
-    const limit = 10;
+    const limit = 5;
     const skip = (page-1)*limit;
     const games = await Games.find().skip(skip).limit(limit)
     for (let game of games) {
@@ -36,6 +36,7 @@ const loadGamesList = async (req, res) => {
     res.render("gamesList", { games, success , totalPages , totalGames , prevPage , nextPage , page , limit});
   } catch (error) {
     console.log(error);
+    
   }
 };
 
@@ -48,6 +49,7 @@ const loadAddGames = async (req, res) => {
     res.render("addGames", { categories, errmsg });
   } catch (error) {
     console.log(error);
+    
   }
 };
 
@@ -146,6 +148,7 @@ const loadEditGames = async (req,res)=>{
     res.render('editGames',{gameDetails,gameId:id,categories,errmsg})
   } catch (error) {
     console.log(error);
+    
   }
 }
 
@@ -207,10 +210,11 @@ const gameStatus = async (req,res)=>{
     res.json({success:true,newStatus})
   } catch (error) {
     console.log(error);
+    
   }
 }
 
-
+ 
 
 const loadComingSoon = async (req,res)=>{
   try {
@@ -225,6 +229,7 @@ const loadComingSoon = async (req,res)=>{
     res.render('comingSoonList',{categories , comings})
   } catch (error) {
     console.log(error);
+    
   }
 }
 
@@ -267,6 +272,7 @@ const addComingSoonGames = async (req,res)=>{
     
   } catch (error) {
     console.log(error);
+    
   }
 }
 

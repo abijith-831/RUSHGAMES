@@ -32,6 +32,9 @@ const couponSchema = new mongoose.Schema({
     is_active : {
         type : Boolean , 
         default : 0
+    },
+    eligible : {
+        type : String
     }
 })
 

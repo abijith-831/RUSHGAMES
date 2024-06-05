@@ -49,7 +49,7 @@ const addGameToCart = async (req, res) => {
       const userId = req.session.user_id;
       let userCart = await Cart.findOne({ userId: userId });
       const game = await Games.findById(gameId);
-      console.log('sbhdfsd'+game);
+      
  
       if (!userCart) {
         const gamePrice = quantity * game.finalPrice;
@@ -121,6 +121,7 @@ const removeFromCart = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    
   }
 };
 
@@ -130,9 +131,11 @@ const updateCartQuantity = async (req, res) => {
   try {
     const userId = req.session.user_id;
     const { quantity, gameId, cartId } = req.body;
+    
     const game = await Games.findById(gameId)
     const gamePrice = game.finalPrice;
     const exists = await Cart.findById(cartId)
+    
 
     if(!exists){
       return res.status(404).json({ success: false, message: "Cart not found" });
@@ -149,6 +152,7 @@ const updateCartQuantity = async (req, res) => {
     exists.totalCartPrice = exists.games.reduce((acc , curr)=>{
       return acc + curr.totalAmount
     },0)
+    
 
     const cartUpdated = await exists.save()
     res.json({

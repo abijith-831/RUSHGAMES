@@ -1,5 +1,6 @@
 <%-include('../layouts/header.ejs')%>
 <%-include('../layouts/navbar.ejs')%>
+
 <style>
     /* Add this CSS to give a black border to the content containers */
 .content-container {
@@ -49,17 +50,19 @@
 
 										</tr>
 									</thead>
-
+									<% let finalPrice = 0 %>
 									<tbody> 
 										
-									<% if (cartData && cartData.length > 0) { %>  	
+										
+									<% if (cartData && cartData.length > 0) { %>  
+											
 										<% cartData.forEach(gameItem => { %>
 												
 												<tr>
 													<td class="product-col col-lg-4">
 														<div class="product">
-															<a href="#">
-																<img src="<%=gameItem.mainImage.path%>" alt="<%= gameItem.name %>" style="width: 100px; height: 100px; margin-right: 30px; margin-left: 30px;">>
+															<a href="#"> 
+																<img src="<%=gameItem.mainImage.path%>" alt="<%= gameItem.name %>" style="width: 100px; border: 2px ; height: 100px; margin-right: 30px; margin-left: 30px; color: black;">>
 															</a>	
 																													
 															<h3 class="product-title  ">
@@ -84,7 +87,9 @@
 														</div>
 
 													</td>
-													<td class="total-col" style="color: black; font-weight: bold;" ><%= gameItem.gameId.finalPrice ? gameItem.gameId.finalPrice : gameItem.price %></td>
+													<td class="total-col" id="totalAmount-<%= gameItem.gameId._id %>" style="color: black; font-weight: bold;" ><%= gameItem.gameId.finalPrice ? gameItem.gameId.finalPrice : gameItem.price %></td>
+													<% finalPrice += gameItem.gameId.finalPrice ? gameItem.gameId.finalPrice : gameItem.price %>
+													
 													<td class="remove-col">
 														<button class="btn-remove" onclick="confirmDelete('<%= gameItem.name %>' , '<%= gameItem.gameId._id %> ')">
 															<i class="icon-close"></i>
@@ -119,11 +124,11 @@
 	                				<table class="table table-summary">
 	                					<tbody>
 	                						<tr class="summary-subtotal">
-	                							<td>Subtotal:</td>
-	                							<td><%= totalCartPrice.toFixed(2) %> Rs</td>
+	                							<td>Price:</td>
+	                							<td id="totalCartPrice"><%= finalPrice %> Rs</td>
 	                						</tr><!-- End .summary-subtotal -->
 	                						<tr class="summary-shipping">
-	                							<td>Shipping:</td>
+	                							<td>Delivery:</td>
 	                							<td>&nbsp;</td>
 	                						</tr>
 
@@ -134,28 +139,10 @@
 														<label class="custom-control-label" for="free-shipping">Free Shipping</label>
 													</div><!-- End .custom-control -->
 	                							</td>
-	                							<td>$0.00</td>
+	                							<td>0.00</td>
 	                						</tr><!-- End .summary-shipping-row -->
 
-	                						<tr class="summary-shipping-row">
-	                							<td>
-	                								<div class="custom-control custom-radio">
-														<input type="radio" id="standart-shipping" name="shipping" class="custom-control-input">
-														<label class="custom-control-label" for="standart-shipping">Standart:</label>
-													</div><!-- End .custom-control -->
-	                							</td>
-	                							<td>$10.00</td>
-	                						</tr><!-- End .summary-shipping-row -->
-
-	                						<tr class="summary-shipping-row">
-	                							<td>
-	                								<div class="custom-control custom-radio">
-														<input type="radio" id="express-shipping" name="shipping" class="custom-control-input">
-														<label class="custom-control-label" for="express-shipping">Express:</label>
-													</div><!-- End .custom-control -->
-	                							</td>
-	                							<td>20.00</td>
-	                						</tr><!-- End .summary-shipping-row -->
+	                						
 
 	                						<tr class="summary-shipping-estimate">
 	                							<td>Estimate for Your Country<br> <a href="dashboard.html">Change address</a></td>
@@ -164,7 +151,7 @@
 
 	                						<tr class="summary-total">
 	                							<td>Total:</td>
-	                							<td><%= totalCartPrice.toFixed(2) %> Rs</td>
+	                							<td id="cartTotal"><%= finalPrice %> Rs</td>
 	                						</tr><!-- End .summary-total -->
 	                					</tbody>
 	                				</table><!-- End .table table-summary -->
@@ -173,7 +160,7 @@
 	                			</div><!-- End .summary -->
 
 		            			<a href="/allGames" class="btn btn-outline-dark btn-block mb-3" style="border-width: 2px; font-weight: bold;"><span>CONTINUE SHOPPING</span><i class="icon-refresh"></i></a>
-	                		</aside><!-- End .col-lg-3 -->
+	                		</aside>
 	                	</div><!-- End .row -->
 	                </div><!-- End .container -->
                 </div><!-- End .cart -->
@@ -234,36 +221,52 @@
 
 <!-- fucntion to  increase the amount when quantity changes -->
 <script>
-document.querySelectorAll('.quantity-input').forEach(input => {
-    input.addEventListener('change', async function() {
-        const gameId = this.id;
-        const newQuantity = parseInt(this.value, 10);
-		const cartId = this.getAttribute('data-cartid');
-		         
-        try {
-            const response = await fetch(`/update-cart/`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ quantity: newQuantity , gameId : gameId , cartId : cartId })
-            });
-            
-            if (!response.ok) {
-                throw new Error('Failed to update cart');
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('change', async function() {
+            const gameId = this.id;
+            const newQuantity = parseInt(this.value, 10);
+            const cartId = this.getAttribute('data-cartid');
+
+            try {
+                const response = await fetch(`/update-cart/`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ quantity: newQuantity, gameId: gameId, cartId: cartId })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update cart');
+                }
+
+                const responseData = await response.json();
+                const { updatedTotalAmount, updatedTotalCartPrice } = responseData;
+
+                const totalAmountElem = document.getElementById(`totalAmount-${gameId}`);
+                if (totalAmountElem) {
+                    totalAmountElem.innerText = updatedTotalAmount.toFixed(2);
+                }
+
+                const totalCartPriceElem = document.getElementById('totalCartPrice');
+                if (totalCartPriceElem) {
+                    totalCartPriceElem.innerText = updatedTotalCartPrice.toFixed(2);
+                }
+
+                const finalPriceElem = document.getElementById('cartTotal');
+                if (finalPriceElem) {
+                    finalPriceElem.innerText = updatedTotalCartPrice.toFixed(2);
+                }
+
+                console.log('Updated Total Amount:', updatedTotalAmount);
+                console.log('Updated Total Cart Price:', updatedTotalCartPrice);
+
+                
+            } catch (error) {
+                console.error(error);
             }
-            
-            const responseData = await response.json();
-            const { updatedTotalAmount, updatedTotalCartPrice } = responseData;
-            
-            const totalAmountElem = document.getElementById(`totalAmount-${gameId}`);
-			location.reload();
-            totalAmountElem.innerText = updatedTotalAmount.toFixed(2)
-            document.getElementById('totalCartPrice').innerText = updatedTotalCartPrice.toFixed(2)
-			
-        } catch (error) {
-            console.error(error);
-        }
+        });
     });
 });
 
