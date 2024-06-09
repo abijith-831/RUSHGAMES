@@ -76,6 +76,7 @@ user_route.post('/addNewAddress' , checkOutController.addNewAddress)
 user_route.post('/placeOrder' , checkOutController.placeOrder)
 
 
+
 //******   USER ADDRESS SECTIONS ******
 user_route.get('/addresses' ,userAuth.isLogin , profileController.loadAddresses)
 user_route.get('/editAddress', userAuth.isLogin,profileController.editAddress)

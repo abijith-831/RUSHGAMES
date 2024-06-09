@@ -26,7 +26,7 @@ const adminVerifyLogin = async (req, res) => {
         if (adminEmail === process.env.adminEmail) {
             if (adminPassword === process.env.adminPassword) {
                 req.session.admin = { email: adminEmail };
-                res.render('adminDashboard')
+                res.redirect('/admin/dashboard')
             } else {
                
                 req.flash('error', 'Email or Password is incorrect');

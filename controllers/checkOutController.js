@@ -34,7 +34,7 @@ const loadCheckOut = async (req,res)=>{
     }
       
       const coupon = await Coupon.find({is_active:false})
-      
+       
       const gameIds = cartData.games.map(game => game.gameId);
       const gameDetailsPromises = gameIds.map(gameId => Games.findOne({_id: gameId}));
       const gameDetails = await Promise.all(gameDetailsPromises); 
@@ -43,8 +43,11 @@ const loadCheckOut = async (req,res)=>{
       if(cartData.totalCartPrice < 2500){
         cartData.deliveryCharge = 80
         await cartData.save();
+      }else{
+        cartData.deliveryCharge = 0
+        await cartData.save();
       }
-
+      console.log('ajnsdf'+cartData);
       res.render('checkOut',{user : userData , addresses , cartData , gameDetails,errmsg ,coupon , count})
     } catch (error) {
       console.log(error);
@@ -174,8 +177,13 @@ const placeOrder = async (req, res) => {
           currBalance: wallet.balance
         });
 
+
+        orderInstance.paymentStatus = 'Success'
+
+
         await wallet.save();
         await orderInstance.save();
+        
         await Cart.findOneAndDelete({ userId: userId });
         await giveCoupon(userId, cart.totalCartPrice);
 
@@ -210,12 +218,23 @@ const placeOrder = async (req, res) => {
       
       res.json({ success: true });
     }
+
+
+    //decreasing the stock and increasing the gamesalescount.....
     for (const item of cart.games){
+
+      const game = await Games.findById(item.gameId);
       await Games.updateOne(
         {_id:item.gameId},
-        {$inc : {stock : - item.quantity}}
+        { $inc : { stock : - item.quantity , gameSalesCount : +item.quantity}}
+      )
+
+      await Category.updateOne(
+        { _id : game.category},
+        { $inc : { categorySalesCount : + item.quantity}}
       )
     } 
+ 
 
     if (coupon) {
       await User.updateOne(
@@ -224,6 +243,7 @@ const placeOrder = async (req, res) => {
       );
   } 
 
+ 
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "An error occurred during order placement." });

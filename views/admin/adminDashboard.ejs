@@ -10,6 +10,87 @@
     .container-fluid{
         background-color: #dddada;
     }
+    .body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.h1, .h2, .h6 {
+    font-family: 'Roboto', sans-serif;
+}
+.card:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease-in-out;
+}
+.card:hover {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    border-color: #007bff;
+}
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+.container-fluid {
+    padding: 20px;
+}
+
+.row > div {
+    margin: 10px;
+}
+.body {
+    background-color: #f4f4f4;
+    color: #333;
+}
+.card {
+            border-radius: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .card-body {
+            padding: 1.5rem;
+        }
+        .badge {
+            background-color: #007bff;
+        }
+        .font-weight-medium {
+            font-weight: 500;
+        }
+        .font-12 {
+            font-size: 12px;
+        }
+        .text-dark {
+            color: #343a40 !important;
+        }
+        .text-muted {
+            color: #6c757d !important;
+        }
+        .opacity-7 {
+            opacity: 0.7;
+        }
+        .text-truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .swiper-container {
+      width: 80%;
+      height: 730px;
+      margin: auto;
+    }
+    .swiper-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+     .swiper-slide img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border: 2px solid #007bff; /* Add border style here */
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
 </style>
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
@@ -29,15 +110,15 @@
                                 <div class="d-flex align-items-center">
                                     <div>
                                         <div class="d-inline-flex align-items-center">
-                                            <h2 class="text-dark mb-1 font-weight-medium">236</h2>
-                                            <span
-                                                class="badge bg-primary font-12 text-white font-weight-medium rounded-pill ms-2 d-lg-block d-md-none">+18.33%</span>
+                                            <h2 class="text-dark mb-1 font-weight-medium"><%= orderCount %> </h2>
+                                            
                                         </div>
-                                        <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">New Clients
+                                        <br>
+                                        <h6 class="text-muted font-weight-bold mb-0 w-100 text-truncate">TOTAL NUMBER OF ORDERS
                                         </h6>
                                     </div>
                                     <div class="ms-auto mt-md-3 mt-lg-0">
-                                        <span class="opacity-7 text-muted"><i data-feather="user-plus"></i></span>
+                                        <span class="opacity-7 text-muted"><i data-feather="shopping-cart"></i></span>
                                     </div>
                                 </div>
                             </div>
@@ -49,13 +130,11 @@
                                 <div class="d-flex align-items-center">
                                     <div>
                                         <h2 class="text-dark mb-1 w-100 text-truncate font-weight-medium"><sup
-                                                class="set-doller">$</sup>18,306</h2>
-                                        <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">Earnings of
-                                            Month
-                                        </h6>
+                                                class="set-doller"></sup><%= totalOrderAmount %></h2>
+                                        <h6 class="text-muted font-weight-bold mb-0 w-100 text-truncate">TOTAL REVENUE</h6>
                                     </div>
                                     <div class="ms-auto mt-md-3 mt-lg-0">
-                                        <span class="opacity-7 text-muted"><i data-feather="dollar-sign"></i></span>
+                                        <span class="opacity-7 text-muted"><i class="fas fa-rupee-sign"></i></span>
                                     </div>
                                 </div>
                             </div>
@@ -67,23 +146,21 @@
                                 <div class="d-flex align-items-center">
                                     <div>
                                         <div class="d-inline-flex align-items-center">
-                                            <h2 class="text-dark mb-1 font-weight-medium">1538</h2>
-                                            <span
-                                                class="badge bg-danger font-12 text-white font-weight-medium rounded-pill ms-2 d-md-none d-lg-block">-18.33%</span>
+                                            <h2 class="text-dark mb-1 font-weight-medium"><%= gameCount %></h2>
+                                           
                                         </div>
-                                        <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">New Projects
-                                        </h6>
+                                        <h6 class="text-muted font-weight-bold mb-0 w-100 text-truncate">TOTAL GAMES SOLD</h6>
                                     </div>
                                     <div class="ms-auto mt-md-3 mt-lg-0">
-                                        <span class="opacity-7 text-muted"><i data-feather="file-plus"></i></span>
+                                        <span class="opacity-7 text-muted"><i class="fas fa-gamepad"></i></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-lg-3">
+                    <div class="col-sm-6 col-lg-2">
                         
-                        <div class="card ">
+                        <div  class="card">
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <div>
@@ -100,126 +177,157 @@
                         </div>
                     </div>
                 </div>
-                <!-- *************************************************************** -->
-                <!-- End First Cards -->
-                <!-- *************************************************************** -->
-                <!-- *************************************************************** -->
-                <!-- Start Sales Charts Section -->
-                <!-- *************************************************************** -->
-                <div class="row">
-                    <div class="col-lg-4 col-md-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title">Total Sales</h4>
-                                <div id="campaign-v2" class="mt-2" style="height:283px; width:100%;"></div>
-                                <ul class="list-style-none mb-0">
-                                    <li>
-                                        <i class="fas fa-circle text-primary font-10 me-2"></i>
-                                        <span class="text-muted">Direct Sales</span>
-                                        <span class="text-dark float-end font-weight-medium">$2346</span>
-                                    </li>
-                                    <li class="mt-3">
-                                        <i class="fas fa-circle text-danger font-10 me-2"></i>
-                                        <span class="text-muted">Referral Sales</span>
-                                        <span class="text-dark float-end font-weight-medium">$2108</span>
-                                    </li>
-                                    <li class="mt-3">
-                                        <i class="fas fa-circle text-cyan font-10 me-2"></i>
-                                        <span class="text-muted">Affiliate Sales</span>
-                                        <span class="text-dark float-end font-weight-medium">$1204</span>
-                                    </li>
-                                </ul>
+
+                <!--///////////////////////////// chart sectoin    //////////////////////////////////-->
+                <div class="col-lg-12"> 
+                    <div class="card ">                       
+                        <div class="card-body">
+                            <div class="dropdown">                               
+                                <select name="sortby" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" id="sortby" aria-haspopup="true" class="form-control" aria-expanded="false">
+                                    <option value="">Choose...</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                    <option value="yearly">Yearly</option>
+                                </select>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title">Net Income</h4>
-                                <div class="net-income mt-4 position-relative" style="height:294px;"></div>
-                                <ul class="list-inline text-center mt-5 mb-2">
-                                    <li class="list-inline-item text-muted fst-italic">Sales for this month</li>
-                                </ul>
+                            <div class="d-flex align-items-center">                                                 
+                                <canvas id="myChart" style="width:100%;max-width:700px; margin-top: 50px; margin-bottom: 50px;  margin-left: 100px;" ></canvas>                               
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start">
-                                    <h4 class="card-title mb-0">Earning Statistics</h4>
-                                    <div class="ms-auto">
-                                        <div class="dropdown sub-dropdown">
-                                            <button class="btn btn-link text-muted dropdown-toggle" type="button"
-                                                id="dd1" data-bs-toggle="dropdown" aria-haspopup="true"
-                                                aria-expanded="false">
-                                                <i data-feather="more-vertical"></i>
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dd1">
-                                                <a class="dropdown-item" href="#">Insert</a>
-                                                <a class="dropdown-item" href="#">Update</a>
-                                                <a class="dropdown-item" href="#">Delete</a>
-                                            </div>
+
+
+                            <!-- TOP SELLING GAMES---------------------------------->
+                            <div class="text-center">
+                                <h1 class="font-weight-bold">TOP SELLING CATEGORIES</h1><br><br><br>
+                            </div>
+                            <div class="row" style="margin-left: 100px;">
+                                    <% categories.forEach ((item , index)=>{ %>
+                                        <div class="col-lg-2">
+                                            <p class="font-weight-bold">TOP <%= index +1 %></p>
+                                            
+                                            <br>
+                                            <p class="font-weight-bold" >SOLD : <%= item.categorySalesCount?item.categorySalesCount:0 %></p>
+                                            
+                                            <p class="font-weight-bold"><%= item.name %></p>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="pl-4 mb-5">
-                                    <div class="stats ct-charts position-relative" style="height: 315px;"></div>
-                                </div>
-                                <ul class="list-inline text-center mt-4 mb-0">
-                                    <li class="list-inline-item text-muted fst-italic">Earnings for this month</li>
-                                </ul>
+                                    <% })  %>                          
+                            </div><br><br>
+                           
+
+
+                            <!-- TOP SELLING GAMES---------------------------------->
+                            <div class="text-center">
+                                <h1 class="font-weight-bold">TOP SELLING GAMES</h1><br><br><br>
                             </div>
+                            <div class="swiper-container">
+                                <div class="swiper-wrapper">
+                                    <% games.forEach ((item , index)=>{ %>
+                                        <div class="swiper-slide">
+                                            <p class="font-weight-bold">TOP <%= index +1 %></p>
+                                            <img style="width: 150px; height: 150px; max-width: 150px; max-height: 150p;"  src="<%= item.mainImage[0].path %>" alt="Image 1" >
+                                            <br>
+                                            <p class="font-weight-bold" >SOLD : <%= item.gameSalesCount?item.gameSalesCount:0 %> nos</p>
+                                            
+                                            <p class="font-weight-bold"><%= item.name %></p>
+                                        </div>
+                                    <% })  %>
+                                </div>
+                                <div class="swiper-button-next"></div>
+                                <div class="swiper-button-prev"></div>
+                            </div>
+
+
+
+
+
+                              <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+                              
                         </div>
+
+                        <br>
+                        
                     </div>
-                    
                 </div>
-                <!-- *************************************************************** -->
-                <!-- End Sales Charts Section -->
-                <!-- *************************************************************** -->
-                <!-- *************************************************************** -->
-                <!-- Start Location and Earnings Charts Section -->
-                <!-- *************************************************************** -->
-                <div class="row">
-                    
-                    
-                </div>
-                <!-- *************************************************************** -->
-                <!-- End Location and Earnings Charts Section -->
-                <!-- *************************************************************** -->
-                <!-- *************************************************************** -->
-                <!-- Start Top Leader Table -->
-                <!-- *************************************************************** -->
-                
-                <!-- *************************************************************** -->
-                <!-- End Top Leader Table -->
-                <!-- *************************************************************** -->
+        
             </div>
-            <!-- ============================================================== -->
-            <!-- End Container fluid  -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- footer -->
-            <!-- ============================================================== -->
-            <footer class="footer text-center text-muted">
-                All Rights Reserved by Freedash. Designed and Developed by <a
-                    href="https://adminmart.com/">Adminmart</a>.
-            </footer>
-            <!-- ============================================================== -->
-            <!-- End footer -->
-            <!-- ============================================================== -->
+  
         </div>
-        <!-- ============================================================== -->
-        <!-- End Page wrapper  -->
-        <!-- ============================================================== -->
-    </div>
-    <!-- ============================================================== -->
-    <!-- End Wrapper -->
-    <!-- ============================================================== -->
-    <!-- End Wrapper -->
-    <!-- ============================================================== -->
-    <!-- All Jquery -->
-    <!-- ============================================================== -->
+        
+</div>
+   
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sortbySelect = document.getElementById('sortby');
+
+        const fetchAndRenderChart = (sortby) => {
+            fetch(`/admin/chartSortby`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ sortby: sortby })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById('myChart').getContext('2d');
+          
+                if (window.chartInstance) {
+                    window.chartInstance.destroy();
+                }
+                window.chartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Dynamic Chart Data'
+                            }
+                        }
+                    }
+                });
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+        };
+
+        fetchAndRenderChart('weekly');
+
+        sortbySelect.addEventListener('change', function() {
+            const selectedOption = this.value;
+            fetchAndRenderChart(selectedOption);
+        });
+    });
+</script>
+
+
+
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script>
+    var swiper = new Swiper('.swiper-container', {
+      slidesPerView: 5,
+      spaceBetween: 10,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+    });
+  </script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
     <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
     <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <!-- apps -->

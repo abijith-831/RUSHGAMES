@@ -44,6 +44,7 @@ const isNavUser = async (req,res,next)=>{
     }
 } 
 
+
 module.exports = {
     isLogin,
     isLogout,

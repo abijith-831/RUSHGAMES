@@ -7,7 +7,7 @@ const Wallet = require('../models/walletModel')
 const Coupon = require('../models/couponModel')
 const Cart = require('../models/cartModel')
 const PDFDocument = require('pdfkit');
-
+const Razorpay = require('razorpay')
 
 
 
@@ -230,7 +230,8 @@ const loadOrderHistory = async (req,res)=>{
   }
 }
 
- 
+
+
 // ********** FOR RENDERING ORDER DETAILS PAGE **********
 const loadOrderDetailsPage = async (req,res)=>{
   try {
@@ -555,7 +556,7 @@ const loadCoupons = async (req,res)=>{
     console.log('hbugyh'+userData);
     const coupons = userData.coupons;
     
-  
+  console.log('aslfjsf'+coupons);
     res.render('coupons',{user : userData , coupons : coupons})
     
   } catch (error) {
@@ -575,15 +576,14 @@ const checkCoupon = async (req,res)=>{
 
       
       if(!user.coupons || user.coupons.length===0){
-        console.log('no coupon')
         return res.json({success:false , message :'no coupon'})
       }
     
       const exists = user.coupons.find(item=>item.couponCode === code)
       const cart = await Cart.findOne({userId:userId})
       
-      const couponPrice = cart.totalCartPrice * (exists.discount /100)
-      console.log('cnsfjf'+couponPrice);
+      const couponPrice =Math.floor( cart.totalCartPrice * (exists.discount /100))
+
 
       if(exists){
         res.json({success:true ,

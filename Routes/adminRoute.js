@@ -35,6 +35,7 @@ admin_route.get('/logout',adminController.adminLogout)
 
 // ****** DASHBOARD SECTION ******
 admin_route.get('/dashboard',adminAuth.isLogin,adminDashboardController.loadDashboard)
+admin_route.post('/chartSortby',adminDashboardController.chartSortby)
 
 
 // ****** USER DETAILS ******

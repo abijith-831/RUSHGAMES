@@ -1,6 +1,7 @@
 <%-include('../layouts/header.ejs')%>
 <%-include('../layouts/mobilenav.ejs')%>
 <%-include('../layouts/navbar.ejs')%>
+
 <link rel="stylesheet" href="/assets/vendor/line-awesome/line-awesome/line-awesome/css/line-awesome.min.css">
     <!-- Plugins CSS File -->
     
@@ -8,7 +9,7 @@
     <link rel="stylesheet" href="/assets/css/plugins/magnific-popup/magnific-popup.css">
     <!-- Main CSS File -->
     
-    <link rel="stylesheet" href="/assets/css/plugins/nouislider/nouislider.css">
+        
     <link rel="stylesheet" href="/assets/css/demos/demo-11.css">
 
     <div class="page-wrapper">
@@ -21,19 +22,19 @@
                     <div class="row">
                         <div class="col-xl-3 d-none d-xl-block">
                             <nav class="side-nav">
-                                <div class="sidenav-title">Browse Categories</div><!-- End .sidenav-title -->
+                                <div class="sidenav-title">Browse Categories</div>
                                 <ul class="menu-vertical sf-arrows text-black font-weight-bold">
                                     <% categories.forEach(category => { %>
-                                        <% if (category.is_listed) { %> <!-- Check if the category is listed -->
+                                        <% if (category.is_listed) { %> 
                                             <li>
                                                 <a href="#" class="text-black font-weight-bold"><%= category.name %></a>
                                             </li>
                                         <% } %>
                                     <% }) %>
                                     
-                                </ul><!-- End .menu -->
-                            </nav><!-- End .side-nav -->
-                        </div><!-- End .col-lg-3 -->
+                                </ul>
+                            </nav>
+                        </div>
                         <br><br>
                         <div class="col-lg-8 col-xl-6">
                             <div class="banner banner-overlay banner-lg content-left">

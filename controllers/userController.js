@@ -398,7 +398,6 @@ const loadAllGames = async (req, res) => {
     res.render("allGames",{categories , games:games,user:userData,errmsg , totalPages , prevPage , nextPage , page , number});
   } catch (error) {
     console.log(error);
-    
   }
 };
 

@@ -61,6 +61,9 @@ const gameSchema = mongoose.Schema({
     finalPrice : {
         type : Number , 
         min : 0
+    },
+    gameSalesCount : {
+        type : Number
     }
 
     

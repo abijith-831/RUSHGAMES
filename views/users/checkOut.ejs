@@ -276,7 +276,7 @@ input[type="radio"]:checked + label {
 												<tr class="summary-total">
 													<td>Total : </td>
 													<td id="total-price">
-														<%= Number(cartData.discountedPrice? cartData.discountedPrice.toFixed(2) : cartData.totalCartPrice.toFixed(2)) + 
+														<%= Number(cartData.discountedPrice? Number(cartData.discountedPrice.toFixed(2)) : cartData.totalCartPrice.toFixed(2)) + 
 														   Number(cartData.deliveryCharge) %> Rs
 													</td>
 												</tr>
@@ -351,10 +351,6 @@ input[type="radio"]:checked + label {
         </main>
 
 
-
-
-
-		
 
 <!-- add address modal-->
 <div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog" aria-labelledby="addAddressModalLabel" aria-hidden="true">
@@ -720,45 +716,56 @@ input[type="radio"]:checked + label {
 });
 
 function verifyPayment(payment,order){
-	console.log('njsnfsnf');
-	window.location.href = `/orderHistory`;
-    console.log(payment);
   $.ajax({
-    url:'/orderHistory',
-    data:{
-        payment,
-        order
-    },
+    url:'/verifyPayment',
+    data: JSON.stringify({
+      payment,
+      order
+    }),
+	contentType: 'application/json',
     method:"POST",
     success:(response)=>{
         if(response.payment){
-
-            Swal.fire({
-                title: 'Order Placed Successfully!',
-                icon: 'success',
-                showConfirmButton: false,
-                timer: 2000 
-
-            });
-            const orderid=order.receipt
-            setTimeout(()=>{
-				console.log('lnjinfnj');
-                    window.location.href = `/orderHistory`;
-            },1000)
+			orderInstance.paymentStatus = 'Success'
+			orderInstance.save()
+        			.then(() => {
+                        Swal.fire({
+                            title: 'Order Placed Successfully!',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                        setTimeout(() => {
+                            window.location.href = `/orderHistory`;
+                        }, 3000); 
+                    })
+                   .catch((error) => {
+                        console.error('Error updating payment status:', error);
+                });
         }else{
-			Swal.fire({
-                        title: 'Payment Failed',
-                        text: 'Your payment failed. Please try again.',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        window.location.href = '/paymentFailed';
+			orderInstance.paymentStatus = 'Failed';
+			orderInstance.save()
+					.then(() => {
+                        Swal.fire({
+                            title: 'Payment Failed',
+                            text: 'Your payment failed. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '/paymentFailed';
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('Error updating payment status:', error);
                     });
 		}
     }
   })
 }
+
+
 </script>
+
 
 
 <!-- checking coupon is available or not -->
@@ -862,7 +869,6 @@ function verifyPayment(payment,order){
 });
 
 </script>
-
 
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>

@@ -8,7 +8,11 @@ const categorySchema = mongoose.Schema({
     is_listed : {
         type : Boolean,
         default : true
+    },
+    categorySalesCount : {
+        type : Number
     }
+    
 })
 
 

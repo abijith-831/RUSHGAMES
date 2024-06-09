@@ -1255,19 +1255,137 @@
 // let word = s.split(' ').map(item=>item.trim()).filter(item=>item !== '')
 //     console.log(word)
     
-let nums = [2,7,9,6,4,6]
-let sort = nums.sort((a,b)=>a-b)
-console.log(sort);
+// let nums = [2,7,9,6,4,6]
+// let sort = nums.sort((a,b)=>a-b)
+// console.log(sort);
 
 
-    let arr= []
-    for(let i=0;i<sort.length;i++){
-        let f = sort[0]
-        let s = sort[1]
-        arr.push(s)
-        arr.push(f)
-        sort.splice(0,2)
+//     let arr= []
+//     for(let i=0;i<sort.length;i++){
+//         let f = sort[0]
+//         let s = sort[1]
+//         arr.push(s)
+//         arr.push(f)
+//         sort.splice(0,2)
        
-    }
-    console.log(sort);
-    console.log(arr);
+//     }
+//     console.log(sort);
+//     console.log(arr);
+
+// let s = {a:10,b:20,c:30}
+// let sum = 0
+// for(item in s){
+//     sum += s[item]
+// }
+// console.log(sum);
+
+// let sentences = ["alice and bob love leetcode", "i think so too", "this is great thanks very much"]
+// [1,13,10,12,31,1,31,1,21,13].
+
+// let nums = [1,13,10,12,31]
+// let arr= []
+// for(let i =0;i<nums.length;i++){
+//     if(nums[i]>=10){
+//         let a
+//     }else{
+//         arr.push(nums[i])
+//     }
+// }
+// console.log(arr);
+
+// const fs = require('fs');
+
+// fs.readFile('./package.json', 'utf-8', (err,data) => {
+//     if (err) {
+//         console.log(err);
+//     } else {
+//         console.log(data);
+//     }
+// });
+
+// const express=require('express')
+// const app=express()
+// app.get('/',(req,res)=>{
+//     let {nums1,nums2}=req.query
+
+//     let num1 = parseFloat(nums1)
+//     let num2 = parseFloat(nums2)
+
+//     let sum = num1+num2
+    
+//     console.log(typeof(sum));
+//     console.log('sdnsdf'+sum);
+//     res.send(`Sum: ${sum}`);
+// })
+
+// app.listen(5000,()=>{
+//     console.log('running');
+// })
+
+// const fs = require('fs')
+
+
+// let nums = [1,2,3,4,5,6]
+// let data = nums.join(',')
+// console.log(data);
+// fs.writeFile('./note1.txt',data,'fghjpt-8',(err)=>{
+//     if(err){
+//         console.log(err);
+//     }
+// })
+
+
+// let words = ["bella","label",'roller']
+
+// let a = []
+// let arr1 = words[0].split('')
+// let arr2 = words[1].split('')
+// let arr3 = words[2].split('')
+// console.log(arr1);
+// console.log(arr2);
+
+// for(let i=0;i<arr2.length;i++){
+//     if(arr2.includes(arr1[i])){
+//         a.push(arr2[i])
+//     }
+// }
+
+// console.log(a);
+
+
+// let sentence = "i love eating burger"
+// let searchWord = "burg"
+
+// for(let i=0;i<sentence.length;i++){
+
+// }
+
+// let nums = [13,25,83,77]
+// let a = nums.join('').split('')
+// console.log(a);
+// let arr = []
+//     for(let i=0;i<nums.length;i++){
+//         if(nums[i]>=10){
+//             let a = nums[i].join('')
+//             let str = a.split('')
+//             arr.push(str)
+//         }else{
+//             arr.push(nums[i])
+//         }
+//     }
+//     console.log(arr);
+
+
+
+
+// [2,2,3,4]
+// let arr = [1,2,2,3,3,3]
+// let count = []
+// for(let i=0;i<arr.length;i++){
+//    for(let j=i+1;j<arr.length;j++){
+//         if(arr[i]===arr[j]){
+//             count.push(arr[i])
+//         }
+//    }
+// }
+// console.log(count);
