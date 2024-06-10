@@ -199,12 +199,15 @@ const placeOrder = async (req, res) => {
       const minimumAmount = 100;
       const adjustedAmount = Math.max(totalCartPrice, minimumAmount);
 
-      generateRazorpay(orderInstance._id, adjustedAmount).then(async (response) => {
-        await orderInstance.save();
-        await Cart.findOneAndDelete({ userId: userId });
-        await giveCoupon(userId, cart.totalCartPrice);
 
-        isOrderSaved = true;
+      // console.log('msfksd'+orderInstance);
+            
+      await orderInstance.save();
+      await Cart.findOneAndDelete({ userId: userId });
+      
+      // console.log('mmscmsdf'+orders);     
+      generateRazorpay(orderInstance._id, adjustedAmount).then(async (response) => {
+       
         res.json({ Razorpay: response });
       });
     } else if (selectedPayment === 'cashOnDelivery') {
@@ -251,6 +254,28 @@ const placeOrder = async (req, res) => {
 };
 
    
+
+// ********** RAZORPAY SETTINGS  **********
+const generateRazorpay = (orderId , totalCartPrice)=>{
+  return new Promise((resolve , reject)=>{
+
+    const options = {
+      amount : totalCartPrice,
+      currency : 'INR',
+      receipt : ""+orderId
+    };
+    instance.orders.create(options,function(err,order){
+      if(err){
+        console.log(err);
+      }
+      resolve(order)
+    })
+  })
+}
+  
+
+
+
 // ********** GIVE COUPONS FUCNTION **********
 const giveCoupon = async (userId , totalCartPrice)=>{
   try {
@@ -274,24 +299,26 @@ const giveCoupon = async (userId , totalCartPrice)=>{
 }
 
 
-// ********** RAZORPAY SETTINGS  **********
-const generateRazorpay = (orderId , totalCartPrice)=>{
-  return new Promise((resolve , reject)=>{
 
-    const options = {
-      amount : totalCartPrice,
-      currency : 'INR',
-      receipt : ""+orderId
-    };
-    instance.orders.create(options,function(err,order){
-      if(err){
-        console.log(err);
-      }
-      resolve(order)
-    })
-  })
+const verifyPayment = async (req,res)=>{
+  try {
+    
+    const userId = req.session.user_id;
+    const { payment, order ,addressId} = req.body;
+    
+    
+    const orders = await Order.find({userId:userId}).sort({orderDate : -1}).limit(1)   
+    const lastOrder = orders[0]
+    
+    lastOrder.paymentStatus = "Success"
+    await lastOrder.save()
+    
+    
+  } catch (error) {
+    console.log(error);
+  }
 }
-  
+
 
 // ********** FOR GENERATE RANDOM 8 DIGIT NUMBER FOR ORDER-ID  **********
 function generateOrderId() {
@@ -301,10 +328,12 @@ function generateOrderId() {
 }
 
 
+
 module.exports = {
     loadCheckOut,
     addNewAddress,
     placeOrder,
+    verifyPayment,
     instance
 }
 

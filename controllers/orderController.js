@@ -8,11 +8,26 @@ const Wallet = require('../models/walletModel')
 const loadOrderHistory = async (req,res)=>{
     try {
         const orders = await Order.find().populate('userId')
-       
-        res.render('orderMgmt',{orders})
+         
+        const page = parseInt(req.query.page)||1
+        const limit = 10
+        const skip = (page - 1)*limit
+        const totalOrders = orders.length
+        const totalPages = Math.ceil(totalOrders/limit)
+
+        let prevPage = page - 1 ;
+        let nextPage = page + 1 ;
+        if(prevPage < 1 ) prevPage = 1
+        if(nextPage > totalPages) nextPage = totalPages
+
+        const paginatedOrders = orders.reverse().slice(skip,skip+limit)
+
+        res.render('orderMgmt',{orders:paginatedOrders,
+            page , limit , prevPage , nextPage , totalPages
+        })
     } catch (error) {
         console.log(error);
-        
+         
     }
 } 
 
@@ -65,7 +80,7 @@ const approveRequest = async (req,res)=>{
         const gameData = await Games.findOne({_id : gameId})
         const wallet = await Wallet.findOne({userId : userId})
         
-
+ 
         const game = order.games.find(game => game.gameId.toString()===gameId);
 
         if(game){

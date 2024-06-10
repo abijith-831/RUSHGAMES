@@ -70,9 +70,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <% const indexPage = (page-1)*limit %>
                                     <% orders.forEach( (order , index) => { %> 
                                         <tr>
-                                            <td style="font-size: 15px;"><%= index+1 %></td>
+                                            <td style="font-size: 15px;"><%= index+1+indexPage %></td>
                                             <td style="font-size: 15px;"><%= order.userId.name %></td>
                                             <td style="font-size: 15px;"><%= order.orderId %></td>
                                             <% if (order.discount) { %>
@@ -94,6 +95,27 @@
                                     <%  })  %>
                                 </tbody>
                             </table>
+                            <nav aria-label="page navigation">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item <%= prevPage ===1 ? 'disabled' : '' %>">
+                                        <a class="page-link-prev" href="?page=<%= prevPage %>" aria-label="Previous" >
+                                            <span aria-hidden="'true"><i class="icon-long-arrow-left"></i></span>Prev
+                                        </a>
+                                    </li>
+                                    <% for (let i =1 ; i<= totalPages ; i++) { %> 
+                                        <li class="page-item <%= page ===i? 'ative':''%>" >
+                                            <a class="page-link" href="?page=<%=i%>"><%= i %></a>
+                                        </li>
+                                    <%  } %>
+                                        <li class="page-item <%= nextPage > totalPages?'disabled':''%>">
+                                            <a class="page-link page-link-next" href="?page=<%= nextPage%>" aria-label="next">
+                                                Next <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span>
+                                            </a>
+                                        </li>
+                                        
+                                </ul>
+                                
+                            </nav>
                         </div>
                     </div>
                 </div>

@@ -1389,3 +1389,99 @@
 //    }
 // }
 // console.log(count);
+
+//  Add razor Section :-
+
+function razorpay(amount) {
+    console.log('reached razor' + amount);
+    const form = document.getElementById('myForm');
+    fetch('/razor', {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify({ amount })
+    }).then(res => res.json()).then(data => {
+        if (data.succes) {
+
+            let options = {
+                "key": ${data.key_id},
+                "amount": ${data.amount},
+                "currency": "INR",
+                "name": "ORNATE",
+                "order_id": ${data.order_id},
+                "handler": function (response) {
+                    form.submit();
+
+                },
+                "profile": {
+                    "name": ${data.name},
+                    "email": ${data.email}
+                }
+            }
+
+            let razorpayObject = new Razorpay(options);
+            razorpayObject.on('payment.failed', (response) => {
+                form.action = '/failedRazorpay'
+                form.submit()
+            });
+            razorpayObject.open();
+        }
+    })
+}
+
+
+
+// razor
+const razor = async (req, res) => {
+    try {
+        console.log('df');
+
+        const user = await User.findOne({ _id: req.session.user })
+
+        console.log(user);
+
+        let amount = req.body.amount * 100
+
+        if(req.session.offer) amount=parseInt(amount/100*(100-req.session.offer))
+
+        const options = {
+
+            amount: amount,
+            currency: "INR",
+            receipt: 'ffarsanakt@gmail.com'
+            
+        }
+
+        instance.orders.create(options, (err, order) => {
+
+            if (!err) {
+                res.send({
+                    succes: true,
+                    msg: 'ORDER created',
+                    order_id: order.id,
+                    amount: amount,
+                    key_id: process.env.RAZORPAY_IDKEY,
+                    name: user.fullName,
+                    email: user.email
+                })
+
+            } else {
+
+                console.error("Error creating order:", err);
+                res.status(500).send({ success: false, msg: "Failed to create order" });
+
+            }
+        })
+    } catch (err) {
+        console.log(err.message + '     razor')
+    }
+}
+
+const Razorpay = require('razorpay');
+require('dotenv').config();
+const instance = new Razorpay({
+    key_id: process.env.RAZORPAY_IDKEY,
+    key_secret: process.env.RAZORPAY_SECRET_KEY,
+});
+
+module.exports=instance
+

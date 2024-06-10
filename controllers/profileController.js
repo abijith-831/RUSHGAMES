@@ -212,6 +212,11 @@ const loadOrderHistory = async (req,res)=>{
     const userId = req.session.user_id;
     const userData = await User.findOne({_id:userId})
     
+    const page = parseInt(req.query.page)||1
+    const limit = 4 ; 
+    const skip = (page-1)*limit;
+    
+
     let orders = await Order.find({userId : userId}).populate('games.gameId');
     let totalAmountSums = [];
     orders.forEach(item=>{
@@ -224,7 +229,23 @@ const loadOrderHistory = async (req,res)=>{
     totalAmountSums = totalAmountSums.reverse()
     orders = orders.reverse()
     
-    res.render('orderHistory',{user:userData , order:orders , totalAmountSums}) 
+    const paginatedOrders = orders.slice(skip , skip + limit)
+    const orderLength = orders.length;
+    const totalPages = Math.ceil(orderLength/limit)
+
+    let prevPage = page - 1 ;
+    let nextPage = page + 1 ; 
+    if(prevPage < 1) prevPage = 1 ; 
+    if(nextPage > totalPages) nextPage = totalPages
+
+    res.render('orderHistory',{
+      user:userData ,
+      order:paginatedOrders ,
+      totalAmountSums,
+      totalPages,
+      orderLength,
+      prevPage,nextPage,limit,page
+    }) 
   } catch (error) {
     console.log(error);
   }
@@ -511,7 +532,7 @@ const addMoneyToWallet = async (req , res)=>{
     
   }
 }
-
+ 
 
 //********** FOR WITHDRAWING MONEY TO WALLET **********
 const withdrawMoney = async (req,res)=>{

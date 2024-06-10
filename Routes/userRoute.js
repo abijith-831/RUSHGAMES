@@ -74,6 +74,7 @@ user_route.get('/loadNotification',wishlistController.loadNotification)
 user_route.get('/checkOut' , userAuth.isLogin , checkOutController.loadCheckOut)
 user_route.post('/addNewAddress' , checkOutController.addNewAddress)
 user_route.post('/placeOrder' , checkOutController.placeOrder)
+user_route.post('/verifyPayment',checkOutController.verifyPayment)
 
 
 

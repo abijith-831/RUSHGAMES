@@ -13,7 +13,7 @@ const loadGamesList = async (req, res) => {
   try {
     
     let success = req.flash("success");
-
+ 
     
     const page = parseInt(req.query.page)||1;
     const limit = 5;
@@ -24,7 +24,7 @@ const loadGamesList = async (req, res) => {
       if (category) {
         game.categoryName = category.name;
       }
-    }
+    } 
     const totalGames = await Games.countDocuments();
     const totalPages = Math.ceil(totalGames/limit)
 
