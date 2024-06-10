@@ -47,7 +47,7 @@ const loadCheckOut = async (req,res)=>{
         cartData.deliveryCharge = 0
         await cartData.save();
       }
-      console.log('ajnsdf'+cartData);
+      
       res.render('checkOut',{user : userData , addresses , cartData , gameDetails,errmsg ,coupon , count})
     } catch (error) {
       console.log(error);
@@ -204,8 +204,8 @@ const placeOrder = async (req, res) => {
             
       await orderInstance.save();
       await Cart.findOneAndDelete({ userId: userId });
-      
-      // console.log('mmscmsdf'+orders);     
+      console.log('kjbjdfgsg'+orderInstance._id);
+          
       generateRazorpay(orderInstance._id, adjustedAmount).then(async (response) => {
        
         res.json({ Razorpay: response });
@@ -299,7 +299,7 @@ const giveCoupon = async (userId , totalCartPrice)=>{
 }
 
 
-
+// ********** VERIFYING PAYMENT AS SUCCESS **********
 const verifyPayment = async (req,res)=>{
   try {
     
@@ -312,13 +312,13 @@ const verifyPayment = async (req,res)=>{
     
     lastOrder.paymentStatus = "Success"
     await lastOrder.save()
-    
+    res.json({success:true})
     
   } catch (error) {
     console.log(error);
   }
 }
-
+ 
 
 // ********** FOR GENERATE RANDOM 8 DIGIT NUMBER FOR ORDER-ID  **********
 function generateOrderId() {

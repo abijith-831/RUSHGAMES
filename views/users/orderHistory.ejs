@@ -296,7 +296,7 @@
                                             
                                             <% if(orderItem.paymentStatus !=='Success') { %>
                                               <div class="col-md-3">
-                                                <button class="btn btn-info" >Re-Payment</button>
+                                                <button class="btn btn-info" onclick="initiateRepayment('<%= orderItem._id %>', '<%= orderItem.totalCartPrice %>')">Re-Payment</button>
                                               </div>
                                             <% }else { %>
                                               <p style="font-weight: bold; color: green;">Payment    Success</p>
@@ -349,212 +349,107 @@ function showOrderDetailsPage(orderId) {
 </script>
 	
 
-
 <script>
-	document.addEventListener('DOMContentLoaded', () => {
-		// Existing proceedToCheckout function
-		function proceedToCheckout(paymentMethod, addressId , couponId = null) {
-			const requestBody = {
-				paymentMethod : paymentMethod,
-				addressId : addressId
-			}
+  async function initiateRepayment(orderId, amount) {
+    try {
+      const response = await fetch('/repayment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ orderId, amount })
+      });
 
-			if(couponId){
-				requestBody.couponId = couponId;
-			}
-			fetch('/placeOrder', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(requestBody)
-				
-			})
-				.then(response => response.json())
-				.then(data => {
-					if (data.success) {	
-						if(data.couponCode){
-							confetti({
-								particleCount: 100,
-								spread: 70,
-								origin: { y: 0.6 }
-							});
-						}else{
-							Swal.fire({
-								icon: 'success',
-								title: 'Success!',
-								text: 'Order Placed Successfully .! ',
-								showConfirmButton: false,
-								timer: 1500
-							})
-							setTimeout(() => {
-								window.location.href = '/orderHistory';
-							}, 2000);
-						}
-					}else if(data.message==='nocod'){
-						Swal.fire({
-								icon : 'error',
-								title : 'Not Available',
-								text : 'Cash on Delivery not Available for Purchases Below 1000 Rs',
-								confirmButtonText : 'OK'
-						});
-					} else if(data.Razorpay){
-						const options = {
-							"key": 'rzp_test_v7eXLfL0Wt6Ws9', 
-							"amount": data.Razorpay.amount, 
-							"currency": "INR",
-							"name": "Rush Games",
-							"description": "Test Transaction",
-							"image": "https://example.com/your_logo",
-							"order_id": data.Razorpay.id,
-							"handler": function (response){
-								verifyPayment(response, data.Razorpay)
-							},
-							"prefill": {
-								"name": "Abhijith",
-								"email": "abhijithasokan831gmail.com",
-								"contact": "1234567890"
-							},
-							"notes": {
-								"address": "Razorpay Corporate Office"
-							},
-							"theme": {
-								"color": "#3399cc"
-							}
-						};
-						var rzp1 = new Razorpay(options);
-						rzp1.open();
-					} else if(data.message == "nowallet"){
-						Swal.fire({
-							icon : 'error',
-							title : 'No Wallet',
-							text : 'You dont have wallet to Purchase',
-							confirmButtonText : 'OK'
-						});
-					} else if(data.message == "Insufficient"){
-						Swal.fire({
-							icon : 'error',
-							title : 'Insufficient Balance',
-							text : 'You dont have enough balance in your Wallet',
-							confirmButtonText : 'OK'
-						});
-					} else {
-						Swal.fire({
-							title: 'Order Processing Failed',
-							text: 'An error occurred while processing the order.',
-							icon: 'error',
-							confirmButtonText: 'OK'
-						});
-					}
-				})
-				.catch(error => {
-					console.error('Fetch error:', error);
-				});
-		}
+      const data = await response.json();
+      
+      if (data.success && data.Razorpay) {
+        
+        const options = {
+          key: 'rzp_test_v7eXLfL0Wt6Ws9',
+          amount: Number(data.amount),
+          currency: 'INR',
+          name: 'Rush Games',
+          description: 'Test Transaction',
+          image: 'https://example.com/your_logo',
+          order_id: data.Razorpay.id,
+          handler: function (response) {
+            verifyRepayment(response.razorpay_payment_id, response.razorpay_order_id, response.razorpay_signature , orderId);
+          },
+          prefill: {
+            name: 'Abhijith',
+            email: 'abhijithasokan831@gmail.com',
+            contact: '1234567890'
+          },
+          notes: {
+            address: 'Razorpay Corporate Office'
+          },
+          theme: {
+            color: '#3399cc'
+          }
+        };
 
-		// Event listener for the order form
-		document.querySelector('#orderForm').addEventListener('submit', (event) => {
-			event.preventDefault();
-			const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-			const selectedAddress = document.querySelector('input[name="address"]:checked').value;
-			const couponInput = document.getElementById('checkout-discount-input');
-			const couponId = couponInput ? couponInput.value : null;
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+      } else {
+        
+        alert('Failed to initiate payment. Please try again.');
+      }
+    } catch (error) {
+      
+      console.error('Error initiating payment:', error);
+      alert('An error occurred. Please try again.');
+    }
+  }
 
-			proceedToCheckout(paymentMethod, selectedAddress, couponId);
-		});
+  async function verifyRepayment(paymentId, razorOrderId, signature , orderId) {
+    try {
+      const response = await fetch('/verifyRepayment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ paymentId, razorOrderId, signature ,orderId})
+      });
 
-		// Re-Payment button click handler
-		document.querySelectorAll('.repayment-btn').forEach(button => {
-			button.addEventListener('click', (event) => {
-				const orderId = button.getAttribute('data-order-id');
-				fetch(`/initiateRePayment/${orderId}`, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				})
-					.then(response => response.json())
-					.then(data => {
-						if (data.Razorpay) {
-							const options = {
-								"key": 'rzp_test_v7eXLfL0Wt6Ws9',
-								"amount": data.Razorpay.amount,
-								"currency": "INR",
-								"name": "Rush Games",
-								"description": "Test Transaction",
-								"image": "https://example.com/your_logo",
-								"order_id": data.Razorpay.id,
-								"handler": function (response){
-									verifyPayment(response, data.Razorpay)
-								},
-								"prefill": {
-									"name": "Abhijith",
-									"email": "abhijithasokan831gmail.com",
-									"contact": "1234567890"
-								},
-								"notes": {
-									"address": "Razorpay Corporate Office"
-								},
-								"theme": {
-									"color": "#3399cc"
-								}
-							};
-							var rzp1 = new Razorpay(options);
-							rzp1.open();
-						} else {
-							Swal.fire({
-								title: 'Re-Payment Initiation Failed',
-								text: 'An error occurred while initiating the payment.',
-								icon: 'error',
-								confirmButtonText: 'OK'
-							});
-						}
-					})
-					.catch(error => {
-						console.error('Fetch error:', error);
-					});
-			});
-		});
-	});
-
-	function verifyPayment(payment, order){
-		$.ajax({
-			url: '/verifyPayment',
-			data: JSON.stringify({
-				payment,
-				order
-			}),
-			contentType: 'application/json',
-			method: 'POST',
-			success: (response) => {
-				if (response.success) {
-					Swal.fire({
-						title: 'Order Placed Successfully!',
-						icon: 'success',
-						showConfirmButton: false,
-						timer: 2000
-					});
-					setTimeout(() => {
-						window.location.href = '/orderHistory';
-					}, 3000);
-				} else {
-					Swal.fire({
-						title: 'Payment Failed',
-						text: response.message || 'Your payment failed. Please try again.',
-						icon: 'error',
-						confirmButtonText: 'OK'
-					}).then(() => {
-						window.location.href = '/paymentFailed';
-					});
-				}
-			},
-			error: (error) => {
-				console.error('Error verifying payment:', error);
-			}
-		});
-	}
+      const data = await response.json();
+      if (data.success) {
+        Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Payment verified successfully!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                setTimeout(()=>{
+                  window.location.reload()
+                },1500)
+      
+    } else {
+      Swal.fire({
+                    icon: 'serror',
+                    title: 'Error!',
+                    text: 'Payment verification failed. Please contact support',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                setTimeout(()=>{
+                  window.location.reload()
+                },1500)
+ 
+    }
+    } catch (error) {
+      console.log('3');
+      console.error('Error verifying payment:', error);
+      alert('An error occurred. Please try again.');
+    }
+  }
 </script>
 
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <%-include('../layouts/footbar.ejs')%> 
 <%-include('../layouts/footer.ejs')%>

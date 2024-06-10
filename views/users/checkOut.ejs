@@ -731,15 +731,40 @@ function verifyPayment(payment, order, addressId) {
     method: "POST",
     success: (response) => {
       if (response.success) {
-        console.log('Payment verification successful');
-
-        window.location.href = `/orderHistory`;
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: 'Payment verified successfully!',
+          showConfirmButton: false,
+          timer: 1500
+        });
+        setTimeout(() => {
+          window.location.href = '/orderHistory';
+        }, 1500);
       } else {
-        console.log('Payment verification failed');
-        window.location.href = '/paymentFailed';
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: response.message || 'Payment verification failed. Please contact support.',
+          showConfirmButton: false,
+          timer: 1500
+        });
+        setTimeout(() => {
+          window.location.href = '/orderHistory';
+        }, 1500);
       }
+    },
+    error: (xhr, status, error) => {
+      console.error('Error verifying payment:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: 'An error occurred. Please try again.',
+        showConfirmButton: false,
+        timer: 1500
+      });
     }
-  })
+  });
 }
 
 </script>

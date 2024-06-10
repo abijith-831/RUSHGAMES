@@ -10,6 +10,10 @@ const PDFDocument = require('pdfkit');
 const Razorpay = require('razorpay')
 
 
+const instance = new Razorpay({
+  key_id : 'rzp_test_v7eXLfL0Wt6Ws9',
+  key_secret : 'AYLcwjPi06hnNEvNPogTv4lf'
+})
 
 
 // ********** FOR LOADING USER PROFILE PAGE  **********
@@ -250,6 +254,73 @@ const loadOrderHistory = async (req,res)=>{
     console.log(error);
   }
 }
+
+
+// ********** FOR IMPLEMENT THE RAZORPAY REPAYMENT **********
+const repayment = async(req,res)=>{
+  try {
+      const { orderId, amount } = req.body;
+      const order = await Order.findById(orderId);
+
+      if (!order) {
+        return res.status(404).json({ success: false, message: 'Order not found' });
+      }
+
+      const discountedPrice = order.discount 
+        ? order.totalCartPrice - (order.totalCartPrice * order.discount / 100)
+        : order.totalCartPrice;
+
+      const totalCartPrice = Math.round(discountedPrice * 100); 
+      const minimumAmount = 100; 
+      const adjustedAmount = Math.max(totalCartPrice, minimumAmount);
+      
+      const razorpayOrder = await generateRazorpay(orderId, adjustedAmount);
+      generateRazorpay(orderId, adjustedAmount).then(async (response) => {
+       
+        res.json({ success : true, Razorpay: { id: razorpayOrder.id, amount: adjustedAmount } });
+      });
+  } catch (error) {
+      console.log(error);
+  }
+}
+  
+
+// ********** VERIFYING PAYMENT AS SUCCESS **********
+const verifyRepayment = async(req,res)=>{
+  try {
+    const { paymentId, razorOrderId, signature , orderId} = req.body
+    
+    const order = await Order.findOne({_id:orderId})
+    
+    order.paymentStatus = "Success"
+    await order.save()
+    res.json({success:true})
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+
+// ********** RAZORPAY SETTINGS  **********
+const generateRazorpay = (orderId, amount) => {
+ 
+  return new Promise((resolve, reject) => {
+    const options = {
+      amount: amount,
+      currency: 'INR',
+      receipt: "" + orderId
+    };
+    instance.orders.create(options, function (err, order) {
+     
+      if (err) {
+        console.log(err);
+        reject(err);
+      }
+      resolve(order);
+    });
+  });
+};
 
 
 
@@ -574,10 +645,10 @@ const loadCoupons = async (req,res)=>{
   try {
     const userId = req.session.user_id;
     const userData = await User.findOne({_id : userId}).populate('coupons')
-    console.log('hbugyh'+userData);
+    
     const coupons = userData.coupons;
     
-  console.log('aslfjsf'+coupons);
+  
     res.render('coupons',{user : userData , coupons : coupons})
     
   } catch (error) {
@@ -636,9 +707,11 @@ module.exports = {
 
 
     loadOrderHistory,
+    repayment,
+    verifyRepayment,
     loadOrderDetailsPage,
     downloadInvoice,
-    cancelOrder ,
+    cancelOrder,
     returnOrder,
 
 
@@ -648,5 +721,6 @@ module.exports = {
 
 
     loadCoupons,
-    checkCoupon
+    checkCoupon,
+    instance
 }

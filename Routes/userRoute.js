@@ -41,6 +41,8 @@ user_route.post('/editUserProfile',profileController.editUserProfile)
 user_route.post('/editUserPassword',profileController.editUserPassword)
 //----------------
 user_route.get('/orderHistory', userAuth.isLogin , profileController.loadOrderHistory)
+user_route.post('/repayment',profileController.repayment)
+user_route.post('/verifyRepayment',profileController.verifyRepayment)
 user_route.get('/orderDetailsPage', userAuth.isLogin, profileController.loadOrderDetailsPage)
 user_route.post('/downloadInvoice',profileController.downloadInvoice) 
 user_route.post('/cancelOrder',profileController.cancelOrder)
