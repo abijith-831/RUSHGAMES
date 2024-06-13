@@ -30,6 +30,13 @@
     .btn-product-icon {
         color: #000; /* Black color */
     }
+    .product-gallery {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+    }
+    
 </style>
 
 
@@ -71,13 +78,12 @@
                                 <div class="product-gallery product-gallery-vertical">
                                     <div class="row">
                                         <figure class="product-main-image">
-                                            
-                                            <img id="product-zoom" src="<%= game.mainImage[0].path%>" data-zoom-image="<%= game.mainImage[0].path%>" alt="product image"  data-action="zoom">
-                                                                                    
-                                        </figure><!-- End .product-main-image -->                                       
-                                    </div><!-- End .row -->
-                                </div><!-- End .product-gallery -->
-                            </div><!-- End .col-md-6 -->
+                                            <img id="product-zoom" src="<%= game.mainImage[0].path %>" data-zoom-image="<%= game.mainImage[0].path %>" alt="product image" data-action="zoom">
+                                        </figure>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End .col-md-6 -->
 
                             <div class="col-md-6">
                                 <div class="product-details product-details-centered">
@@ -109,8 +115,6 @@
 
                                             <a href="#" class="btn-product btn-cart btn btn-outline-primary-2"><span>BUY NOW</span></a>
                                         </div><!-- End .details-action-col -->
-
-                                        
                                     </div>
 
                                     <div class="product-details-action">
@@ -199,8 +203,8 @@
                                 <br>
                                 <div class="product-cat">
                                     <a href="#">SCREENSHOT 1</a>
-                                </div><!-- End .product-cat -->                           
-                            </div><!-- End .product -->
+                                </div>
+                            </div>
                             <div class="product product-7 text-center">
                                 <a href="<%=game.screenshotImages[1].path %>" class="popup-image">
                                     <img src="<%=game.screenshotImages[1].path %>" alt="Product image" class="product-image" data-zoom="<%=game.screenshotImages[1].path %>">
@@ -208,9 +212,8 @@
                                 <br>
                                 <div class="product-cat">
                                     <a href="#">SCREENSHOT 2</a>
-                                </div><!-- End .product-cat -->                           
-                            </div><!-- End .product -->
-    
+                                </div>
+                            </div>
                             <div class="product product-7 text-center">
                                 <a href="<%=game.screenshotImages[2].path %>" class="popup-image">
                                     <img src="<%=game.screenshotImages[2].path %>" alt="Product image" class="product-image" data-zoom="<%=game.screenshotImages[2].path %>"> 
@@ -218,9 +221,8 @@
                                 <br>
                                 <div class="product-cat">
                                     <a href="#">SCREENSHOT 3</a>
-                                </div><!-- End .product-cat -->  
-                            </div><!-- End .product -->
-    
+                                </div>
+                            </div>
                             <div class="product product-7 text-center">
                                 <a href="<%=game.screenshotImages[3].path %>" class="popup-image">
                                     <img src="<%=game.screenshotImages[3].path %>" alt="Product image" class="product-image" data-zoom="<%=game.screenshotImages[3].path %>">
@@ -228,9 +230,7 @@
                                 <br>
                                 <div class="product-cat">
                                     <a href="#">SCREENSHOT 4</a>
-                                </div><!-- End .product-cat --> 
-    
-                               
+                                </div>
                             </div>
                             <!-- Repeat similar structure for other screenshots -->
                         </div><!-- End .owl-carousel -->
@@ -417,11 +417,43 @@
         </main><!-- End .main -->
 
                
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>   
-        <script src="assets/js/jquery.elevateZoom.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/zoom.js/1.7.21/zoom.min.js"></script>
-        <script src="https://unpkg.com/js-image-zoom@0.7.0/js-image-zoom.js" type="application/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>   
+<script src="assets/js/jquery.elevateZoom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
       
+
+
+
+
+<script>
+    //lense zoom
+    // $(document).ready(function(){
+    //     $("#product-zoom").elevateZoom({
+    //         zoomType: "lens",
+    //         lensShape: "round",
+    //         lensSize: 200,
+    //         borderSize: 1,
+    //         borderColour: "#000",
+    //         responsive: true
+    //     });
+    // });
+    
+    //inner zoom
+    $("#product-zoom").elevateZoom({
+    zoomType: "inner",
+    cursor: "crosshair",
+    borderSize: 0,
+    responsive: true
+});
+$('.popup-image').magnificPopup({
+            type: 'image',
+            gallery: {
+                enabled: true
+            }
+        });
+</script>
+
+
 <!-- ADDING TO WISHLIST -->
 <script>
 	function addToWishlist(gameId){
@@ -460,6 +492,7 @@
             });
 	}
 </script>
+
 
 
 <!-- ADDING TO CART -->
@@ -504,15 +537,7 @@
 
 
 
-<script>
-    $(document).ready(function() {
-    $('.popup-image').magnificPopup({
-        type: 'image',
-        gallery: {
-            enabled: true
-        }
-    });
-});
+
 
 </script>
          

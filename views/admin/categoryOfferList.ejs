@@ -1,6 +1,7 @@
 <%-include('../layouts/adminHeader.ejs')%>
 <%-include('../layouts/adminSidebar.ejs')%>
 
+
 <style>
     .purple-header-box {
     background-color: #936dd1; /* Purple color */
@@ -104,6 +105,7 @@
 }
 
 </style>
+
 
 <div class="page-wrapper">
 
@@ -279,14 +281,14 @@
 function validation(){
     
     const discount = document.getElementById('discount').value.trim();
-    const discountRegex = /^(100|[1-9]?\d)(\.\d{1,2})?$/;
+    const discountRegex = /^(60|[5-9]|[1-5]\d)(\.\d{1,2})?$/
     let discountError = document.getElementById('discountError');
     discountError.innerText = '';
     if (discount === '') {
       discountError.innerText = "Discount cannot be empty";
       return false;
     } else if (!discountRegex.test(discount)) {
-      discountError.innerText = "Discount should be a positive number between 1 and 100";
+      discountError.innerText = "Discount should be a positive number between 5 and 60";
       return false;
     } else if (Number(discount) > 100) {
       discountError.innerText = "Discount cannot exceed 100";

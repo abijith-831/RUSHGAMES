@@ -6,6 +6,8 @@ const path = require("path");
 const express = require("express");
 const app = express();
 const sharp = require('sharp')
+const Swal = require('sweetalert2');
+
 
 
 // ********** FOR LOADING GAMESLIST **********
@@ -180,10 +182,18 @@ const editGames = async(req,res)=>{
           price : req.body.price,
           stock : req.body.quantity,
           systemReq : req.body.systemReq,
+          trailer : req.body.trailer
          
         })
-        req.flash('success',"Game Updated Successfully...")
-        res.redirect('/admin/gamesList')
+        Swal({
+          title: 'Success!',
+          text: 'Game updated successfully.',
+          icon: 'success',
+          timer: 3000, // Automatically close after 3 seconds
+          buttons: false // Hide the "OK" button as we'll close it automatically
+      }).then(() => {
+          res.redirect('/admin/gamesList');
+      });
     
   } catch (error) {
     console.log(error);

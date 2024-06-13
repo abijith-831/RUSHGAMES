@@ -195,9 +195,8 @@
                   Addresses
                   <i class="fas fa-address-book" style="margin-right: 5px"></i>
                 </button>
-                <button class="buttons">
-                  Wallet <i class="fas fa-wallet" style="margin-right: 5px"></i>
-                </button>
+                <a href="/wallet"><button class="buttons">Wallet <i class="fas fa-wallet" style="margin-right: 5px;"></i></button></a>
+
                 <button class="buttons">
                   Offers <i class="fas fa-tag" style="margin-right: 5px"></i>
                 </button>
@@ -253,11 +252,11 @@
                                                 <%   }  %>    
                                                 <% if (game.Status==='Cancelled') { %> 
                                                     <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                                        <p class="text-muted mb-0 small" style="text-decoration: line-through;"><%= game.totalAmount %></p>
+                                                        <p class="text-muted mb-0 small" style="text-decoration: line-through;"><%=Math.floor(game.totalAmount) %></p>
                                                     </div>
                                                 <%  }else { %> 
                                                     <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                                      <p class="text-muted mb-0 small"><%= game.totalAmount %></p>
+                                                      <p class="text-muted mb-0 small"><%=Math.floor(game.totalAmount) %></p>
                                                     </div>
                                                 <%   }  %>  
                                                 <% if (game.Status==='Cancelled') { %>    
@@ -272,16 +271,9 @@
                                             <% }) %>
                                         </div> 
                                         <div class="row mt-3" style="font-weight: bold;">
-                                          <% if (orderItem.discount) { %>
-                                              <% const discountedPrice = orderItem.totalCartPrice - (orderItem.totalCartPrice * orderItem.discount/100) %>
                                               <div class="col-md-3">
-                                                <p class="text-muted mb-0" style="font-weight: bold;">Total Price: <%= discountedPrice %></p>
+                                                <p class="text-muted mb-0" style="font-weight: bold;">Total Price: <%=Math.floor(orderItem.totalCartPrice) %></p>
                                               </div>
-                                          <% }else { %>
-                                              <div class="col-md-3">
-                                                <p class="text-muted mb-0" style="font-weight: bold;">Total Price: <%= orderItem.totalCartPrice %></p>
-                                              </div>
-                                          <% } %> 
                                           
                                           
                                             
@@ -294,11 +286,13 @@
                                                 <button class="btn btn-primary" onclick="showOrderDetailsPage('<%= orderItem.orderId%>')">Order Details</button>
                                             </div>
                                             
-                                            <% if(orderItem.paymentStatus !=='Success') { %>
+                                            <% if(orderItem.paymentStatus =='Failed') { %>
                                               <div class="col-md-3">
                                                 <button class="btn btn-info" onclick="initiateRepayment('<%= orderItem._id %>', '<%= orderItem.totalCartPrice %>')">Re-Payment</button>
                                               </div>
-                                            <% }else { %>
+                                            
+                                            <% }else{ %>
+
                                               <p style="font-weight: bold; color: green;">Payment    Success</p>
                                             <% } %>
                                             
@@ -413,6 +407,7 @@ function showOrderDetailsPage(orderId) {
 
       const data = await response.json();
       if (data.success) {
+        const orderId = data.orderId
         Swal.fire({
                     icon: 'success',
                     title: 'Success!',
@@ -421,12 +416,12 @@ function showOrderDetailsPage(orderId) {
                     timer: 1500
                 });
                 setTimeout(()=>{
-                  window.location.reload()
+                  window.location.href = `/success?orderId=${orderId}`;
                 },1500)
       
     } else {
       Swal.fire({
-                    icon: 'serror',
+                    icon: 'error',
                     title: 'Error!',
                     text: 'Payment verification failed. Please contact support',
                     showConfirmButton: false,

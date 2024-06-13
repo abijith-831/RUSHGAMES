@@ -100,6 +100,11 @@ const orderSchema = new mongoose.Schema({
     },
     discount : {
         type :Number
+    },
+    deliveryCharge : {
+        type : String,
+        enum:["YES","NO"],
+        default : "NO"
     }
 })
 

@@ -9,9 +9,10 @@ const checkOutController = require('../controllers/checkOutController')
 const path = require('path')
 
 
-user_route.set('view engine','ejs')
+
 user_route.set('views','./views/users')
 const userAuth = require('../middleware/userAuth')
+const errorHandler = require('../middleware/errorHandler')
 
 
 
@@ -43,6 +44,7 @@ user_route.post('/editUserPassword',profileController.editUserPassword)
 user_route.get('/orderHistory', userAuth.isLogin , profileController.loadOrderHistory)
 user_route.post('/repayment',profileController.repayment)
 user_route.post('/verifyRepayment',profileController.verifyRepayment)
+
 user_route.get('/orderDetailsPage', userAuth.isLogin, profileController.loadOrderDetailsPage)
 user_route.post('/downloadInvoice',profileController.downloadInvoice) 
 user_route.post('/cancelOrder',profileController.cancelOrder)
@@ -55,7 +57,9 @@ user_route.post('/withdrawMoney',profileController.withdrawMoney)
 user_route.get('/coupons',userAuth.isLogin , profileController.loadCoupons)
 user_route.post('/checkCoupon',profileController.checkCoupon)
 
+
 //******   USER CART SECTIONS ******
+const {loadCart} = require('../controllers/cartController')
 user_route.get('/cart' , userAuth.isLogin , cartController.loadCart)
 user_route.post('/addToCart' ,  userAuth.isLogin , cartController.addGameToCart)
 user_route.put('/removeFromCart' , userAuth.isLogin , cartController.removeFromCart)
@@ -76,6 +80,7 @@ user_route.get('/loadNotification',wishlistController.loadNotification)
 user_route.get('/checkOut' , userAuth.isLogin , checkOutController.loadCheckOut)
 user_route.post('/addNewAddress' , checkOutController.addNewAddress)
 user_route.post('/placeOrder' , checkOutController.placeOrder)
+user_route.get('/success',userAuth.isLogin,checkOutController.LoadSuccessPage)
 user_route.post('/verifyPayment',checkOutController.verifyPayment)
 
 

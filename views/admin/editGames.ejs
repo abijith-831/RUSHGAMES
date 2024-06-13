@@ -76,7 +76,7 @@
                         </div>
                         
                         <% if (errmsg) { %> 
-                            <div class="alert text-center" role="alert" style="color: red;" >
+                             <div class="alert text-center" role="alert" style="color: red;" >
                                 <%= errmsg %>
                             </div>
                         <% } %>
@@ -99,23 +99,29 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="quantity">QUANTITY</label>
-                                            <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Enter Quantity" value="<%= gameDetails && gameDetails.quantity ? gameDetails.quantity : '' %>" required>
+                                            <input type="text" class="form-control" id="quantity" name="quantity" placeholder="Enter Quantity" value="<%= gameDetails && gameDetails.stock ? gameDetails.stock : '' %>" required>
                                             <div id="quantityContainer" class="text-danger"></div>
                                         </div>
                                         <div class="form-group">
                                             <label for="category">CATEGORY</label>
                                             <select class="custom-select mr-sm-2" id="category" name="category">
+                                                <option value="Choose..." disabled selected>Choose...</option>
                                                 <% categories.forEach(category => { %>
-                                                    <option value="<%=category._id%>"><%=category.name%></option>
-                                                <%    }) %>
-                                                
+                                                    <option value="<%= category._id %>" <%= gameDetails && gameDetails.category.equals(category._id) ? 'selected' : '' %>><%= category.name %></option>
+                                                <% }) %>
                                             </select>
                                             <div id="categoryContainer" class="text-danger"></div>
                                         </div>
                                         
+                                        
                                         <div class="form-group">
                                             <label for="description">SYSTEM REQUIREMENTS</label>
                                             <textarea class="form-control" rows="3" id="description" name="description" placeholder="Text Here..." value=""><%= gameDetails && gameDetails.systemReq ? gameDetails.systemReq : '' %></textarea>
+                                            <div id="descriptionContainer" class="text-danger"></div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="description">SYSTEM REQUIREMENTS</label>
+                                            <textarea class="form-control" rows="3" id="trailer" name="trailer" placeholder="Link Here..." value=""><%= gameDetails && gameDetails.trailer ? gameDetails.trailer : '' %></textarea>
                                             <div id="descriptionContainer" class="text-danger"></div>
                                         </div>
                                     </div>
@@ -142,8 +148,7 @@
                                                 <% } %>
                                             <% } %>  
                                             
-                                        </div> 
-                                       
+                                        </div>                               
 
                                     </div>
                                 </div>                              
@@ -151,9 +156,8 @@
 
                             <div class="form-actions text-right">
                                 <button type="submit" class="purple-button">Save Changes</button>
-                                <!-- <button type="button" class="btn purple-button btn-reset" onclick="resetForm()">Reset</button> -->
-                            </div>
-                            
+                                
+                            </div>                           
                         </form>
                     </div>
                 </div>

@@ -216,9 +216,8 @@ p {
                     <button class="buttons" style="background-color: rgb(240, 104, 104)">
                       Wallet <i class="fas fa-wallet" style="margin-right: 5px"></i>
                     </button>
-                    <button class="buttons">
-                      Offers <i class="fas fa-tag" style="margin-right: 5px"></i>
-                    </button>
+                    <a href="/coupons"><button class="buttons" >Coupons <i class="fas fa-tag" style="margin-right: 5px;"></i></button></a>
+
                     <a href="/logout">
                       <button class="buttons">
                         Logout
@@ -252,7 +251,7 @@ p {
                                 <div class="input">
                                   <h5>Balance</h5>
                                   <% if (wallet) { %>
-                                    <h5><%= wallet.balance %> Rs</h5>
+                                    <h5><%= Math.floor(wallet.balance) %> Rs</h5>
                                   <%  }else{ %>
                                     <h5>Empty</h5>
                                   <% } %>
@@ -556,9 +555,9 @@ p {
                 <tr>
                   <th scope="row"><%= index+1 %></th>
                   <% if (item.transactionType === 'debit') { %>
-                    <td>-<%= item.amount %></td>
+                    <td>-<%= Math.floor(item.amount) %></td>
                   <%  }else { %>
-                    <td><%= item.amount %></td>
+                    <td><%= Math.floor(item.amount) %></td>
                   <%  }  %>
                   
                   <td><%= new Date(item.date).toLocaleString('en-IN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true }) %></td>
@@ -569,7 +568,7 @@ p {
                     <td style="color: green;"><%= item.transactionType %></td>
                   <%  }  %>
                   
-                  <td><%= item.currBalance %></td>
+                  <td><%=Math.floor(item.currBalance) %></td>
                 </tr>
   
               <%   })  %>
@@ -581,7 +580,7 @@ p {
       <div class="row">
         <div class="col-lg-6">
           <% if (wallet) { %>
-            <h5 class="text-right">Balance: <%= wallet.balance %></h5>
+            <h5 class="text-right">Balance: <%= Math.floor(wallet.balance) %></h5>
           <% }else{ %>
             <h5 class="text-right">Balance: </h5>
           <%  } %>

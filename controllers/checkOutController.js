@@ -109,15 +109,26 @@ const placeOrder = async (req, res) => {
     if (!addressData) {
       return res.status(400).json({ message: "Address not found." });
     }
-
+    
     const cart = await Cart.findOne({ userId: userId });
+
+    if(coupon){
+      cart.totalCartPrice = cart.totalCartPrice - (cart.totalCartPrice * coupon.discount / 100)
+
+      await cart.save()
+    }
+
+
     if(cart.deliveryCharge){
       cart.totalCartPrice += cart.deliveryCharge;
+ 
       await cart.save();
+      
+      
     }
-    if (!cart) {
-      return res.status(400).json({ message: "Cart not found for this user." });
-    }
+    
+    
+
 
     const orderId = generateOrderId();
 
@@ -143,18 +154,23 @@ const placeOrder = async (req, res) => {
         houseNo: addressData.addresses[0].houseNo,
       },
       paymentMethod: selectedPayment,
-      paymentStatus: 'Pending',
+      paymentStatus: 'Failed',
       orderId: orderId,
       orderDate: new Date(),
+      deliveryCharge : "NO"
     };
-
+    
     if (coupon) {
       newOrderData.discount = coupon.discount;
     }
 
     const orderInstance = new Order(newOrderData);
 
-    let isOrderSaved = false;
+    if(orderInstance.totalCartPrice < 2500){
+      orderInstance.deliveryCharge = "YES"
+    }
+   
+    
     let discountedPrice = cart.totalCartPrice;
 
     if (selectedPayment === 'wallet') {
@@ -164,10 +180,8 @@ const placeOrder = async (req, res) => {
       } else if (cart.totalCartPrice > wallet.balance) {
         return res.json({ success: false, message: "Insufficient" });
       } else {
-        if (orderInstance.discount) {
-          discountedPrice = orderInstance.totalCartPrice - (orderInstance.totalCartPrice * orderInstance.discount / 100);
-        }
-        wallet.balance -= discountedPrice;
+        
+        wallet.balance -= cart.totalCartPrice;
 
         wallet.history.push({
           amount: discountedPrice,
@@ -179,7 +193,7 @@ const placeOrder = async (req, res) => {
 
 
         orderInstance.paymentStatus = 'Success'
-
+        
 
         await wallet.save();
         await orderInstance.save();
@@ -187,24 +201,19 @@ const placeOrder = async (req, res) => {
         await Cart.findOneAndDelete({ userId: userId });
         await giveCoupon(userId, cart.totalCartPrice);
 
-        res.json({ success: true });
+        res.json({ success: true , orderId : orderInstance._id});
        
       }
     } else if (selectedPayment === 'onlinePayment') {
-      if (orderInstance.discount) {
-        const discount = orderInstance.discount;
-        discountedPrice = orderInstance.totalCartPrice - (orderInstance.totalCartPrice * discount / 100);
-      }
+      
       const totalCartPrice = Math.round(discountedPrice * 100);
       const minimumAmount = 100;
       const adjustedAmount = Math.max(totalCartPrice, minimumAmount);
 
-
-      // console.log('msfksd'+orderInstance);
-            
+         
       await orderInstance.save();
       await Cart.findOneAndDelete({ userId: userId });
-      console.log('kjbjdfgsg'+orderInstance._id);
+      await giveCoupon(userId, cart.totalCartPrice);
           
       generateRazorpay(orderInstance._id, adjustedAmount).then(async (response) => {
        
@@ -214,12 +223,13 @@ const placeOrder = async (req, res) => {
       if(cart.totalCartPrice < 1000){
           return res.json({success:false,message:'nocod'})
       }
+      orderInstance.paymentStatus = 'Pending';
       await orderInstance.save();
       await Cart.findOneAndDelete({ userId: userId });
       await giveCoupon(userId, cart.totalCartPrice);
 
       
-      res.json({ success: true });
+      res.json({ success: true , orderId : orderInstance._id});
     }
 
 
@@ -309,16 +319,33 @@ const verifyPayment = async (req,res)=>{
     
     const orders = await Order.find({userId:userId}).sort({orderDate : -1}).limit(1)   
     const lastOrder = orders[0]
+    const orderId = lastOrder._id
     
     lastOrder.paymentStatus = "Success"
     await lastOrder.save()
-    res.json({success:true})
+    res.json({success:true , orderId : orderId})
     
   } catch (error) {
     console.log(error);
   }
 }
  
+
+
+const LoadSuccessPage = async (req,res)=>{
+  try {
+    let userId = req.session.user_id;
+    let userData = await User.findOne({_id:userId})
+
+    const orderId = req.query.orderId
+    const order = await Order.findOne({_id : orderId})
+    console.log('njkjh'+order);
+    res.render('success',{ user : userData, order })
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 
 // ********** FOR GENERATE RANDOM 8 DIGIT NUMBER FOR ORDER-ID  **********
 function generateOrderId() {
@@ -334,6 +361,7 @@ module.exports = {
     addNewAddress,
     placeOrder,
     verifyPayment,
+    LoadSuccessPage,
     instance
 }
 

@@ -101,20 +101,6 @@ const modifyCategory = async (req,res)=>{
 }
 
 
-// ********** FOR DELETING THE CATEGORY ********** 
-const deleteCategory = async (req,res)=>{
-  try {
-   
-    const categoryId = req.query.categoryId;
-    await Category.deleteOne({_id:categoryId})
-    req.flash('errmsg',"Category Removed Successfully")
-    res.redirect('/admin/categoryList')
-  } catch (error) {
-    console.log(error);
-    
-  }
-}
-
 
 // ********** FOR LISTING AND UNLISTING CATEGORIES ********** 
 const categoryStatus = async (req,res)=>{
@@ -149,6 +135,5 @@ module.exports = {
   addNewCategory,
   loadEditCategory,
   modifyCategory,
-  deleteCategory,
   categoryStatus
 };

@@ -10,6 +10,7 @@ const flash=require('express-flash')
 const session = require('express-session')
 const googleAuth = require('./googleAuth')
 
+
 app.use(session({
     secret:process.env.SESSION_SECRET,
     resave: false,
@@ -26,7 +27,13 @@ app.use(express.urlencoded({extended:true}))
 app.use(express.static(path.join(__dirname,'public')))
 app.use(express.static(path.join(__dirname,'public/uploads')))
 
+
 app.set('view engine','ejs')
+
+
+const errorHandler = require('./middleware/errorHandler')
+
+app.use(errorHandler)
 
 //FOR USER ROUTES
 const userRoute = require('./Routes/userRoute')
@@ -57,3 +64,5 @@ app.listen(port,()=>{
     console.log(`server running on http://localhost:${port}/admin/dashboard`);
     console.log(`server running on http://localhost:${port}`);
 })
+
+

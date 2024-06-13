@@ -252,7 +252,7 @@
                                             <td style="font-size: 13px;"><%= order.pageOfferPrice? order.pageOfferPrice : order.offerPrice %></td>
                                             <td style="font-size: 13px;"><%= order.pageFinalPrice? order.pageFinalPrice : order.finalPrice %></td>
                                             <td style="font-size: 13px;"><%= order.status %></td>
-                                        </tr>
+                                         </tr>
                                     <% }) %>
                                 </tbody>
                                 <tfoot>
@@ -279,7 +279,7 @@
                                     <% for (let i = 1; i <= totalPages; i++) { %>
                                         <li class="page-item <%= currentPage === i ? 'active' : '' %>">
                                             <a class="page-link" href="?page=<%= i %><%= filterParams %>"><%= i %></a>
-                                        </li>
+                                        </li> 
                                     <% } %>
                                     <% if (currentPage < totalPages) { %>
                                         <li class="page-item">
@@ -340,7 +340,7 @@
   });
 
 </script>
-
+ 
 
 <!--  for passing orders to backend when clicking excel and pdf   -->
 <script>

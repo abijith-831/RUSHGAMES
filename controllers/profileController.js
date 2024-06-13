@@ -266,9 +266,7 @@ const repayment = async(req,res)=>{
         return res.status(404).json({ success: false, message: 'Order not found' });
       }
 
-      const discountedPrice = order.discount 
-        ? order.totalCartPrice - (order.totalCartPrice * order.discount / 100)
-        : order.totalCartPrice;
+      const discountedPrice = order.discount ? order.totalCartPrice - (order.totalCartPrice * order.discount / 100): order.totalCartPrice;
 
       const totalCartPrice = Math.round(discountedPrice * 100); 
       const minimumAmount = 100; 
@@ -294,7 +292,7 @@ const verifyRepayment = async(req,res)=>{
     
     order.paymentStatus = "Success"
     await order.save()
-    res.json({success:true})
+    res.json({success:true , orderId : orderId})
   } catch (error) {
     console.log(error);
   }
@@ -314,6 +312,7 @@ const generateRazorpay = (orderId, amount) => {
     instance.orders.create(options, function (err, order) {
      
       if (err) {
+        
         console.log(err);
         reject(err);
       }
@@ -358,7 +357,7 @@ const downloadInvoice = async (req, res) => {
     const { orderId, gameId, name } = req.body;
 
     const order = await Order.findOne({ _id: orderId });
-
+   
     if (!order) {
       return res.status(404).send('Order not found');
     }
@@ -369,35 +368,55 @@ const downloadInvoice = async (req, res) => {
       return res.status(404).send('Game not found in the order');
     }
 
-    const doc = new PDFDocument({ margin: 80 });
+    const doc = new PDFDocument({ margin: 50 });
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=invoice_' + orderId + '.pdf');
 
     doc.pipe(res);
 
-    doc.fontSize(30).text('ORDER-INVOICE', { align: 'center' });
-    doc.fontSize(20).text('RUSH GAMES', { align: 'center' });
+    // Title and Header
+    doc.fontSize(30).font('Helvetica-Bold').text('ORDER-INVOICE', { align: 'center' });
+    doc.fontSize(20).font('Helvetica').text('RUSH GAMES', { align: 'center' });
+    doc.fontSize(12).font('Helvetica').text('Rush Games Pvt Ltd , KINFRA Techno Industrial Park,', { align: 'center' });
+    doc.fontSize(12).font('Helvetica').text('National Highway 66 , near Calicut University ', { align: 'center' });
+    doc.fontSize(12).font('Helvetica').text('Kakkanchery Chelembra PO , Dt, Thenhipalam, Kerala 673634', { align: 'center' });
+
     doc.moveDown();
 
-    doc.fontSize(12).text(`Order ID: ${order.orderId}`, { align: 'left' });
-    doc.text(`Order Date: ${new Date(order.orderDate).toLocaleDateString('en-IN')}`, { align: 'left' });
-    doc.text(`User Name: ${order.addresses.name}`, { align: 'left' });
-    doc.text(`Address: ${order.addresses.houseNo}, ${order.addresses.area}, ${order.addresses.city}, ${order.addresses.district}, ${order.addresses.state}, ${order.addresses.pincode}`, { align: 'left' });
-    doc.moveDown();
 
+   // Order Information
+   doc.fontSize(12).font('Helvetica-Bold').text(`Order ID:`, { continued: true }).font('Helvetica').text(` ${order.orderId}`, { align: 'left' });
+   doc.font('Helvetica-Bold').text(`Order Date:`, { continued: true }).font('Helvetica').text(` ${new Date(order.orderDate).toLocaleDateString('en-IN')}`, { align: 'left' });
+   doc.font('Helvetica-Bold').text(`Customer Name:`, { continued: true }).font('Helvetica').text(` ${order.addresses.name}`, { align: 'left' });
+   doc.font('Helvetica-Bold').text(`Delivery Address:`, { continued: true }).font('Helvetica').text(` ${order.addresses.houseNo}, ${order.addresses.area}, ${order.addresses.city}, ${order.addresses.district}, ${order.addresses.state}, ${order.addresses.pincode}`, { align: 'left' });
+   doc.moveDown(2);
+
+    
+    
+
+    // Table Header
     const tableHeader = ['Game Name', 'Quantity', 'Price', 'Total Amount', 'Status'];
-    const cellWidths = [250, 60, 80, 100, 150]; 
+    const cellWidths = [150, 60, 80, 100, 100]; 
+    const startX = doc.page.margins.left;
     let startY = doc.y;
     const rowHeight = 20;
-    let currentX = 30;
-    
+    const tableHeaderBgColor = '#cccccc';
+    const tableHeaderTextColor = '#000000';
+    const tableCellTextColor = '#000000';
+
+    // Draw table header background
+    doc.rect(startX, startY, doc.page.width - doc.page.margins.left - doc.page.margins.right, rowHeight).fill(tableHeaderBgColor);
+
+    // Table Header Text
+    let currentX = startX;
     tableHeader.forEach((header, index) => {
-      doc.fontSize(10).font('Helvetica-Bold').text(header, currentX, startY, { width: cellWidths[index], align: 'left' });
-      currentX += cellWidths[index] + 10; 
+      doc.fillColor(tableHeaderTextColor).fontSize(10).font('Helvetica-Bold').text(header, currentX, startY + 5, { width: cellWidths[index], align: 'left' });
+      currentX += cellWidths[index] + 10;
     });
-    
+
     let currentY = startY + rowHeight;
 
+    // Table Body
     const gameDetails = [
       name,
       game.quantity,
@@ -406,32 +425,32 @@ const downloadInvoice = async (req, res) => {
       game.Status
     ];
 
-    
-    currentX = 10;
+    currentX = startX;
     gameDetails.forEach((data, index) => {
-      doc.fontSize(10).font('Helvetica').text(data.toString(), currentX, currentY, { width: cellWidths[index], align: 'left' });
-      currentX += cellWidths[index] + 10; 
+      doc.fillColor(tableCellTextColor).fontSize(10).font('Helvetica').text(data.toString(), currentX, currentY + 5, { width: cellWidths[index], align: 'left' });
+      currentX += cellWidths[index] + 10;
     });
 
     currentY += rowHeight;
 
+    // Add page if needed
     if (currentY > doc.page.height - doc.page.margins.bottom) {
       doc.addPage();
-      currentY = startY;
+      currentY = doc.page.margins.top;
+    }
 
-      currentX = 10;
-      tableHeader.forEach((header, index) => {
-        doc.fontSize(10).font('Helvetica-Bold').text(header, currentX, currentY, { width: cellWidths[index], align: 'left' });
-        currentX += cellWidths[index] + 10; 
-      });
-
+    // Total Amount and Delivery Charge
+    currentY += 30;
+    if (order.deliveryCharge === 'YES') {
+      game.totalAmount += 80;
+      const deliveryCharge = 80;
+      doc.fontSize(12).font('Helvetica-Bold').text('Delivery Charge:', startX, currentY);
+      doc.font('Helvetica').text(deliveryCharge.toFixed(2), startX + 200, currentY);
       currentY += rowHeight;
     }
 
-    currentY += 50
-
-    doc.fontSize(12).font('Helvetica-Bold').text('Total Amount:', 350, currentY);
-    doc.text(game.totalAmount.toFixed(2), 450, currentY);
+    doc.fontSize(12).font('Helvetica-Bold').text('Total Amount:', startX, currentY);
+    doc.font('Helvetica').text(game.totalAmount.toFixed(2), startX + 200, currentY);
 
     doc.end();
 
@@ -440,6 +459,7 @@ const downloadInvoice = async (req, res) => {
     res.status(500).send('An error occurred while generating the PDF.');
   }
 };
+
 
 
 
@@ -454,14 +474,25 @@ const cancelOrder = async (req,res)=>{
     const game = order.games.find(item =>item.gameId.equals(gameId))
     
     const gameData = await Games.findOne({_id  : game.gameId})
+    console.log('orders'+order);
+    if(order.discount){
+      game.totalAmount = game.totalAmount - ((game.totalAmount*order.discount )/ 100)
+    }
     
+    const nonCancelled = order.games.filter(item => item.Status !== 'Cancelled')
+
+    // if((order.deliveryCharge == "YES" &&  order.games.length === 1)|| nonCancelled ===2){
+    //   console.log('abcdd');
+    //   game.totalAmount += 80
+    // }
+
     if(order.paymentMethod !== 'cashOnDelivery'){
       if(wallet){
   
         const previousBalance = wallet.balance
-        wallet.balance = wallet.balance + game.price
+        wallet.balance = wallet.balance + game.totalAmount
         wallet.history.push({
-            amount : game.price,
+            amount : game.totalAmount,
             method : 'Order Cancelled',
             transactionType : 'credit',
             date : Date.now(),
@@ -474,14 +505,14 @@ const cancelOrder = async (req,res)=>{
 
         const walletData = new Wallet({
           userId:userId,
-          balance : game.price,
+          balance : game.totalAmount,
           history : [{
-            amount : game.price,
+            amount : game.totalAmount,
             method : 'Order Cancelled',
             transactionType:'credit',
             date : Date.now(),
             previousBalance : 0,
-            currBalance : game.price
+            currBalance : game.totalAmount
           }] 
 
 
@@ -674,7 +705,7 @@ const checkCoupon = async (req,res)=>{
       const exists = user.coupons.find(item=>item.couponCode === code)
       const cart = await Cart.findOne({userId:userId})
       
-      const couponPrice =Math.floor( cart.totalCartPrice * (exists.discount /100))
+      const couponPrice = Math.floor( cart.totalCartPrice * (exists.discount /100))
 
 
       if(exists){

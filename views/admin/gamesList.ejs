@@ -124,8 +124,7 @@
                                             <td style="font-size: 13px;"><%= game.categoryName %></td>
                                             <td style="font-size: 13px;"><%= game.stock %></td>
                                             <td class="text-right align-middle" style="font-size: 13px;">
-                                                <a href="/admin/editGames?gameId=<%= game._id %>" class="btn-status-toggle" data-gameid="<%= game._id %>">
-                                                
+                                                <a href="/admin/editGames?gameId=<%= game._id %>" class="btn-status-toggle" data-gameid="<%= game._id %>">                                        
                                                     <span class="btn btn-info ml-2">EDIT</span>                                                                                                         
                                                 </a>
                                                 <% if (game.is_listed) { %>

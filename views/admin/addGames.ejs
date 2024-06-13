@@ -133,20 +133,20 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <label for="imageInput">GAME MAIN IMAGE</label>
-                                                <div class="input-with-preview">
-                                                    <input type="file" class="form-control-file" id="imageInput"   accept="image/*" name="mainImage" required>
-                                                    <canvas id="croppedImage" style="display: none;"></canvas>
-                                                    <div id="imagePreview" class="d-flex flex-wrap mt-2"></div>
-                                                </div>
+                                            <div class="input-with-preview">
+                                                <input type="file" class="form-control-file" id="imageInput" accept="image/*" name="mainImage" required>
+                                                <canvas id="croppedImage" style="display: none;"></canvas>
+                                                <div id="imagePreview" class="d-flex flex-wrap mt-2"></div>
+                                            </div>
                                         </div>
-
+                        
                                         <br><br>
                                         <div class="form-group">
                                             <label for="screenshotImages">SCREENSHOT IMAGES</label>
-                                                <div class="input-with-preview">
-                                                    <input type="file" class="form-control-file" id="screenshotImages"  accept="image/*" name="screenshotImages" multiple required >
-                                                    <div id="screenshotPreview" class="d-flex flex-wrap mt-2"></div>
-                                                </div>    
+                                            <div class="input-with-preview">
+                                                <input type="file" class="form-control-file" id="screenshotImages" accept="image/*" name="screenshotImages" multiple required>
+                                                <div id="screenshotPreview" class="d-flex flex-wrap mt-2"></div>
+                                            </div>
                                         </div>
                                         
 
@@ -222,39 +222,51 @@
 </script>
 
 
+<!-- ********** IMAGE PREVIEW FOR ADD GAMES IMAGES AND SCREENSHOTS ********** -->
 <script>
-
-    // ********** IMAGE PREVIEW FOR ADD GAMES IMAGES AND SCREENSHOTS **********
-    function previewImage (input , previewElement) {
+    function previewImage(input, previewElement) {
         const preview = document.getElementById(previewElement);
-        preview.innerHTML = '';
 
-        if(input.files){
-            Array.from(input.files).forEach(file=>{
+        if (input.files) {
+            Array.from(input.files).forEach(file => {
                 const reader = new FileReader();
-                reader.onload = function(e){
-                    const img = document.createElement('img')
+                reader.onload = function (e) {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.classList.add('image-container');
+                    imgContainer.style.display = 'inline-block';
+                    imgContainer.style.marginRight = '10px';
+                    imgContainer.style.marginBottom = '10px';
+
+                    const img = document.createElement('img');
                     img.src = e.target.result;
                     img.style.maxWidth = '100px';
                     img.style.maxHeight = '100px';
-                    img.style.marginRight = '10px'; 
-                    img.style.marginBottom = '10px';
-                    preview.appendChild(img)
-                }
-                reader.readAsDataURL(file)
-            })
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Remove';
+                    deleteButton.classList.add('btn', 'btn-sm', 'btn-danger', 'ml-2');
+                    deleteButton.addEventListener('click', function () {
+                        imgContainer.remove();
+
+                        input.value = '';
+                    });
+
+                    imgContainer.appendChild(img);
+                    imgContainer.appendChild(deleteButton);
+                    preview.appendChild(imgContainer);
+                };
+                reader.readAsDataURL(file);
+            });
         }
     }
 
-    document.getElementById('imageInput').addEventListener('change',function(){
-        previewImage(this,'imagePreview')
-    })
+    document.getElementById('imageInput').addEventListener('change', function () {
+        previewImage(this, 'imagePreview');
+    });
 
-    document.getElementById('screenshotImages').addEventListener('change',function(){
-        previewImage(this,'screenshotPreview')
-    })
-
-  
+    document.getElementById('screenshotImages').addEventListener('change', function () {
+        previewImage(this, 'screenshotPreview');
+    });
 </script>
 
 

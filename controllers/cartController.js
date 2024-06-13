@@ -5,7 +5,7 @@ const Cart = require("../models/cartModel");
 
 
 // ********** FOR RENDERING CART PAGE **********
-const loadCart = async (req, res) => {
+const loadCart = async (req, res ,next) => {
   try {
     const userId = req.session.user_id;
     const userData = await User.findOne({ _id: userId });
@@ -15,6 +15,8 @@ const loadCart = async (req, res) => {
       path: 'games.gameId',
       model: 'Games'
     }).exec();
+
+    
     
     if (!cart || cart.games.length === 0) {
       const totalCartPrice = 0;
@@ -33,12 +35,13 @@ const loadCart = async (req, res) => {
         res.render('cart', { user: userData, cartData, totalCartPrice, cartId: cart._id, isEmpty: false ,errmsg });
     }
   } catch (error) {
-    console.error('Error fetching cart:', error);
-    res.status(500).send('Internal Server Error');
+    console.error('Error in loadCart:', error);
+    error.statusCode = 500;
+    next(error)
   } 
 };
 
-
+ 
 
 // ********** FOR INSERTING GAME TO THE CART **********
 const addGameToCart = async (req, res) => {
@@ -77,6 +80,7 @@ const addGameToCart = async (req, res) => {
       if (exists) {
         exists.quantity += parseInt(quantity);
         exists.totalAmount = exists.quantity * game.finalPrice;
+
       } else {
         const gamePrice = quantity * game.finalPrice;
         userCart.games.push({
@@ -100,30 +104,40 @@ const addGameToCart = async (req, res) => {
 };
 
 
+
 // ********** FOR REMOVING GAME FROM THE CART **********
 const removeFromCart = async (req, res) => {
   try {
     const gameId = req.query.gameId;
     const userId = req.session.user_id;
     
-    
-    if (
-      await Cart.updateOne({ userId }, { $pull: { games: { gameId: gameId } } })
-    ) {
-      res.status(200).json({ success: true });
-    } else {
-      res
-        .status(400)
-        .json({
-          success: false,
-          message: "Failed to remove the game from the cart.",
-        });
-    }
+    const updateResult = await Cart.updateOne(
+      { userId },
+      { $pull: { games: { gameId: gameId } } }
+     );
+
+     const cart = await Cart.findOne({ userId })
+        console.log('csdfdsf'+cart);
+      if(updateResult){
+        let totalCartPrice = 0
+        
+        if(cart){
+          cart.games.forEach(item =>{
+            totalCartPrice += item.totalAmount
+          })
+
+          cart.totalCartPrice = totalCartPrice
+          await cart.save()
+        }
+      }
+      res.json({ success: true });
+
   } catch (error) {
     console.log(error);
     
   }
 };
+
 
 
 // ********** FOR UPDATING PRICES ACCORDING TO QUANTITY **********

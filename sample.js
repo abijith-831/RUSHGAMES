@@ -1392,96 +1392,135 @@
 
 //  Add razor Section :-
 
-function razorpay(amount) {
-    console.log('reached razor' + amount);
-    const form = document.getElementById('myForm');
-    fetch('/razor', {
-        method: 'POST',
-        headers: { 'Content-type': 'application/json' },
-        body: JSON.stringify({ amount })
-    }).then(res => res.json()).then(data => {
-        if (data.succes) {
 
-            let options = {
-                "key": ${data.key_id},
-                "amount": ${data.amount},
-                "currency": "INR",
-                "name": "ORNATE",
-                "order_id": ${data.order_id},
-                "handler": function (response) {
-                    form.submit();
+// [2,2,2,1,4,3,3,9,6,7,19]
 
-                },
-                "profile": {
-                    "name": ${data.name},
-                    "email": ${data.email}
-                }
-            }
+// let arr1 =[2,3,1,3,2,4,6,7,9,2,19]
+// let arr2 =[2,1,4,3,9,6]
+// let arr3 = []
+// let arr4 = []
+//     for(let i=0;i<arr1.length;i++){
+//         if(!arr2.includes(arr1[i])){
+//             arr4.push(arr1[i])
+//         }
+// }
 
-            let razorpayObject = new Razorpay(options);
-            razorpayObject.on('payment.failed', (response) => {
-                form.action = '/failedRazorpay'
-                form.submit()
-            });
-            razorpayObject.open();
-        }
-    })
-}
+// arr1 = arr1.sort((a,b)=>a-b)
+// for(i = 0;i<arr2.length;i++){
+//     for(let j=0;j<arr1.length;j++){
+//         if(arr2[i]==arr1[j]){
+//             arr3.push(arr1[j])
+//         }
+//     }
+// }
+// arr4 = arr4.sort((a,b)=>a-b)
+
+// console.log([...arr3,...arr4]);
 
 
+// let nums = [1,2,3,2]
+// let arr = []
+// for(let i=0;i<nums.length;i++){
+//     for(let j=i+1;j<nums.length;j++){
+//         if(nums[i]!==nums[j]){
+//             arr.push(nums[i])
+//         }
+//     }
+// }
+// console.log(arr);
 
-// razor
-const razor = async (req, res) => {
-    try {
-        console.log('df');
 
-        const user = await User.findOne({ _id: req.session.user })
+// let num = 123;
+// num = num.toString().split('')
+// console.log(num);
+// console.log(typeof(num));
+// for(let i=0;i<1000;i++){
+//     let sum = 0
+//     for(let i=0;i<num.length;i++){
+//         sum = sum+ (num[i]*num[i])
+//     }
+//     console.log(sum);
+// }
 
-        console.log(user);
 
-        let amount = req.body.amount * 100
+// let s = "hello world 5 x 5"
 
-        if(req.session.offer) amount=parseInt(amount/100*(100-req.session.offer))
+// let words = s.split(' ')
+    
+//     let nums = words.filter(item=> Number(item))
 
-        const options = {
+//     let sort = nums.sort((a,b)=>a-b)
+//     console.log(sort)
+    
+//     if(sort===nums){
+//         console.log('true');
+//     }else{
+//         console.log('false');
+//     }
+    
+  
+// let words1 = ["leetcode","is","amazing","as","is"]
+// let words2 = ["amazing","leetcode","is"]
 
-            amount: amount,
-            currency: "INR",
-            receipt: 'ffarsanakt@gmail.com'
-            
-        }
+// let arr = []
 
-        instance.orders.create(options, (err, order) => {
+// for(let i=0;i<words1.length;i++){
+//     if(words2.includes(words1[i])){
+//         arr.push(words1[i])
+//     }
+// }
+// arr = arr.sort()
+// for(let i=0;i<arr.length;i++){
+//     if(arr[i]==arr[i+1]){
+//         arr.splice(i,2)
+//     }
+// }
 
-            if (!err) {
-                res.send({
-                    succes: true,
-                    msg: 'ORDER created',
-                    order_id: order.id,
-                    amount: amount,
-                    key_id: process.env.RAZORPAY_IDKEY,
-                    name: user.fullName,
-                    email: user.email
-                })
+// console.log(arr);
+// <!-- image zoom functionality -->
+// <script>
+//     $(document).ready(function() {
+//         $("#product-zoom").elevateZoom({
+//             zoomType: "inner",
+//             cursor: "crosshair",
+//             zoomWindowFadeIn: 500,
+//             zoomWindowFadeOut: 750
+//         });
 
-            } else {
+//         $(".product-gallery-item").on("click", function(e) {
+//             e.preventDefault();
+//             var ezoom = $('#product-zoom').data('elevateZoom');
+//             ezoom.swaptheimage($(this).data('image'), $(this).data('zoom-image'));
+//             $(".product-gallery-item").removeClass("active");
+//             $(this).addClass("active");
+//         });
+//     });
+// </script>
 
-                console.error("Error creating order:", err);
-                res.status(500).send({ success: false, msg: "Failed to create order" });
-
-            }
-        })
-    } catch (err) {
-        console.log(err.message + '     razor')
-    }
-}
-
-const Razorpay = require('razorpay');
-require('dotenv').config();
-const instance = new Razorpay({
-    key_id: process.env.RAZORPAY_IDKEY,
-    key_secret: process.env.RAZORPAY_SECRET_KEY,
-});
-
-module.exports=instance
-
+            <div class="col-md-6">
+                        <div class="product-gallery product-gallery-vertical">
+                            <div class="row">
+                                <figure class="product-main-image" style="width: 400px;">
+                                    <img id="product-zoom" src="/IMAGES/<%=products.Inputimage[0].filename %>" data-zoom-image="/IMAGES/<%=products.Inputimage[0].filename %>" alt="product image">
+                                </figure>
+                                
+                                <div id="product-zoom-gallery" class="product-image-gallery">
+                                    <a class="product-gallery-item active" href="#" data-image="/IMAGES/<%=products.Inputimage[0].filename %>" data-zoom-image="/IMAGES/<%=products.Inputimage[0].filename %>">
+                                        <img src="/IMAGES/<%=products.Inputimage[0].filename %>" alt="product side">
+                                    </a>
+                    
+                                    <a class="product-gallery-item" href="#" data-image="/IMAGES/<%=products.Inputimage[1].filename %>" data-zoom-image="/IMAGES/<%=products.Inputimage[1].filename %>">
+                                        <img src="/IMAGES/<%=products.Inputimage[1].filename %>" alt="product cross">
+                                    </a>
+                    
+                                    <a class="product-gallery-item" href="#" data-image="/IMAGES/<%=products.Inputimage[2].filename %>" data-zoom-image="/IMAGES/<%=products.Inputimage[2].filename %>">
+                                        <img src="/IMAGES/<%=products.Inputimage[2].filename %>" alt="product with model">
+                                    </a>
+                    
+                                    <a class="product-gallery-item" href="#" data-image="/IMAGES/<%=products.Inputimage[3].filename %>" data-zoom-image="/IMAGES/<%=products.Inputimage[3].filename %>">
+                                        <img src="/IMAGES/<%=products.Inputimage[3].filename %>" alt="product back">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div

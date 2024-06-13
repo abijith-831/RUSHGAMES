@@ -307,8 +307,9 @@
     const discount = document.getElementById('discount').value.trim();
 
     const couponNameRegex = /^[a-zA-Z0-9]+$/;
-    const minimumRegex = /^[1-9]\d{0,3}(?:\.\d{1,2})?$/; // Allows numbers from 1 to 10000
-    const discountRegex = /^(100|[1-9]?\d)(\.\d{1,2})?$/; // Allows numbers from 1 to 100
+    const minimumRegex = /^(10000|[1-9]\d{3})(?:\.\d{1,2})?$/
+    const discountRegex = /^(60|[5-9]|[1-5]\d)(\.\d{1,2})?$/
+
 
     let couponNameError = document.getElementById('couponNameError');
     let minimumError = document.getElementById('minimumError');
@@ -328,7 +329,7 @@
       minimumError.innerText = "Minimum amount cannot be empty";
       return false;
     } else if (!minimumRegex.test(minimum)) {
-      minimumError.innerText = "Minimum amount should be a positive number between 1 and 10,000";
+      minimumError.innerText = "Minimum amount should be a positive number between 1000 and 10,000";
       return false;
     } else if (Number(minimum) > 10000) {
       minimumError.innerText = "Minimum amount cannot exceed 10,000";
@@ -340,7 +341,7 @@
       discountError.innerText = "Discount cannot be empty";
       return false;
     } else if (!discountRegex.test(discount)) {
-      discountError.innerText = "Discount should be a positive number between 1 and 100";
+      discountError.innerText = "Discount should be a positive number between 5 and 60";
       return false;
     } else if (Number(discount) > 100) {
       discountError.innerText = "Discount cannot exceed 100";

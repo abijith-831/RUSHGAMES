@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Success</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="styles.css" rel="stylesheet">
-    <style>
+<%-include('../layouts/header.ejs')%>
+<%-include('../layouts/navbar.ejs')%>
+
+
+
+<style>
         body {
-    background-color: #f8f9fa;
+    background-color: #cbf0c6;
     font-family: 'Arial', sans-serif;
 }
 
@@ -16,7 +13,7 @@
     margin-top: 50px;
     padding: 30px;
     border: none;
-    border-radius: 10px;
+    border-radius: 0px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
 }
@@ -103,8 +100,12 @@
     background-color: #5a6268;
 }
 
-    </style>
+</style>
+
+
+
 </head>
+<br>
 <body>
     <div class="container text-center">
         <div class="row justify-content-center">
@@ -117,19 +118,27 @@
                                 <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
                             </svg>
                         </div>
-                        <h2 class="card-title">Payment Successful!</h2>
+                        <h2 class="card-title">Order Confirmed!</h2>
                         <p class="card-text">Thank you for your purchase. Your payment has been processed successfully.</p>
-                        <a href="#" class="btn btn-primary">Go to Dashboard</a>
-                        <a href="#" class="btn btn-secondary">Continue Shopping</a>
+                        <p class="card-text"><strong>Order ID:</strong> # <%= order.orderId %></p>
+                        <p class="card-text"><strong>Order Date:</strong> <%= new Date(order.orderDate).toLocaleString('en-IN',{year : 'numeric',month:'2-digit',day :'2-digit',hour:'2-digit',minute: '2-digit'})  %> </p>
+                        <p class="card-text"><strong>Total Amount:</strong> <%=Math.floor(order.totalCartPrice) %> Rs</p>
+                        <a href="/orderHistory" class="btn btn-primary mx-5">Go to Order History</a>
+                        <a href="/allGames" class="btn btn-secondary">Continue Shopping</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
+    <br><br><br>
 
     <!-- Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+
+<%-include('../layouts/footbar.ejs')%>
+<%-include('../layouts/footer.ejs')%>

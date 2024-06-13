@@ -214,11 +214,8 @@ const loadSalesReport = async (req, res) => {
 // ********** FOR FILERTING ORDERS ON THE BASIS OF PERIOD AND SPECIFIC DATE **********
 const filterSalesReport = async (req,res)=>{
     try {
-        const { startDate, endDate, sortField } = req.query;
-
-        if (!startDate ||!endDate) {
-            return res.status(400).send('Both startDate and endDate are required.');
-        }
+        const { startDate, endDate, sort } = req.query;
+        
         const filter = (startDate && endDate);
         let filterParams = '';
         if(filter){
@@ -238,10 +235,10 @@ const filterSalesReport = async (req,res)=>{
  
         
         let sortOption = {};
-        if (sortField) {
-            sortOption = {[sortField]: 1}; 
+        if (sort) {
+            sortOption = {[sort]: 1}; 
         }
-
+       
        
         const orders = await Order.find(query).sort(sortOption).populate('games.gameId').populate('userId')
         
@@ -400,18 +397,29 @@ const downloadPDF = async (req, res) => {
         doc.fontSize(20).text('RUSH GAMES - SALES REPORT', { align: 'center' });
         doc.moveDown();
 
-        const tableHeader = ['SL.NO', 'Order Date', 'User Name', 'Order ID', 'Game Name', 'Game Price', 'Offer Price', 'Final Price', 'Status'];
-        const cellWidths = [30, 60, 60, 60, 80, 50, 50, 60, 50];
+        const tableHeader = ['NO.', 'Order Date', 'Name', 'Order ID', 'Game Name', 'Price', 'Offer Price', 'Final Price', 'Status'];
+        const cellWidths = [30, 90, 60, 60, 110, 50, 60, 60, 50];
         const tableStartX = 10;
         const startY = doc.y;
         const rowHeight = 20;
+        const headerBackgroundColor = '#FFA500' ;
 
 
         let currentX = tableStartX;
+        doc.fillColor(headerBackgroundColor);
         tableHeader.forEach((header, index) => {
-            doc.fontSize(10).font('Helvetica-Bold').text(header, currentX, startY, { width: cellWidths[index], align: 'left' });
+            doc.rect(currentX, startY, cellWidths[index], rowHeight).fill();
             currentX += cellWidths[index];
         });
+
+
+        currentX = tableStartX;
+        doc.fillColor('black'); 
+        tableHeader.forEach((header, index) => {
+            doc.fontSize(10).font('Helvetica-Bold').text(header, currentX, startY + 5, { width: cellWidths[index], align: 'left' });
+            currentX += cellWidths[index];
+        });
+
 
         let sumPrice = 0;
         let sumOffer = 0;
@@ -419,11 +427,14 @@ const downloadPDF = async (req, res) => {
         let currentY = startY + rowHeight;
 
 
+
         forEachedOrders.forEach((order, index) => {
             currentX = tableStartX;
+           
+
             const rowData = [
                 index + 1,
-                new Date(order.orderDate).toLocaleString('en-IN', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+                order.orderDate,
                 order.userName,
                 order.orderId,
                 order.gameName,
@@ -449,8 +460,9 @@ const downloadPDF = async (req, res) => {
                 currentY = startY;
 
                 currentX = tableStartX;
+                doc.fillColor('black');
                 tableHeader.forEach((header, index) => {
-                    doc.fontSize(10).font('Helvetica-Bold').text(header, currentX, currentY, { width: cellWidths[index], align: 'left' });
+                    doc.fontSize(10).font('Helvetica-Bold').text(header, currentX, currentY + 5, { width: cellWidths[index], align: 'left' });
                     currentX += cellWidths[index];
                 });
 
@@ -467,8 +479,7 @@ const downloadPDF = async (req, res) => {
 
         doc.end();
     } catch (error) {
-        console.error('An error occurred while generating the PDF:', error);
-        res.status(500).send('An error occurred while generating the PDF.');
+        console.error(error);
     }
 };
 
