@@ -80,7 +80,7 @@
                                 <%= errmsg %>
                             </div>
                         <% } %>
-                        <form action="/admin/editGamesSubmit?gameId=<%=gameId%>" method="POST"  >
+                        <form action="/admin/editGamesSubmit?gameId=<%=gameId%>" method="POST" enctype="multipart/form-data" >
                            <input type="hidden" id="gameId" name="gameId" value="<%=gameId%>">
                             <div class="form-body">
                                 <div class="row">
@@ -196,6 +196,7 @@
         previewImage(this,'screenshotPreview')
     })  
 </script>
+
 
 <script>
     const urlParams = new URLSearchParams(window.location.search);

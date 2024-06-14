@@ -156,49 +156,75 @@ const loadEditGames = async (req,res)=>{
 
 
 // ********** FOR MODIFYING GAME DETAILS **********
-const editGames = async(req,res)=>{
+const editGames = async (req, res) => {
   try {
-    const gameId = req.body.gameId
-    const games = await Games.find()
-    const newName = req.body.name.toUpperCase()
-    const categoryId = req.body.category;
-    
-    const currentGame = games.find(game=>game._id==gameId)
-    
-    if(!currentGame){
-      req.flash('errmsg',"Game not found")
-      return res.redirect('/admin/editGames')
-    }
-    //for extracting all game names from Games DB
-    
-    const gameNames = games.map(x=>x.name).filter(name=>name!== currentGame.name)
-    if(gameNames.includes(newName)){
-        req.flash('errmsg',"Game Already Exists...")
-        res.redirect('/admin/editGames')
-    }
-        await Games.findByIdAndUpdate(gameId,{
-          name : newName,
-          category : categoryId,
-          price : req.body.price,
-          stock : req.body.quantity,
-          systemReq : req.body.systemReq,
-          trailer : req.body.trailer
-         
-        })
-        Swal({
-          title: 'Success!',
-          text: 'Game updated successfully.',
-          icon: 'success',
-          timer: 3000, // Automatically close after 3 seconds
-          buttons: false // Hide the "OK" button as we'll close it automatically
-      }).then(() => {
+      upload(req, res, async function (err) {
+          if (err) {
+              req.flash("errmsg", "Error uploading images");
+              return res.redirect(`/admin/editGames?gameId=${req.body.gameId}`);
+          }
+
+          const gameId = req.body.gameId;
+          const games = await Games.find();
+          const newName = req.body.name.toUpperCase();
+          const categoryId = req.body.category;
+
+          const currentGame = games.find(game => game._id == gameId);
+
+          if (!currentGame) {
+              req.flash('errmsg', "Game not found");
+              return res.redirect(`/admin/editGames?gameId=${gameId}`);
+          }
+
+
+          const gameNames = games.map(x => x.name).filter(name => name !== currentGame.name);
+          if (gameNames.includes(newName)) {
+              req.flash('errmsg', "Game Already Exists...");
+              return res.redirect(`/admin/editGames?gameId=${gameId}`);
+          }
+
+
+          let mainImage = currentGame.mainImage;
+          if (req.files && req.files['mainImage'] && req.files['mainImage'].length > 0) {
+              const mainImageFile = req.files['mainImage'][0];
+              mainImage = {
+                  filename: mainImageFile.filename,
+                  path: "/uploads/" + mainImageFile.filename,
+              };
+          }
+
+
+          let screenshotImages = currentGame.screenshotImages;
+          if (req.files && req.files['screenshotImages'] && req.files['screenshotImages'].length > 0) {
+              const screenshotFiles = req.files['screenshotImages'];
+              screenshotImages = screenshotFiles.map(file => ({
+                  filename: file.filename,
+                  path: '/uploads/' + file.filename
+              }));
+          }
+
+          await Games.findByIdAndUpdate(gameId, {
+              name: newName,
+              category: categoryId,
+              price: req.body.price,
+              stock: req.body.quantity,
+              systemReq: req.body.systemReq,
+              trailer: req.body.trailer,
+              mainImage: mainImage,
+              screenshotImages: screenshotImages
+          });
+
+          req.flash('success', 'Game updated successfully.');
           res.redirect('/admin/gamesList');
       });
-    
   } catch (error) {
-    console.log(error);
+      console.log(error);
+      req.flash('errmsg', 'An error occurred while updating the game');
+      res.redirect(`/admin/editGames?gameId=${req.body.gameId}`);
   }
-}
+};
+
+
 
 
 // ********** FOR LISTING AND UNLISTING GAMES ********** 

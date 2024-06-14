@@ -1497,30 +1497,66 @@
 //     });
 // </script>
 
-            <div class="col-md-6">
-                        <div class="product-gallery product-gallery-vertical">
-                            <div class="row">
-                                <figure class="product-main-image" style="width: 400px;">
-                                    <img id="product-zoom" src="/IMAGES/<%=products.Inputimage[0].filename %>" data-zoom-image="/IMAGES/<%=products.Inputimage[0].filename %>" alt="product image">
-                                </figure>
-                                
-                                <div id="product-zoom-gallery" class="product-image-gallery">
-                                    <a class="product-gallery-item active" href="#" data-image="/IMAGES/<%=products.Inputimage[0].filename %>" data-zoom-image="/IMAGES/<%=products.Inputimage[0].filename %>">
-                                        <img src="/IMAGES/<%=products.Inputimage[0].filename %>" alt="product side">
-                                    </a>
-                    
-                                    <a class="product-gallery-item" href="#" data-image="/IMAGES/<%=products.Inputimage[1].filename %>" data-zoom-image="/IMAGES/<%=products.Inputimage[1].filename %>">
-                                        <img src="/IMAGES/<%=products.Inputimage[1].filename %>" alt="product cross">
-                                    </a>
-                    
-                                    <a class="product-gallery-item" href="#" data-image="/IMAGES/<%=products.Inputimage[2].filename %>" data-zoom-image="/IMAGES/<%=products.Inputimage[2].filename %>">
-                                        <img src="/IMAGES/<%=products.Inputimage[2].filename %>" alt="product with model">
-                                    </a>
-                    
-                                    <a class="product-gallery-item" href="#" data-image="/IMAGES/<%=products.Inputimage[3].filename %>" data-zoom-image="/IMAGES/<%=products.Inputimage[3].filename %>">
-                                        <img src="/IMAGES/<%=products.Inputimage[3].filename %>" alt="product back">
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div
+// let ransomNote = "aab" 
+// let magazine = "baa"
+
+// let arr1 = ransomNote.split('').sort()
+
+// let arr2 = magazine.split('').sort()
+// let arr3 = []
+// console.log(arr1);
+// console.log(arr2);
+
+// for(let i=0;i<arr1.length;i++){
+//    for(let j=0;j<arr2.length;j++){
+//         if(arr1[i]===arr2[j] && i!==j){
+//             arr3.push(arr1[i])
+//             break;
+//         }
+//    }
+// }
+// console.log(arr3);
+// console.log(arr3.join(''));
+// console.log(arr1.join(''));
+// if(arr1.join('')===arr3.join('')){
+//     console.log('sfasf');
+// }else{
+//     console.log('false');
+// }
+
+// let arr1 = ransomNote.split('').sort()
+
+// let arr2 = magazine.split('').sort()
+
+// let ransomNote = "aab" 
+// let magazine = "baa"
+// let a = ransomNote.split('');
+// let b = magazine.split('');
+// console.log(a);
+// console.log(b);
+
+// for (let i = 0; i < a.length; i++) {
+   
+//     let index = b.indexOf(a[i]);
+//     console.log('sdfas'+index);
+//     if (index !== -1) {
+//         b.splice(index, 1);
+//     } else {
+        
+//         return false;
+//     }
+// }
+
+
+// return true;
+
+// let pos = []
+//     let neg = []
+//     for(let i=0;i<nums.length;i++){
+//         if(nums[i] < 0 ){
+//             neg.push(nums[i])
+//         }else if(nums[i]> 0){
+//             pos.push(nums[i])
+//         }
+//     }
+//     return pos.length>neg.length ? pos.length : neg.length
