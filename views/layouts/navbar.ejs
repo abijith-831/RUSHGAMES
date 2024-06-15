@@ -60,10 +60,10 @@
         float: left;
     }
     nav a {
-            color: white; /* Set text color */
-            text-decoration: none; /* Remove underline */
-            padding: 0 10px; /* Add padding to the links */
-            margin: 0 5px; /* Add margin for spacing */
+            color: white; 
+            text-decoration: none;
+            
+            margin: 0 5px; 
         }
 
         /* Style for active link */
@@ -101,12 +101,9 @@
             <div class="header-middle" >
                 <div class="container">
                     <div class="header-left">
-                        <button class="mobile-menu-toggler">
-                            <span class="sr-only">Toggle mobile menu</span>
-                            <i class="icon-bars"></i>
-                        </button>
+                       
                         
-                        <a href="index.html" class="logo">
+                        <a class="logo">
                             <img src="assets/images/demos/demo-3/logo.png" alt="Rush Games logo" width="80" height="30">
                         </a>
                     </div><!-- End .header-left -->
@@ -125,45 +122,39 @@
                     </div>
 
                     <div class="header-right">
+                    
                         <div class="header-dropdown-link">
-                           
                             <% if (locals.user) { %>
-                                
                                 <div class="account">
                                     <a href="/userProfile" title="User-Profile">
                                         <div class="icon">
-                                            <i class="far fa-user" style="color: lightgray;"></i> 
+                                            <i class="far fa-user" style="color: lightgray;"></i>
                                         </div>
-                                        <p id="userProfile"><%= locals.user.name %></p> 
+                                        <p id="userProfile"><%= locals.user.name %></p>
                                     </a>
                                 </div>
-                                
                                 <div class="account">
-                                    <a  id="logoutButton" title="Logout">
+                                    <a id="logoutButton" title="Logout">
                                         <div class="icon">
                                             <i class="fas fa-sign-out-alt" style="color: lightgray;"></i>
                                         </div>
                                         <p>Logout</p>
                                     </a>
                                 </div>
-                                
                             <% } else { %>
                                 <div class="account">
                                     <a href="/login" title="My account">
                                         <div class="icon">
-                                            <i class="fas fa-user" style="color: lightgray;"></i> 
+                                            <i class="fas fa-user" style="color: lightgray;"></i>
                                         </div>
                                         <p>Login/Sign In</p>
                                     </a>
                                 </div>
                             <% } %>
-
                             <div class="wishlist">
                                 <a href="/wishlist" title="Wishlist">
                                     <div class="icon">
                                         <i class="icon-heart-o"></i>
-                                        
-                                        
                                     </div>
                                     <p>Wishlist</p>
                                 </a>
@@ -172,43 +163,36 @@
                                 <a href="/cart" title="Cart">
                                     <div class="icon">
                                         <i class="fas fa-shopping-cart"></i>
-                                        
-                                        
                                     </div>
                                     <p>Cart</p>
                                 </a>
                             </div>
-                            <div class="wishlist">
+                            <div class="wishlist" style="padding-left: 10px;">
                                 <a href="/loadNotification" title="notification">
                                     <div class="icon">
                                         <i class="fas fa-bell"></i>
-                                        
-                                        
                                     </div>
-                                    <p>Notification</p>
+                                    <p>Message</p>
                                 </a>
                             </div>
-                            
-
-                            
-                            <!-- End .cart-dropdown -->
                         </div>
                     </div><!-- End .header-right -->
+                    
                 </div><!-- End .container -->
             </div><!-- End .header-middle -->
 
-            <div class="header-middle" style="background-color: rgb(56, 54, 54); padding-top: 5px; padding-bottom: 5px;"> 
+            <div class="header-middle" style="background-color: rgb(56, 54, 54); width: 100%;"> 
                
-                <nav style="width: 100%; display: flex; justify-content: space-around;">
+                <nav style="width: 100%; display: flex; justify-content: space-around; padding: 0 0px" >
                     <a href="/" class="active">Home</a>
-                    <a href="/allGames">All Games</a>
+                    <a href="/allGames">Games</a>
                     <a href="#">Trending</a>
                     <a href="/comingSoon">Coming Soon</a>
-                    <a href="/aboutUs">About Us</a>
-                    <a href="/contactUs">Contact Us</a>
+                    <a href="/aboutUs">About</a>
+                    <a href="/contactUs">Contact</a>
                 </nav>
                 
-            </div><!-- End .header-middle -->
+            </div>
         </header>
 </div>
 

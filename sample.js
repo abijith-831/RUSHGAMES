@@ -1560,3 +1560,29 @@
 //         }
 //     }
 //     return pos.length>neg.length ? pos.length : neg.length
+
+// let nums1 = [4,9,5]
+// let nums2 = [9,4,9,8,4]
+
+// let arr = []
+// for(let i=0;i<nums1.length;i++){
+//     for(let j=i+1;j<nums2.length;j++){
+//         if(nums1[i]===nums2[j]){
+//             arr.push(nums1[i])
+//         }
+//     }
+// }
+
+// console.log(arr);
+
+// let uni = [...new Set(arr)]
+// console.log(uni);
+
+// let nums = [4,4,4,9,2,4]
+// let arr = []
+// for(let i=0;i<nums.length;i++){
+//       if(nums[i]%2==0){
+//             arr.push(nums[i])
+//       }  
+// }
+// console.log(arr);

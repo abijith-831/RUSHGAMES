@@ -490,7 +490,7 @@ const searchName = async (req,res)=>{
 const filterGames = async (req,res)=>{
   try {
     const {categories} = req.body;
-    // console.log('sdhfbjhsf'+categories); 
+    
     const allGames = await Games.find({is_listed : true})
     const gamesFound = await Games.find({
       $and : [
@@ -498,7 +498,7 @@ const filterGames = async (req,res)=>{
         {is_listed : true}
       ]      
     })
-    // console.log('sjkfsdf'+gamesFound);
+   
     if(gamesFound.length === 0){
       res.json(allGames)
     }else{
@@ -511,7 +511,7 @@ const filterGames = async (req,res)=>{
   }
 }  
 
-
+ 
 const loadComingSoon = async (req ,res)=>{
   try {
     const comings = await Coming.find()

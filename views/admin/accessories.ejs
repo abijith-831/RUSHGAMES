@@ -1,0 +1,138 @@
+<%-include('../layouts/adminHeader.ejs')%>
+<%-include('../layouts/adminSidebar.ejs')%>
+
+
+<style>
+    .purple-header-box {
+    background-color: #936dd1; /* Purple color */
+    color: #ffffff; /* White text color */
+    padding: 15px; /* Adjust padding as needed */
+    border-radius: 5px; /* Optional: Add rounded corners */
+    margin-bottom: 20px; /* Optional: Add space below the box */
+    text-align: center;
+}
+.search-bar {
+    margin-bottom: 10px; /* Adjust spacing between search bar and heading */
+}
+.search-btn {
+        width: 100px; /* Adjust the width of the button as needed */
+        height: 40px; /* Adjust the height of the button as needed */
+        border: 2px solid #000; /* Black border */
+        border-radius: 5px; /* Make it round */
+        background-color: #936dd1; /* Black background */
+        color: #050404; /* White text color */
+        font-size: 14px; /* Adjust font size */
+        padding: 0; /* Remove padding */
+    }
+
+
+.search-bar {
+    width: calc(100% - 80px); 
+    margin-right: 10px;
+}
+.btn-primary {
+    border-radius: 5px; 
+    background-color: #936dd1; 
+    border-color: #0a0a0a; 
+    color: #050404;
+    font-size: 14px; 
+}
+.custom-table-header {
+    background-color: grey;
+    color: black;
+}
+.pagination {
+    margin-top: 20px;
+}
+
+.pagination .page-item {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.pagination .page-link {
+    color: #007bff;
+    border: 1px solid #007bff;
+    padding: 6px 12px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.pagination .page-link:hover {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
+}
+
+.pagination .page-item.active .page-link {
+    z-index: 1;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+</style>
+
+
+<div class="page-wrapper">
+
+    <div class="container-fluid">
+ 
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        
+                        <div class="purple-header-box"> 
+                             
+                            <h4 class="card-title">ACCESSORIES</h4>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table ">
+                                <thead class="custom-table-header">
+                                    <tr>
+                                        <th scope="col">SL NO</th>
+                                        <th scope="col">ACCESSORY NAME</th>
+                                        <th scope="col">IMAGE</th>
+                                        <th scope="col">PRICE</th>
+                                        <th scope="col">STOCK</th>  
+                                        <th scope="col">CHANGES</th>                                              
+                                    </tr>
+                                </thead>
+                                
+                                    
+                            </table>
+                        </div>
+                        
+                    </div>
+                    <div class="text-right col-lg-2 d-flex justify-content-center">
+                        <a href="/admin/addAccessories" class="btn btn-warning">+ Add Games</a>
+                    </div>
+
+                    
+                    
+                </div>
+                
+            </div>
+            
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
+
+<%-include('../layouts/adminFooter.ejs')%>

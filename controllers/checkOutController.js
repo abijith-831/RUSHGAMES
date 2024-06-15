@@ -220,9 +220,11 @@ const placeOrder = async (req, res) => {
         res.json({ Razorpay: response });
       });
     } else if (selectedPayment === 'cashOnDelivery') {
-      if(cart.totalCartPrice < 1000){
+
+      if(cart.totalCartPrice > 5000){
           return res.json({success:false,message:'nocod'})
       }
+      
       orderInstance.paymentStatus = 'Pending';
       await orderInstance.save();
       await Cart.findOneAndDelete({ userId: userId });
@@ -285,7 +287,6 @@ const generateRazorpay = (orderId , totalCartPrice)=>{
   
 
 
-
 // ********** GIVE COUPONS FUCNTION **********
 const giveCoupon = async (userId , totalCartPrice)=>{
   try {
@@ -308,7 +309,7 @@ const giveCoupon = async (userId , totalCartPrice)=>{
   } 
 }
 
-
+ 
 // ********** VERIFYING PAYMENT AS SUCCESS **********
 const verifyPayment = async (req,res)=>{
   try {

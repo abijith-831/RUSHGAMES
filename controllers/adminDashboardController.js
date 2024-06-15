@@ -118,9 +118,31 @@ const chartSortby = async (req,res)=>{
 
 
 
+const loadAccessories = async (req,res)=>{
+    try {
+        res.render('accessories')
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+
+const loadAddAccessories = async(req,res)=>{
+    try {
+        res.render('addAccessories')
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 
 module.exports = {
     loadDashboard,
-    chartSortby
+    chartSortby,
+
+
+    loadAccessories,
+    loadAddAccessories
+
 }

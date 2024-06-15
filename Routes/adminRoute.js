@@ -38,6 +38,11 @@ admin_route.get('/dashboard',adminAuth.isLogin,adminDashboardController.loadDash
 admin_route.post('/chartSortby',adminDashboardController.chartSortby)
 
 
+// ****** ACCESSORIES SECTION ******
+admin_route.get('/accessories',adminDashboardController.loadAccessories)
+admin_route.get('/addAccessories',adminDashboardController.loadAddAccessories)
+// admin_route.post('/submitAccessory',adminDashboardController.addAccessory)
+
 // ****** USER DETAILS ******
 admin_route.get('/userList',adminAuth.isLogin,adminController.loadUserList)
 admin_route.get('/blockUser',adminController.userStatus)
