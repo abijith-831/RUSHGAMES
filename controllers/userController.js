@@ -7,6 +7,8 @@ const UserOTPVerification = require("../models/userOTPVerification");
 const Coming = require('../models/comingSoonModel')
 const GameOffers = require('../models/gameOfferModel')
 const CategoryOffers = require('../models/categoryOfferModel')
+const Message = require('../models/messageModel')
+
 
 
 // ********** PASSWORD HASHING FUNCTION **********
@@ -25,14 +27,24 @@ const loadHome = async (req, res) => {
   try {
     let user = req.session.user_id;
     const categories = await Category.find();
+
+    
+
+ 
     if(user){
+      const messageData = await Message.findOne({ userId: user }, { messages: 1 });
+
+      const unreadMessage = messageData.messages.filter(item => item.is_readed === false).length
+
+      console.log('sfsgs'+unreadMessage);
+
       const userData = await User.findById(user);
       if(userData.is_blocked){
         req.session.user_id = null
         res.redirect('/login');
         return;
       }else{
-        res.render("home", { user: userData , categories });
+        res.render("home", { user: userData , categories , unreadMessage});
       }
     }else{
       res.render('home',{categories})
@@ -133,6 +145,66 @@ const verifyLogin = async (req, res) => {
 };
 
 
+
+// ********** VERIFYING THE FORGOT PASSWORD EAMIL **********
+const verifyForgotEmail = async (req,res)=>{
+  try {
+    const {email} = req.body
+    const userData = await User.findOne({email : email})
+    if(!userData){
+      res.json({success : false , message : "nouser"})
+    }
+
+    await sendOTPVerifyForgotMail(userData, res);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+const sendOTPVerifyForgotMail = async ({ email }, res) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: true,
+      requireTLS: true,
+      auth: {
+        user: "officialwoodstreet831@gmail.com",
+        pass: "kbcv ratp wleh dqjg",
+      },
+    });
+
+    const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
+    console.log(otp);
+
+    const mailOptions = {
+      from: "officialwoodstreet831@gmail.com",
+      to: email,
+      subject: "Verify Your Email",
+      html: ` hi... Your OTP is : ${otp}`,
+    };
+
+    const saltRounds = 10;
+    const hashedOTP = await bcrypt.hash(otp, saltRounds);
+
+    const newOTPVerification = new UserOTPVerification({
+      email: email,
+      otp: hashedOTP,
+    });
+    await newOTPVerification.save();
+    await transporter.sendMail(mailOptions);
+
+    res.json({ success: true, message: "OTP sent", email: email });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ success: false, message: "Failed to send OTP" });
+  }
+};
+
+
+
 // ********** FOR RESENDING OTP **********
 const resendOTP = async (req, res) => {
   try {
@@ -153,6 +225,7 @@ const resendOTP = async (req, res) => {
 // ********** FOR SENDING OTP VERIFICATION EMAIL **********
 const sendOTPVerifymail = async ({ email }, res) => {
   try {
+    console.log('jknjsd');
     const transporter = nodemailer.createTransport({
       service: "gmail",
       host: "smtp.gmail.com",
@@ -181,11 +254,10 @@ const sendOTPVerifymail = async ({ email }, res) => {
       html: ` hi... Your OTP is : ${otp}`,
     };
 
-    // Hash the OTP
     const saltRounds = 10;
     const hashedOTP = await bcrypt.hash(otp, saltRounds);
 
-    // Save hashed OTP to database
+
     const newOTPVerification = new UserOTPVerification({
       email: email,
       otp: hashedOTP,
@@ -317,104 +389,136 @@ const loadContactUs = async (req, res) => {
 };
 
 
+
 // ********** FOR RENDERING ALL PRODUCTS PAGE **********
 const loadAllGames = async (req, res) => {
   try {
-    let errmsg = req.flash('errmsg')
-    let user = req.session.user_id;
-    const userData = await User.findOne({_id:user})
-    const categories = await Category.find({ is_listed: true });
+    const userId = req.session.user_id;
+    
+    const [userData, categories, allGames, gameOffers, categoryOffers] = await Promise.all([
+      User.findOne({_id: userId}),
+      Category.find({ is_listed: true }),
+      Games.find({ is_listed: true }),
+      GameOffers.find({ is_active: false }),
+      CategoryOffers.find({ is_active: false })
+    ]);
+
     const categoryIds = categories.map(category => category._id);
-    let number = await Games.find({is_listed : true})
-    
-    const page = parseInt(req.query.page)||1;
-    const limit = 6;
-    const skip = (page-1)*limit;
+    const isPostRequest = req.method === 'POST';
+    const { filterCategories = categoryIds, sortCriteria = '', search = '' } = isPostRequest ? req.body : {};
 
-    const games = await Games.find({ category: { $in: categoryIds }, is_listed:true})
-      .skip(skip).limit(limit)
-
-
-    const gameOffers = await GameOffers.find({is_active : false})
-    const categoryOffers = await CategoryOffers.find({is_active : false})
-    
-    
-    const totalGames = await Games.countDocuments({ category : { $in : categoryIds},is_listed:true});
-    const totalPages = Math.ceil(totalGames/limit);
- 
-        
-
-    let prevPage = page-1;
-    let nextPage = page+1;
-    if(prevPage < 1) prevPage = 1;
-    if(nextPage > totalPages) nextPage = totalPages
-
-
-
-    for(let category of categories){
+    await Promise.all(categories.map(async (category) => {
       const categoryOffer = categoryOffers.find(item => item.categoryId.equals(category._id));
-
-      if(categoryOffer){
+      if (categoryOffer) {
         await Games.updateMany(
-          {category : category._id},
-          { $set : { categoryOffer : categoryOffer.discount ?  categoryOffer.discount : null}}    
-        )
+          { category: category._id },
+          { $set: { categoryOffer: categoryOffer.discount || null } }
+        );
       }
-    }
-    
+    }));
 
-    for(let game of games){
+
+    await Promise.all(allGames.map(async (game) => {
       const gameOffer = gameOffers.find(item => item.gameId.equals(game._id));
       const categoryDiscount = game.categoryOffer;
-      const gameDiscount = game.gameOffer;
-      
+      const gameDiscount = gameOffer ? gameOffer.discount : null;
+
       let finalPrice = game.price;
-      
-
-      if (gameDiscount && !categoryDiscount){
-        finalPrice = Math.round(game.price - (game.price * gameDiscount / 100))
+      if (gameDiscount && !categoryDiscount) {
+        finalPrice = Math.round(game.price - (game.price * gameDiscount / 100));
+      } else if (!gameDiscount && categoryDiscount > 0) {
+        finalPrice = Math.round(game.price - (game.price * categoryDiscount / 100));
+      } else if (gameDiscount && categoryDiscount) {
+        const bigDiscount = Math.max(gameDiscount, categoryDiscount);
+        finalPrice = Math.round(game.price - (game.price * bigDiscount / 100));
       }
 
-      if(!gameDiscount && categoryDiscount >0){
-        finalPrice = Math.round(game.price - (game.price * categoryDiscount / 100))
-      }
-
-      if(gameDiscount && categoryDiscount){
-        let bigDiscount = gameDiscount > categoryDiscount ? gameDiscount : categoryDiscount ;
-        finalPrice = Math.round(game.price - (game.price * bigDiscount / 100)) 
-      }  
-      
       await Games.findByIdAndUpdate(
         game._id,
-        {$set : { gameOffer : gameOffer ? gameOffer.discount : null , finalPrice : finalPrice}},
-        {new : true}
-      )
+        { $set: { gameOffer: gameDiscount, finalPrice } },
+        { new: true }
+      );
+
       const gameCategory = await Category.findById(game.category);
-      if(gameCategory){
-        game.categoryName = gameCategory.name
+      if (gameCategory) {
+        game.categoryName = gameCategory.name;
       }
-    } 
-     
-    res.render("allGames",{categories , games:games,user:userData,errmsg , totalPages , prevPage , nextPage , page , number});
+    }));
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = 6;
+    const skip = (page - 1) * limit;
+
+
+    let sortOrder = {};
+    if (sortCriteria === 'priceLow-High') {
+      sortOrder.finalPrice = 1;
+    } else if (sortCriteria === 'priceHigh-Low') {
+      sortOrder.finalPrice = -1;
+    } else if (sortCriteria === 'nameA-Z') {
+      sortOrder.name = 1;
+    } else if (sortCriteria === 'nameZ-A') {
+      sortOrder.name = -1;
+    }
+
+    let baseQuery = { is_listed: true };
+    if (filterCategories.length > 0) {
+      baseQuery.category = { $in: filterCategories };
+    }
+    if (search.trim() !== '') {
+      baseQuery.name = { $regex: search, $options: 'i' };
+    }
+
+ 
+    const filteredGames = await Games.find(baseQuery).sort(sortOrder).populate('category');
+
+    const games = filteredGames.slice(skip, skip + limit);
+    const totalGames = filteredGames.length;
+    const totalPages = Math.ceil(totalGames / limit);
+
+    let prevPage = page - 1;
+    let nextPage = page + 1;
+    if (prevPage < 1) prevPage = 1;
+    if (nextPage > totalPages) nextPage = totalPages;
+
+    if (isPostRequest) {
+      return res.json(games);
+    }
+
+    res.render("allGames", {
+      categories,
+      games,
+      user: userData,
+      totalPages,
+      prevPage,
+      nextPage,
+      page,
+      number: allGames.length
+    });
+
   } catch (error) {
     console.log(error);
   }
 };
 
 
+ 
 // ********** FOR RENDERING GAME DETAILS PAGE **********
 const loadGameDetails = async (req,res)=>{
   try {
-    let user = req.session.user_id;
-    const userData = await User.findOne({_id:user})
+    let userId = req.session.user_id;
     const gameId = req.query.id;
-    const gameDetails = await Games.findById(gameId).populate('category')
-    const game = await Games.findById(gameId).populate('category')
+
+    const [ userData , gameDetails] = await Promise.all([
+      User.findOne({_id : userId}),
+      Games.findById(gameId).populate('category')
+    ])
+   
     const gameItem = { gameId: { id: gameId } };
-    res.render('gameDetailsPage',{gameDetails,game,gameItem,user:userData})
+
+    res.render('gameDetailsPage', { gameDetails, game: gameDetails, gameItem, user: userData });
   } catch (error) {
     console.log(error);
-    
   }
 }
 
@@ -422,11 +526,11 @@ const loadGameDetails = async (req,res)=>{
 // ********** FOR SORTING GAMES BY CRITERIAS **********
 const sortGames = async(req,res)=>{
   try {
-    // console.log('working');
+
     const { criteria } = req.params;
-    // console.log('awfsd'+criteria);
+
     let gameData;
-    // const allGames = await Games.find({is_listed : true})
+
 
     switch (criteria) {
       case 'priceLow-High':
@@ -489,20 +593,102 @@ const searchName = async (req,res)=>{
 // ********** FOR FILTERING GAMES BASED ON CATEGORIES **********
 const filterGames = async (req,res)=>{
   try {
-    const {categories} = req.body;
+    const {filterCategories} = req.body;
     
+
+    const categories = await Category.find({ is_listed: true });
+
+    const page = parseInt(req.query.page)||1;
+    const limit = 6;
+    const skip = (page-1)*limit;
+
     const allGames = await Games.find({is_listed : true})
-    const gamesFound = await Games.find({
+    let gamesFound = await Games.find({
       $and : [
-        {category : {$in : categories}},
+        {category : {$in : filterCategories}},
         {is_listed : true}
       ]      
     })
-   
+
+    const gameOffers = await GameOffers.find({is_active : false})
+    const categoryOffers = await CategoryOffers.find({is_active : false})
+    
+
+    //-------------------------
     if(gamesFound.length === 0){
-      res.json(allGames)
+      console.log('cajbfsdf');
+      let number = await Games.find({is_listed : true})
+      const totalPages = Math.ceil(number/limit);
+
+      let prevPage = page-1;
+      let nextPage = page+1;
+      if(prevPage < 1) prevPage = 1;
+      if(nextPage > totalPages) nextPage = totalPages
+
+      
+
+
+      res.json( allGames , number , )
+
     }else{
-      res.json(gamesFound)
+      console.log('snmdd');
+      let number = gamesFound.lenngth
+      const totalPages = Math.ceil(number/limit);
+
+
+      for(let category of categories){
+        const categoryOffer = categoryOffers.find(item => item.categoryId.equals(category._id));
+  
+        if(categoryOffer){
+          await Games.updateMany(
+            {category : category._id},
+            { $set : { categoryOffer : categoryOffer.discount ?  categoryOffer.discount : null}}    
+          )
+        }
+      }
+      
+      for(let game of gamesFound){
+        const gameOffer = gameOffers.find(item => item.gameId.equals(game._id));
+        const categoryDiscount = game.categoryOffer;
+        const gameDiscount = game.gameOffer;
+        
+        let finalPrice = game.price;
+        
+  
+        if (gameDiscount && !categoryDiscount){
+          finalPrice = Math.round(game.price - (game.price * gameDiscount / 100))
+        }
+  
+        if(!gameDiscount && categoryDiscount >0){
+          finalPrice = Math.round(game.price - (game.price * categoryDiscount / 100))
+        }
+  
+        if(gameDiscount && categoryDiscount){
+          let bigDiscount = gameDiscount > categoryDiscount ? gameDiscount : categoryDiscount ;
+          finalPrice = Math.round(game.price - (game.price * bigDiscount / 100)) 
+        }  
+        
+        await Games.findByIdAndUpdate(
+          game._id,
+          {$set : { gameOffer : gameOffer ? gameOffer.discount : null , finalPrice : finalPrice}},
+          {new : true}
+        )
+        const gameCategory = await Category.findById(game.category);
+        if(gameCategory){
+          game.categoryName = gameCategory.name
+        }
+      } 
+      
+
+      let prevPage = page-1;
+      let nextPage = page+1;
+      if(prevPage < 1) prevPage = 1;
+      if(nextPage > totalPages) nextPage = totalPages
+
+      gamesFound =  gamesFound.slice(skip , skip + limit)
+      console.log('sfs'+gamesFound);
+
+      res.json(gamesFound , number , page , limit , totalPages , prevPage , nextPage)
     }
     
   } catch (error) {
@@ -510,6 +696,8 @@ const filterGames = async (req,res)=>{
     
   }
 }  
+
+
 
  
 const loadComingSoon = async (req ,res)=>{
@@ -550,6 +738,10 @@ module.exports = {
   loadLogin,
   loadRegister,
   verifyOTP,
+  //-------
+  verifyForgotEmail,
+  sendOTPVerifyForgotMail,
+
 
 
   registerUser,

@@ -9,6 +9,7 @@ const loadgameOfferList = async (req,res)=>{
     try {
         const games = await Games.find({is_listed : true})
         const gameOffer = await GameOffer.find().populate('gameId')
+        console.log('njkn'+gameOffer);
         res.render('gameOfferList' , { games , gameOffer})
     } catch (error) {
         console.log('error');

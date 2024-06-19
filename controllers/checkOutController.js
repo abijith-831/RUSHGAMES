@@ -7,6 +7,7 @@ const Order = require('../models/orderModel')
 const Razorpay = require('razorpay')
 const Wallet = require('../models/walletModel')
 const Coupon = require('../models/couponModel')
+const Message = require('../models/messageModel')
 
 
 
@@ -17,43 +18,49 @@ const instance = new Razorpay({
  
 
 // ********** FOR RENDERING CHECKOUT PAGE **********
-const loadCheckOut = async (req,res)=>{
-  
-    try {
+const loadCheckOut = async (req, res) => {
+  try {
       let userId = req.session.user_id;
-      let errmsg = req.flash('errmsg')
-      const userData = await User.findOne({_id: userId})
-      const addresses = await Address.find({userId : userId})
-      const count = addresses.length > 0 ? addresses[0].addresses.length  : 0 ;
+      let errmsg = req.flash('errmsg');
 
-      const cartData = await Cart.findOne({userId : userId})
+      const [userData, addresses, cartData, inactiveCoupons] = await Promise.all([
+          User.findOne({_id: userId}),
+          Address.find({userId: userId}),
+          Cart.findOne({userId: userId}),
+          Coupon.find({is_active: false})
+      ]);
+
+      const count = addresses.length > 0 ? addresses[0].addresses.length : 0;
+
       if (!cartData || cartData.games.length === 0) {
-        
-        req.flash('errmsg', 'Your cart is empty. Please add items to proceed to checkout.');
-        return res.redirect('/cart');
-    }
-      
-      const coupon = await Coupon.find({is_active:false})
-       
-      const gameIds = cartData.games.map(game => game.gameId);
-      const gameDetailsPromises = gameIds.map(gameId => Games.findOne({_id: gameId}));
-      const gameDetails = await Promise.all(gameDetailsPromises); 
-
-      let deliveryCharge = 0
-      if(cartData.totalCartPrice < 2500){
-        cartData.deliveryCharge = 80
-        await cartData.save();
-      }else{
-        cartData.deliveryCharge = 0
-        await cartData.save();
+          req.flash('errmsg', 'Your cart is empty. Please add items to proceed to checkout.');
+          return res.redirect('/cart');
       }
-      
-      res.render('checkOut',{user : userData , addresses , cartData , gameDetails,errmsg ,coupon , count})
-    } catch (error) {
+
+      const gameIds = cartData.games.map(game => game.gameId);
+      const gameDetails = await Promise.all(gameIds.map(gameId => Games.findOne({_id: gameId})));
+
+
+      if (cartData.totalCartPrice < 2500) {
+          cartData.deliveryCharge = 80;
+      } else {
+          cartData.deliveryCharge = 0;
+      }
+      await cartData.save();
+
+      res.render('checkOut', {
+          user: userData,
+          addresses,
+          cartData,
+          gameDetails,
+          errmsg,
+          coupon: inactiveCoupons,
+          count
+      });
+  } catch (error) {
       console.log(error);
-      
-    }
-}
+  }
+};
 
  
 // ********** FOR ADDING NEW ADDRESS  **********
@@ -127,8 +134,6 @@ const placeOrder = async (req, res) => {
       
     }
     
-    
-
 
     const orderId = generateOrderId();
 
@@ -199,9 +204,27 @@ const placeOrder = async (req, res) => {
         await orderInstance.save();
         
         await Cart.findOneAndDelete({ userId: userId });
-        await giveCoupon(userId, cart.totalCartPrice);
+        
+        const addedCoupons = await giveCoupon(userId, cart.totalCartPrice);
+        let newMessages = [];
+  
+        if (addedCoupons && addedCoupons.length > 0) {
+            for (const coupon of addedCoupons) {
+                const messageHead = 'You Got a Reward';
+                const messageText = `Congrats, You got a Coupon: ${coupon.couponName} with Discount of ${coupon.discount}% - This Coupon will Expire on ${new Date(coupon.expiry).toLocaleString('en-IN',{year :'numeric',month : '2-digit',day:'2-digit' , hour : '2-digit',minute : '2-digit'})}`;
+                const newMessage = { head: messageHead, text: messageText, createdAt: Date.now() };
+                await Message.updateOne(
+                    { userId: userId },
+                    { $push: { messages: newMessage } },
+                    { upsert: true }
+                );
+                newMessages.push(newMessage);
+            }
+        }
+  
 
-        res.json({ success: true , orderId : orderInstance._id});
+ 
+        res.json({ success: true , orderId : orderInstance._id , newMessages});
        
       }
     } else if (selectedPayment === 'onlinePayment') {
@@ -213,11 +236,27 @@ const placeOrder = async (req, res) => {
          
       await orderInstance.save();
       await Cart.findOneAndDelete({ userId: userId });
-      await giveCoupon(userId, cart.totalCartPrice);
+      const addedCoupons = await giveCoupon(userId, cart.totalCartPrice);
+      let newMessages = [];
+
+      if (addedCoupons && addedCoupons.length > 0) {
+          for (const coupon of addedCoupons) {
+              const messageHead = 'You Got a Reward';
+              const messageText = `Congrats, You got a Coupon: ${coupon.couponName} with Discount of ${coupon.discount}% - This Coupon will Expire on ${new Date(coupon.expiry).toLocaleString('en-IN',{year :'numeric',month : '2-digit',day:'2-digit' , hour : '2-digit',minute : '2-digit'})}`;
+              const newMessage = { head: messageHead, text: messageText, createdAt: Date.now() };
+              await Message.updateOne(
+                  { userId: userId },
+                  { $push: { messages: newMessage } },
+                  { upsert: true }
+              );
+              newMessages.push(newMessage);
+          }
+      }
+
           
       generateRazorpay(orderInstance._id, adjustedAmount).then(async (response) => {
        
-        res.json({ Razorpay: response });
+        res.json({ Razorpay: response , newMessages});
       });
     } else if (selectedPayment === 'cashOnDelivery') {
 
@@ -228,10 +267,27 @@ const placeOrder = async (req, res) => {
       orderInstance.paymentStatus = 'Pending';
       await orderInstance.save();
       await Cart.findOneAndDelete({ userId: userId });
-      await giveCoupon(userId, cart.totalCartPrice);
+
+
+      const addedCoupons = await giveCoupon(userId, cart.totalCartPrice);
+      let newMessages = [];
+
+      if (addedCoupons && addedCoupons.length > 0) {
+          for (const coupon of addedCoupons) {
+              const messageHead = 'You Got a Reward';
+              const messageText = `Congrats, You got a Coupon: ${coupon.couponName} with Discount of ${coupon.discount}% - This Coupon will Expire on ${new Date(coupon.expiry).toLocaleString('en-IN',{year :'numeric',month : '2-digit',day:'2-digit' , hour : '2-digit',minute : '2-digit'})}`;
+              const newMessage = { head: messageHead, text: messageText, createdAt: Date.now() };
+              await Message.updateOne(
+                  { userId: userId },
+                  { $push: { messages: newMessage } },
+                  { upsert: true }
+              );
+              newMessages.push(newMessage);
+          }
+      }
 
       
-      res.json({ success: true , orderId : orderInstance._id});
+      res.json({ success: true , orderId : orderInstance._id, newMessages});
     }
 
 
@@ -292,17 +348,26 @@ const giveCoupon = async (userId , totalCartPrice)=>{
   try {
     
     const user = await User.findById(userId);
-    if(user.coupons && user.coupons.length>0){
-      return;
-    }
     
     const coupons = await Coupon.find({is_active : false})
   
-    for(const item of coupons){
-      if(totalCartPrice >= item.minimum){
-        await User.findByIdAndUpdate({_id:userId},{$push:{coupons : item._id}});
+    let addedCoupons = []
+    for (const coupon of coupons) {
+      if (totalCartPrice >= coupon.minimum) {
+        const couponExists = user.coupons.some(item => item.equals(coupon._id));
+
+        if (!couponExists) {
+          await User.findByIdAndUpdate(
+            { _id: userId },
+            { $push: { coupons: coupon._id } }
+          );
+          addedCoupons.push(coupon)
+        }
+        
       }
     }
+    console.log('sfnjsn'+addedCoupons);
+    return addedCoupons
   } catch (error) {
     console.log(error);
     
@@ -333,6 +398,7 @@ const verifyPayment = async (req,res)=>{
  
 
 
+// ********** FOR RENDERING SUCCESS PAGE **********
 const LoadSuccessPage = async (req,res)=>{
   try {
     let userId = req.session.user_id;
@@ -340,12 +406,12 @@ const LoadSuccessPage = async (req,res)=>{
 
     const orderId = req.query.orderId
     const order = await Order.findOne({_id : orderId})
-    console.log('njkjh'+order);
     res.render('success',{ user : userData, order })
   } catch (error) {
     console.log(error);
   }
 }
+
 
 
 // ********** FOR GENERATE RANDOM 8 DIGIT NUMBER FOR ORDER-ID  **********

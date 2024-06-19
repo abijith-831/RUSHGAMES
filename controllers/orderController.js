@@ -82,13 +82,16 @@ const approveRequest = async (req,res)=>{
         
  
         const game = order.games.find(game => game.gameId.toString()===gameId);
-
+        if(order.discount){
+            game.totalAmount = game.totalAmount - ((game.totalAmount*order.discount )/ 100)
+          }
+          
         if(game){
             if(order.paymentMethod !== 'cashOnDelivery'){
                 const previousBalance = wallet.balance
-                wallet.balance = wallet.balance + game.price
+                wallet.balance = wallet.balance + game.totalAmount
                 wallet.history.push({
-                    amount : game.price,
+                    amount : game.totalAmount,
                     method : 'Purchase Return',
                     transactionType : 'credit',
                     date : Date.now(),

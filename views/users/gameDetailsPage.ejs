@@ -111,14 +111,18 @@
                                         <label for="size">QTY:</label>
                                         <div class="details-action-col">
                                             <div class="product-details-quantity">
-                                                <input type="number" id="qty" class="form-control custom-border" value="1" min="1" max="10" step="1" data-decimals="0" required>
+                                                <input type="number" id="qty" class="form-control custom-border" value="1" min="1" max="<%= game.stock %>" step="1" data-decimals="0" required>
                                             </div>
                                             
-
-                                            <a href="#" class="btn-product btn-cart btn btn-outline-primary-2"><span>BUY NOW</span></a>
                                         </div><!-- End .details-action-col -->
+                                        <%= console.log(game) %>
                                     </div>
-
+                                    <% if (game.stock < 10) { %>
+                                        <label for="size" style="font-weight: bold; color: red;">STOCKS LEFT - <%= game.stock %></label>
+                                    <% }else { %>
+                                        <label for="size" style="font-weight: bold; color: rgb(8, 197, 8);">STOCKS AVAILABLE - <%= game.stock %></label>
+                                    <% } %>
+                                    
                                     <div class="product-details-action">
                                         <div class="details-action-wrapper row justify-content-center">
                                             <div class="col-lg-6 col-md-6 col-sm-12 mb-3 mb-md-0">

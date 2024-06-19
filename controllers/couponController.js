@@ -1,5 +1,6 @@
 const categoryModel = require('../models/categoryModel');
 const Coupon = require('../models/couponModel')
+const Message = require('../models/messageModel')
 
 
 // ********** FOR RENDERING COUPON LIST  **********
@@ -71,5 +72,6 @@ module.exports = {
     loadCouponList,
     addCoupon,
     couponStatus,
+
 
 }

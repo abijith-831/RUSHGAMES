@@ -96,9 +96,9 @@
                                                                             
                                                                     <% if (game.Status === 'Return') { %>
                                                                         <% if(game.approval === 'Waiting') { %>
-                                                                            <div class="col-md-2 d-flex justify-content-center align-items-center">
-                                                                                <button class="btn btn-success accept-btn" data-game-id="<%= game.gameId._id %>" data-order-id="<%= order._id %>">Accept</button>
-                                                                                <button class="btn btn-danger reject-btn" data-game-id="<%= game.gameId._id %>" data-order-id="<%= order._id %>">Reject</button>
+                                                                            <div class="col-md-2 ">
+                                                                                <button class="btn btn-success accept-btn" data-game-id="<%= game.gameId._id %>" data-order-id="<%= order._id %>">Accept</button><br>
+                                                                               <br> <button class="btn btn-danger reject-btn" data-game-id="<%= game.gameId._id %>" data-order-id="<%= order._id %>">Reject</button>
                                                                             </div>
                                                                         <% }else if (game.approval === 'Accepted') { %>
                                                                             <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
@@ -137,16 +137,10 @@
                                                 <% } %>
                                                 <!-- Display the totalCartPrice in a common, single place -->
                                                 <div class="row mt-3" style="font-weight: bold;">
-                                                    <% if (order.discount) { %>
-                                                        <% const discountedPrice = order.totalCartPrice - ( order.totalCartPrice * order.discount / 100) %>
-                                                        <div class="col-md-12">
-                                                            <p class="text-muted mb-0" style="font-weight: bold;">Total Cart Price: <%= discountedPrice %></p>
-                                                        </div>
-                                                    <% }else { %>
-                                                        <div class="col-md-12">
-                                                            <p class="text-muted mb-0" style="font-weight: bold;">Total Cart Price: <%= order.totalCartPrice %></p>
-                                                        </div>
-                                                    <% } %>
+                                                    <div class="col-md-12">
+                                                        <p class="text-muted mb-0" style="font-weight: bold;">Total Cart Price: <%= order.totalCartPrice %></p>
+                                                    </div>
+                                                    
                                                     
                                                 </div>
                                             </div>

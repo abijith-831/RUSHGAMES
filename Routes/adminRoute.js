@@ -70,7 +70,7 @@ admin_route.post('/addNewCategory',categoryController.addNewCategory)
 admin_route.get('/editCategory',adminAuth.isLogin,categoryController.loadEditCategory)
 admin_route.post('/modifyCategory',categoryController.modifyCategory)
 admin_route.get('/categoryStatus',categoryController.categoryStatus)
-// admin_route.get('/deleteCategory',categoryController.deleteCategory)
+admin_route.delete('/deleteCategory',categoryController.deleteCategory)
 
 
 // ****** ORDER MANAGEMENT SECTION ******

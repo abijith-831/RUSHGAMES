@@ -627,9 +627,24 @@ input[type="radio"]:checked + label {
 									showConfirmButton: false,
 									timer: 1500
 								})
+							
+
+								if (data.newMessages) {
+                                data.newMessages.forEach(message => {
+                                    Toastify({
+                                        text: `${message.head}: ${message.text}`,
+                                        duration: 3000,  
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",  
+                                        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)"
+                                    }).showToast();
+                                });
+                            }
 								setTimeout(() => {
 									window.location.href = `/success?orderId=${orderId}`;
-								}, 2000);
+								}, 3000);
+
 							}
 						
 					}else if(data.message==='nocod'){
@@ -888,6 +903,8 @@ function verifyPayment(payment, order, addressId) {
 </script>
 
 
+
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.0.1/confetti.min.js"></script>

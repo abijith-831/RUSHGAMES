@@ -2,6 +2,8 @@ const User = require('../models/userModel')
 const Games = require('../models/gameModel')
 const Wishlist = require('../models/wishlistModel')
 const Cart = require('../models/cartModel')
+const Message = require('../models/messageModel')
+
 
 
 // ********** FOR RENDERING WISHLIST PAGE **********
@@ -150,13 +152,31 @@ const addToCartAndRemove = async (req, res) => {
 
 
 // ********** FOR RENDERING NOTIFICATION PAGE **********
-const loadNotification = async (req,res)=>{
+const loadNotification = async (req, res) => {
     try {
-        res.render('notification')
+        let userId = req.session.user_id;
+
+        const userData = await User.findOne({ _id: userId });
+
+        const messageData = await Message.findOne({ userId: userId }, { messages: 1 });
+        
+        console.log('fsfs'+messageData);
+
+        const messages = messageData.messages.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        
+
+        for(const item of messages){
+            item.is_readed = true
+        }
+        await messageData.save()
+
+        
+        res.render('notification', { user: userData, messages });
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        res.status(500).send('Internal Server Error');
     }
-}
+};
 
 
 

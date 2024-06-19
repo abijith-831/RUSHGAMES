@@ -1,5 +1,7 @@
 const Category = require("../models/categoryModel");
 const { exists } = require("../models/userOTPVerification");
+const Games = require('../models/gameModel')
+
 
 
 // ********** FOR RENDERING CATEGORY LIST PAGE **********
@@ -55,7 +57,7 @@ const addNewCategory = async (req, res) => {
     res.redirect("/admin/addNewCategory");
   }
 };
-
+ 
 
 // ********** FOR RENDERING EDIT CATEGORY PAGE **********  
 const loadEditCategory = async(req,res)=>{
@@ -129,11 +131,33 @@ const categoryStatus = async (req,res)=>{
 
  
 
+
+// ********** FOR DELETING CATEGORY ********** 
+const deleteCategory = async(req,res)=>{
+  try {
+    
+    const categoryId  = req.query.categoryId
+    
+    const games = await Games.find({category : categoryId})
+    
+    if(games && games.length>0){
+      return res.json({success:false,message : 'cannot'})
+    }else{
+      await Category.deleteOne({_id : categoryId})
+      res.json({success : true})
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}  
+
+
 module.exports = {
   loadCategoryList,
   loadAddCategory,
   addNewCategory,
   loadEditCategory,
   modifyCategory,
-  categoryStatus
+  categoryStatus,
+  deleteCategory
 };

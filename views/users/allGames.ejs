@@ -1,6 +1,7 @@
 <%-include('../layouts/header.ejs')%>
 <%-include('../layouts/navbar.ejs')%>
 
+
 <style>
     /* Define a custom class for overriding the default Bootstrap grid */
     .custom-col-lg-4 {
@@ -27,6 +28,44 @@
 }
 
 
+
+.toolbox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.toolbox-center {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    margin: 0 20px;
+}
+
+.search-form {
+    display: flex;
+}
+
+.search-form .form-control {
+    width: 200px;
+    border-radius: 4px 0 0 4px;
+    border-right: none;
+}
+
+.search-form .btn-search {
+    background-color: #333;
+    color: white;
+    border: 1px solid #333;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+.search-form .btn-search i.icon-search {
+    font-size: 16px;
+}
+
+
 </style>
     
 
@@ -45,11 +84,7 @@
                     </ol>
                 </div><!-- End .container -->
             </nav><!-- End .breadcrumb-nav -->
-			<% if (errmsg) { %>
-				<div class="alert text-center " role="alert" style="color: red;">
-					<%= errmsg %>
-				</div>
-			<%  }  %>
+			
             <div class="page-content">
                 <div class="container">
                 	<div class="row">
@@ -60,11 +95,19 @@
                 						Showing <span>6 of <%= number.length %></span> Products
                 					</div><!-- End .toolbox-info -->
                 				</div><!-- End .toolbox-left -->
+								<div class="toolbox-center">
+									<form id="searchForm" class="search-form">
+										<input type="text" id="q" class="form-control" placeholder="Search games..." />
+										<button type="submit" class="btn-search">
+											<i class="icon-search"></i>
+										</button>
+									</form>
+								</div><!-- End .toolbox-center -->
 								
                 				<div class="toolbox-right">
 									
                 					<div class="toolbox-sort">
-                						<label for="sortby">Sort by: price</label>
+                						<label for="sortby">Sort</label>
                 						<div class="select-custom">
 											<select name="sortby" id="sortby" class="form-control">
 												<option value="popularity" id="priceLow-High" >Low-High</option>
@@ -80,82 +123,70 @@
                 			</div><!-- End .toolbox -->
 							<div class="products mb-3">
 								<div class="row justify-content-center" id="gameList">
-									
-										<% games.forEach(game => { %> 
-											
-											<div class="col-md-4 col-6">
-												<div class="product product-7 text-center">
-													<figure class="product-media">
-														<% if (game.gameOffer) { %>
-															<span class="product-label label-new"><%= game.gameOffer %> % OFF</span>
-														<% }else if (game.categoryOffer){ %>
-															<span class="product-label label-news"><%= game.categoryOffer %> % OFF</span>
-														<% } %>	
-																							
-														<input type="hidden" class="system-req" value="<%= game.systemReq %>">
-														
-														<input type="hidden" id="mainImage" name="mainImage" value="<%= JSON.stringify(game.image)%>">
-														<input type="hidden" id="screenshotImages" name="screenshotImages" value="<%= JSON.stringify(game.screenshotImages)%>">
-														<a href="/gameDetails?id=<%= game._id %>">
-															<img src="<%= game.mainImage[0].path %>" alt="<%= game.name %>" class="product-image with-border " width="200" height="200">
-														</a>
-
-														<div class="product-action-vertical">
-															<% if (user) { %>
-																<a onclick="addToWishlist('<%= game._id %>')" class="btn-product-icon btn-wishlist btn-expandable"><span>Add to wishlist</span></a>
-															<%  }else {  %>
-																<a href="/login" class="btn-product-icon btn-wishlist  btn-expandable" style="color: red;"><span>Login</span></a>
-														    <%   }  %>
-															
-														<!--	<a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
-															<a href="#" class="btn-product-icon btn-compare" title="Compare"><span>Compare</span></a>-->
-														</div>
-						
-														<div class="product-action">
-															<% if (user) { %>
-																<% if (game.stock > 0 ) { %>
-																	<a   onclick="addToCart('<%= game._id %>' )" class="btn-product btn-cart" style="background-color:rgb(92, 90, 88); color: white; font-weight: bold;"><span>Add to cart</span></a>
-																<% } else { %>
-																	<span class="btn-product btn-out-of-stock" style="background-color: rgb(243, 70, 70); color: rgb(0, 0, 0); font-weight: bold;"><span>Out of Stock</span></span>
-																<%  }  %>	
-															<%  }else {  %>
-																<a  href="/login" class="btn-product btn-cart" style="background-color:rgb(92, 90, 88); color: white; font-weight: bold;"><span>Add to cart</span></a>
-														    <%   }  %>
-																
-															
-														</div><!-- End .product-action -->
-														<div class="product-action-vertical">
-														   
-														</div>
-														<div class="product-action">
-															
-														</div>
-													</figure>
-													<div class="product-body">
-														<div class="product-cat">
-															<a href="/gameDetails?id=<%=game._id%>"><%= game.categoryName %></a>
-														</div>
-														<h3 class="product-title"><a href="/gameDetails?id=<%=game._id%>"><%= game.name %></a></h3><!-- End .product-title -->
-														<div class="product-price "> 
-															<% if (game.gameOffer) { %>
-																<span style="text-decoration: line-through; margin-right: 20px; color: grey;"><%= game.price %> -Rs</span>
-																<span style="color: rgb(0, 0, 0); font-weight: bold;"><%= Math.round(game.price - (game.price * game.gameOffer / 100)) %> Rs</span>
-															<% } else if (game.categoryOffer) { %>
-																<span style="text-decoration: line-through; margin-right: 20px; color: grey;"><%= game.price %> -Rs</span>
-																<span style="color: rgb(5, 5, 5); font-weight: bold;"><%= Math.round(game.price - (game.price * game.categoryOffer / 100)) %> Rs</span>
-															<% }else { %>
-																<%= game.price %> -Rs
+									<% games.forEach(game => { %> 
+										<div class="col-md-4 col-6">
+											<div class="product product-7 text-center">
+												<figure class="product-media">
+													<% if (game.gameOffer) { %>
+														<span class="product-label label-new"><%= game.gameOffer %> % OFF</span>
+													<% } else if (game.categoryOffer) { %>
+														<span class="product-label label-news"><%= game.categoryOffer %> % OFF</span>
+													<% } %>	
+																														
+													<input type="hidden" class="system-req" value="<%= game.systemReq %>">
+													<input type="hidden" id="mainImage" name="mainImage" value="<%= JSON.stringify(game.image)%>">
+													<input type="hidden" id="screenshotImages" name="screenshotImages" value="<%= JSON.stringify(game.screenshotImages)%>">
+													<a href="/gameDetails?id=<%= game._id %>">
+														<img src="<%= game.mainImage[0].path %>" alt="<%= game.name %>" class="product-image with-border" width="200" height="200">
+													</a>
+							
+													<div class="product-action-vertical">
+														<% if (user) { %>
+															<a onclick="addToWishlist('<%= game._id %>')" class="btn-product-icon btn-wishlist btn-expandable"><span>Add to wishlist</span></a>
+														<% } else { %>
+															<a href="/login" class="btn-product-icon btn-wishlist btn-expandable" style="color: red;"><span>Login</span></a>
+														<% } %>
+													</div>
+							
+													<div class="product-action">
+														<% if (user) { %>
+															<% if (game.stock > 0) { %>
+																<a onclick="addToCart('<%= game._id %>')" class="btn-product btn-cart" style="background-color: rgb(92, 90, 88); color: white; font-weight: bold;"><span>Add to cart</span></a>
+															<% } else { %>
+																<span class="btn-product btn-out-of-stock" style="background-color: rgb(243, 70, 70); color: rgb(0, 0, 0); font-weight: bold;"><span>Out of Stock</span></span>
 															<% } %>
-															
-														</div><!-- End .product-price -->
-													</div><!-- End .product-body -->
-												</div><!-- End .product -->
-											</div><!-- End .col-md-4 -->
-										
+														<% } else { %>
+															<a href="/login" class="btn-product btn-cart" style="background-color: rgb(92, 90, 88); color: white; font-weight: bold;"><span>Add to cart</span></a>
+														<% } %>
+													</div><!-- End .product-action -->
+													<div class="product-action-vertical">
+													</div>
+													<div class="product-action">
+													</div>
+												</figure>
+												<div class="product-body">
+													<div class="product-cat">
+														<a href="/gameDetails?id=<%= game._id %>"><%= game.categoryName %></a>
+													</div>
+													<h3 class="product-title"><a href="/gameDetails?id=<%= game._id %>"><%= game.name %></a></h3><!-- End .product-title -->
+													<div class="product-price"> 
+														<% if (game.gameOffer) { %>
+															<span style="text-decoration: line-through; margin-right: 20px; color: grey;"><%= game.price %> -Rs</span>
+															<span style="color: rgb(0, 0, 0); font-weight: bold;"><%= Math.round(game.price - (game.price * game.gameOffer / 100)) %> Rs</span>
+														<% } else if (game.categoryOffer) { %>
+															<span style="text-decoration: line-through; margin-right: 20px; color: grey;"><%= game.price %> -Rs</span>
+															<span style="color: rgb(5, 5, 5); font-weight: bold;"><%= Math.round(game.price - (game.price * game.categoryOffer / 100)) %> Rs</span>
+														<% } else { %>
+															<%= game.price %> -Rs
+														<% } %>
+													</div>
+												</div>
+											</div>
+										</div>
 									<% }) %>
-									
 								</div><!-- End .row -->
 							</div><!-- End .products -->
+							
 							
 
                 			<nav aria-label="Page navigation">
@@ -176,7 +207,7 @@
 									</a>
 								  </li>
 								</ul>
-							  </nav>
+							</nav>
 							  
                 		</div><!-- End .col-lg-9 -->
                 		<aside class="col-lg-3 order-lg-first">
@@ -225,8 +256,6 @@
 </main><!-- End .main -->
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-
-
 
 
 
@@ -312,249 +341,155 @@
 </script>
 
 
-<!-- sorting by criterias fucntionality -->
+
+<!-- filter & sort & search datas passing to backedn  -->
 <script>
-	document.addEventListener('DOMContentLoaded', function () {
-        var dropdown = document.getElementById('sortby');
+document.addEventListener('DOMContentLoaded', function() {
+	const gamesListContainer = document.getElementById('gamesList');
+	
 
-        dropdown.addEventListener('change', handleSortChange);
+    function handleCheckboxChange() {
+        updateGameListBasedOnFilterAndSort();
+    }
 
-        function handleSortChange() {
-            var selectedOption = dropdown.options[dropdown.selectedIndex];
-            var criteria = selectedOption.id;
-			
-            fetch(`/sort/${criteria}`)
-                .then(response => response.json())
-                .then(data => {
-					console.log('fetch'+data);
-                    updateGameList(data.gameData);
-                })
-                .catch(error => console.error('Error:', error));
-        }
+    function handleSortChange() {
+        updateGameListBasedOnFilterAndSort();
+    }
 
-        function updateGameList(data) {
-			var gameList = document.getElementById('gameList');
-            gameList.innerHTML = '';
+	function handleSearchFormSubmit(event) {
+        event.preventDefault();
+        updateGameListBasedOnFilterAndSort();
+    }
 
-            data.forEach(game => {
-                const gameItem = `
-				<div class="col-md-4">
-                <div class="product product-7 text-center">
-                    <figure class="product-media">                                        
-                        <input type="hidden" class="system-req" value="">
-                        
-                        <input type="hidden" id="mainImage" name="mainImage" value="${JSON.stringify(game.image)}">
-                        <input type="hidden" id="screenshotImages" name="screenshotImages" value="${JSON.stringify(game.screenshotImages)}">
-                        <a href="/gameDetails?id=${game._id}">
-                            <img src="${game.mainImage[0].path}" alt="${game.name}" class="product-image with-border" width="200" height="200">
-                        </a>
-                        <div class="product-action-vertical">
-                            <a onclick="addToWishlist('${game._id}')" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                            <a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
-                            <a href="#" class="btn-product-icon btn-compare" title="Compare"><span>Compare</span></a>
-                        </div><!-- End .product-action-vertical -->
+	
 
-                        <div class="product-action">
-                            <a onclick="addToCart('${game._id}')" class="btn-product btn-cart" style="background-color:rgb(92, 90, 88); color: white; font-weight: bold;"><span>add to cart</span></a>
-                        </div><!-- End .product-action -->
-                        <div class="product-action-vertical">
-                           
-                        </div>
-                        <div class="product-action">
-                            
-                        </div>
-                    </figure>
-                    <div class="product-body">
-                        <div class="product-cat">
-                            
-                        </div>
-                        <h3 class="product-title"><a href="/gameDetails?id=${game._id}">${game.name}</a></h3><!-- End .product-title -->
-                        <div class="product-price">
-                            ${game.price}
-                            <p style="font-weight: bold;">   -Rs</p>
-                        </div><!-- End .product-price -->
-                    </div><!-- End .product-body -->
-                </div><!-- End .product -->
-            </div>
-							
-				
-				`;
-                gameList.insertAdjacentHTML('beforeend',gameItem)
-            });
-            
-        }
+    function updateGameListBasedOnFilterAndSort() {
+        const checkboxes = document.querySelectorAll('.custom-control-input');
+        let selectedCategories = [];
+        
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                selectedCategories.push(checkbox.id);
+            }
+        });
+		const search = document.getElementById('q').value; 
+		console.log('osdsdcs'+search);
+
+        const dropdown = document.getElementById('sortby');
+        const selectedOption = dropdown.options[dropdown.selectedIndex];
+        const sortCriteria = selectedOption.id;
+
+        sendFilterAndSortDataToBackend(selectedCategories, sortCriteria , search );
+    }
+
+    function sendFilterAndSortDataToBackend(selectedCategories, sortCriteria , search) {
+        const url = '/allGames';
+        const data = {
+            filterCategories: selectedCategories,
+            sortCriteria: sortCriteria , 
+			search: search 
+        };
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+			filterGameList(data);
+		})
+
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+
+    const checkboxes = document.querySelectorAll('.custom-control-input');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', handleCheckboxChange);
     });
+
+    const dropdown = document.getElementById('sortby');
+    if (dropdown) {
+        dropdown.addEventListener('change', handleSortChange);
+    }
+
+	const searchForm = document.getElementById('searchForm');
+    searchForm.addEventListener('submit', handleSearchFormSubmit);
+})
+
+function filterGameList(data, user) {
+    let filterList = document.getElementById('gameList');
+    filterList.innerHTML = '';
+    data.forEach(game => {
+        const gameOfferLabel = game.gameOffer ? `${game.gameOffer} % OFF` : (game.categoryOffer ? `${game.categoryOffer} % OFF` : '');
+        const discountedPrice = game.gameOffer 
+            ? Math.round(game.price - (game.price * game.gameOffer / 100))
+            : game.categoryOffer 
+                ? Math.round(game.price - (game.price * game.categoryOffer / 100))
+                : null;
+        const gamePrice = discountedPrice !== null 
+            ? `<span style="text-decoration: line-through; margin-right: 20px; color: grey;">${game.price} -Rs</span>
+               <span style="color: rgb(0, 0, 0); font-weight: bold;">${discountedPrice} Rs</span>`
+            : `${game.price} -Rs`;
+
+        const wishlistButton = user
+            ? `<a onclick="addToWishlist('${game._id}')" class="btn-product-icon btn-wishlist btn-expandable"><span>Add to wishlist</span></a>`
+            : `<a href="/login" class="btn-product-icon btn-wishlist btn-expandable" style="color: red;"><span>Login</span></a>`;
+
+        const cartButton = user
+            ? (game.stock > 0
+                ? `<a onclick="addToCart('${game._id}')" class="btn-product btn-cart" style="background-color: rgb(92, 90, 88); color: white; font-weight: bold;"><span>Add to cart</span></a>`
+                : `<span class="btn-product btn-out-of-stock" style="background-color: rgb(243, 70, 70); color: rgb(0, 0, 0); font-weight: bold;"><span>Out of Stock</span></span>`)
+            : `<a href="/login" class="btn-product btn-cart" style="background-color: rgb(92, 90, 88); color: white; font-weight: bold;"><span>Add to cart</span></a>`;
+
+        const gameItem = `
+        <div class="col-md-4 col-6">
+            <div class="product product-7 text-center">
+                <figure class="product-media">
+                    ${gameOfferLabel ? `<span class="product-label label-new">${gameOfferLabel}</span>` : ''}
+                    <input type="hidden" class="system-req" value="${game.systemReq}">
+                    <input type="hidden" id="mainImage" name="mainImage" value='${JSON.stringify(game.image)}'>
+                    <input type="hidden" id="screenshotImages" name="screenshotImages" value='${JSON.stringify(game.screenshotImages)}'>
+                    <a href="/gameDetails?id=${game._id}">
+                        <img src="${game.mainImage[0].path}" alt="${game.name}" class="product-image with-border" width="200" height="200">
+                    </a>
+                    <div class="product-action-vertical">
+                        ${wishlistButton}
+                    </div>
+                    <div class="product-action">
+                        ${cartButton}
+                    </div><!-- End .product-action -->
+                    <div class="product-action-vertical">
+                    </div>
+                    <div class="product-action">
+                    </div>
+                </figure>
+                <div class="product-body">
+                    <div class="product-cat">
+                        <a href="/gameDetails?id=${game._id}">${game.category.name}</a>
+                    </div>
+                    <h3 class="product-title"><a href="/gameDetails?id=${game._id}">${game.name}</a></h3><!-- End .product-title -->
+                    <div class="product-price"> 
+                        ${gamePrice}
+                    </div><!-- End .product-price -->
+                </div><!-- End .product-body -->
+            </div><!-- End .product -->
+        </div>`;
+
+        filterList.insertAdjacentHTML('beforeend', gameItem);
+    });
+}
+
+
 </script>
 
 
-<!-- searching games by names -->
-<script>
-	document.getElementById('searchForm').addEventListener('submit', function(event) {
-		event.preventDefault(); 
-		const query = document.getElementById('q').value; 
-		searchGames(query); 
-	});
-	
-	function searchGames(query) {
-		fetch('/search', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ q: query }),
-		})
-	   .then(response => response.json()) 
-	   .then(data => {
-			if (data.message === "No games found matching your Search query") {
-			
-			} else {
-			
-				searchGameList(data);
-			 
-			}
-		})
-	   .catch(error => console.error('Error:', error));
-	}
-	
-	function searchGameList(data){
-		var searchList = document.getElementById('gameList');
-		searchList.innerHTML = '';
-		data.forEach(game => {
-			const gameItem = `
-			<div class="col-md-4">
-				<div class="product product-7 text-center">
-					<figure class="product-media">                                        
-						<input type="hidden" class="system-req" value="">
-						
-						<input type="hidden" id="mainImage" name="mainImage" value="${JSON.stringify(game.image)}">
-						<input type="hidden" id="screenshotImages" name="screenshotImages" value="${JSON.stringify(game.screenshotImages)}">
-						<a href="/gameDetails?id=${game._id}">
-							<img src="${game.mainImage[0].path}" alt="${game.name}" class="product-image with-border" width="200" height="200">
-						</a>
-						<div class="product-action-vertical">
-							<a onclick="addToWishlist('${game._id}')" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-							<a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
-							<a href="#" class="btn-product-icon btn-compare" title="Compare"><span>Compare</span></a>
-						</div><!-- End.product-action-vertical -->
-	
-						<div class="product-action">
-							<a onclick="addToCart('${game._id}')" class="btn-product btn-cart" style="background-color:rgb(92, 90, 88); color: white; font-weight: bold;"><span>add to cart</span></a>
-						</div><!-- End.product-action -->
-						<div class="product-action-vertical">
-						   
-						</div>
-						<div class="product-action">
-							
-						</div>
-					</figure>
-					<div class="product-body">
-						<div class="product-cat">
-							
-						</div>
-						<h3 class="product-title"><a href="/gameDetails?id=${game._id}">${game.name}</a></h3><!-- End.product-title -->
-						<div class="product-price">
-							${game.price}
-							<p style="font-weight: bold;">   -Rs</p>
-						</div><!-- End.product-price -->
-					</div><!-- End.product-body -->
-				</div><!-- End.product -->
-			</div>
-			`;
-			searchList.insertAdjacentHTML('beforeend', gameItem);
-		});
-	}
-</script>
-	
 
-<!-- filtering games by categories -->
-<script>
-	document.addEventListener('DOMContentLoaded', function() {
-		function handleCheckboxChange() {
-			const checkboxes = document.querySelectorAll('.custom-control-input');
-			let selectedCategories = [];
-	
-			checkboxes.forEach(checkbox => {
-				if (checkbox.checked) {
-					selectedCategories.push(checkbox.id);
-				}
-			});
-			sendSelectedCategoriesToBackend(selectedCategories);
-		}
-	
-		function sendSelectedCategoriesToBackend(selectedCategories) {
-			const url = '/filterGames';
-			const data = {
-				categories: selectedCategories
-			};
-			
-			fetch(url, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(data)
-			})
-		   .then(response => response.json())
-		   .then(data => {
-				filterGameList(data);
-			})
-		   .catch((error) => {
-				console.error('Error:', error);
-			});
-		}
-		const checkboxes = document.querySelectorAll('.custom-control-input');
-		checkboxes.forEach(checkbox => {
-			checkbox.addEventListener('change', handleCheckboxChange);
-		});
-		function filterGameList(data){
-			let filterList = document.getElementById('gameList');
-			filterList.innerHTML = '';
-			data.forEach(game => {
-				const gameItem = `
-				<div class="col-md-4">
-				<div class="product product-7 text-center">
-					<figure class="product-media">                                        
-						<input type="hidden" class="system-req" value="">
-						
-						<input type="hidden" id="mainImage" name="mainImage" value="${JSON.stringify(game.image)}">
-						<input type="hidden" id="screenshotImages" name="screenshotImages" value="${JSON.stringify(game.screenshotImages)}">
-						<a href="/gameDetails?id=${game._id}">
-							<img src="${game.mainImage[0].path}" alt="${game.name}" class="product-image with-border" width="200" height="200">
-						</a>
-						<div class="product-action-vertical">
-							<a onclick="addToWishlist('${game._id}')" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-							<a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
-							<a href="#" class="btn-product-icon btn-compare" title="Compare"><span>Compare</span></a>
-						</div><!-- End.product-action-vertical -->
-	
-						<div class="product-action">
-							<a onclick="addToCart('${game._id}')" class="btn-product btn-cart" style="background-color:rgb(92, 90, 88); color: white; font-weight: bold;"><span>add to cart</span></a>
-						</div><!-- End.product-action -->
-						<div class="product-action-vertical">
-						   
-						</div>
-						<div class="product-action">
-							
-						</div>
-					</figure>
-					<div class="product-body">
-						<div class="product-cat">
-							
-						</div>
-						<h3 class="product-title"><a href="/gameDetails?id=${game._id}">${game.name}</a></h3><!-- End.product-title -->
-						<div class="product-price">
-							${game.price}
-							<p style="font-weight: bold;">   -Rs</p>
-						</div><!-- End.product-price -->
-					</div><!-- End.product-body -->
-				</div><!-- End.product -->
-			</div>			
-				`;
-				filterList.insertAdjacentHTML('beforeend',gameItem)
-			})
-		}
-	});
-</script>
+
 
 
 

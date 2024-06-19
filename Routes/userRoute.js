@@ -36,6 +36,10 @@ user_route.get('/home', userAuth.isLogout , userController.loadHome)
 user_route.get('/logout', userAuth.isLogin , userController.userLogout)
 
 
+//******  FORGOT PASSWORD SECTION ******
+user_route.post('/verifyForgotEmail',userController.verifyForgotEmail)
+
+
 //******   USER PROFILE SECTIONS ******
 user_route.get('/userProfile' , userAuth.isLogin , profileController.loadUserProfile)
 user_route.post('/editUserProfile',profileController.editUserProfile)
@@ -72,7 +76,7 @@ user_route.post('/addToWishlist' , wishlistController.addToWishlist)
 user_route.put('/removeFromWishlist' , userAuth.isLogin , wishlistController.removeFromWishlist)
 user_route.post('/addToCartAndRemove',wishlistController.addToCartAndRemove)
 //-----------------------
-user_route.get('/loadNotification',wishlistController.loadNotification)
+user_route.get('/loadNotification',userAuth.isLogin ,wishlistController.loadNotification)
 
 
 
@@ -102,6 +106,7 @@ user_route.get('/comingSoonDetails',userController.loadComingSoonDetails)
 
 
 user_route.get('/allGames',userController.loadAllGames)
+user_route.post('/allGames',userController.loadAllGames)
 user_route.get('/gameDetails',userController.loadGameDetails)
 user_route.get('/sort/:criteria',userController.sortGames);
 user_route.post('/search',userController.searchName)

@@ -76,12 +76,8 @@
                                             <td style="font-size: 15px;"><%= index+1+indexPage %></td>
                                             <td style="font-size: 15px;"><%= order.userId.name %></td>
                                             <td style="font-size: 15px;"><%= order.orderId %></td>
-                                            <% if (order.discount) { %>
-                                                <% const discountedPrice = Math.floor(order.totalCartPrice - (order.totalCartPrice * order.discount / 100)) %>
-                                                <td style="font-size: 15px;"><%= discountedPrice %></td>
-                                            <% }else{ %>
-                                                <td style="font-size: 15px;"><%= Math.floor(order.totalCartPrice) %></td>
-                                            <% } %>
+                                            <td style="font-size: 15px;"><%= Math.floor(order.totalCartPrice) %></td>
+
                                             
                                             <td style="font-size: 15px;"><%= new Date (order.orderDate).toLocaleString('en-IN',{ year : 'numeric',month : '2-digit',day : '2-digit' , hour : '2-digit',minute : '2-digit'}) %></td>
                                             <td style="font-size: 15px;"> <%= order.paymentMethod %></td>

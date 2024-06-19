@@ -94,9 +94,13 @@
                                                     
                                                         <span class="btn btn-info ml-2">EDIT</span>                                                                                                         
                                                     </a>
+                                                    <a href="#" class="btn-status-toggle delete-btn" data-categoryId="<%= category._id %>">
+                                                    
+                                                        <span class="btn btn-danger ml-2">DELETE</span>                                                                                                         
+                                                    </a>
                                                     <% if (category.is_listed) { %>
                                                         <a>
-                                                            <button id="unlisted-<%= category._id %>" onclick="confirmAction('<%= category._id %>')"  class="btn btn-danger ml-5">Unlist</button>
+                                                            <button id="unlisted-<%= category._id %>" onclick="confirmAction('<%= category._id %>')"  class="btn btn-warning ml-5">Unlist</button>
                                                         </a>
                                                     <% } else { %>
                                                         <a >
@@ -180,6 +184,70 @@
         }
     });
 }
+</script>
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded',function(){
+        const deleteButton = document.querySelectorAll('.delete-btn')
+
+        deleteButton.forEach(button => {
+            button.addEventListener('click',function(){
+                const categoryId = this.getAttribute('data-categoryId')
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/admin/deleteCategory?categoryId=${categoryId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        }).then(response => response.json())
+                          .then(data => {
+                              if (data.success) {
+                                  Swal.fire(
+                                      'Deleted!',
+                                      'The category has been deleted.',
+                                      'success'
+                                  ).then(() => {
+                                      location.reload()
+                                  });
+                              } else if(data.message === 'cannot') {
+                                  Swal.fire(
+                                      'Error!',
+                                      'You Cannot Delete this Category . Because There is games Available in this Category.',
+                                      'error'
+                                  );
+                              }
+                               else {
+                                  Swal.fire(
+                                      'Error!',
+                                      'There was an error deleting the category.',
+                                      'error'
+                                  );
+                              }
+                          }).catch(error => {
+                              Swal.fire(
+                                  'Error!',
+                                  'There was an error deleting the category.',
+                                  'error'
+                              );
+                          });
+                    }
+                });
+            })
+        })
+    })
 </script>
      
  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>

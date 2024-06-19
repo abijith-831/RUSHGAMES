@@ -1,21 +1,16 @@
 <style>
-    /* Style for the circular count */
-    .cart-count,
-    .wishlist-count {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        background-color: #cc9966; /* Background color of the circle */
-        border-radius: 50%; /* Make it a circle */
-        color: #fff; /* Text color */
-        font-size: 12px; /* Font size of the count */
-        text-align: center; /* Center the count horizontally */
-        line-height: 20px; /* Center the count vertically */
-        position: absolute;
-        top: 0;
-        right: -10px;
-        padding: 2px;
-    }
+
+    .notification-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: transparent;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 6px;
+    font-size: 12px;
+    font-weight: bold;
+}
 
 .header-left {
     display: flex;
@@ -28,16 +23,15 @@
 }
 
 .logo img:first-child {
-    margin-right: 10px; /* Adjust the margin as needed */
+    margin-right: 10px; 
 }
     
 
-    /* Adjustment for the position of the cart count */
+
     .cart-count {
         right: -10px;
     }
 
-    /* Adjustment for the position of the wishlist count */
     .wishlist-count {
         right: -10px;
     }
@@ -45,7 +39,7 @@
     position: relative;
 }
 .main-nav .menu > li > a {
-    color: #ffffff; /* White color */
+    color: #ffffff;
 }
 .header-right .header-dropdown-link {
     display: flex;
@@ -54,7 +48,7 @@
 
 .header-right .header-dropdown-link > .cart,
 .header-right .header-dropdown-link > .wishlist {
-    margin-right: 10px; /* Adjust spacing between icons */
+    margin-right: 10px; 
 }
 .left-align {
         float: left;
@@ -66,9 +60,9 @@
             margin: 0 5px; 
         }
 
-        /* Style for active link */
+  
         nav a.active {
-            font-weight: bold; /* Make the active link bold */
+            font-weight: bold; 
         }
         .account {
     text-align: center;
@@ -76,25 +70,25 @@
 
 .icon-container {
     border: 1px solid white;
-    border-radius: 50%; /* To make the border round */
-    width: 40px; /* Adjust the width and height as needed */
+    border-radius: 50%; 
+    width: 40px; 
     height: 40px;
-    line-height: 40px; /* Center the icon vertically */
-    margin: 0 auto; /* Center the container horizontally */
+    line-height: 40px; 
+    margin: 0 auto; 
 }
 
 .icon-container i {
-    color: white; /* Icon color */
-    font-size: 15px; /* Adjust the icon size as needed */
+    color: white;
+    font-size: 15px; 
 }
 .icon {
-    width: 30px; /* Adjust the width and height as needed */
+    width: 30px; 
     height: 40px;
 }
 </style>
 
 
-<div class="page-wrapper">
+<div class="page-wrapper " >
     <div class="wrap-container">
         <header class="header header-intro-clearance header-3">
             
@@ -108,18 +102,7 @@
                         </a>
                     </div><!-- End .header-left -->
 
-                    <div class="header-center">
-                        <div class="header-search header-search-extended header-search-visible d-none d-lg-block">
-                            <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
-                            <form id="searchForm" action="/search" method="get">
-                                <div class="header-search-wrapper search-wrapper-wide">
-                                    <label for="q" class="sr-only">Search</label>
-                                    <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
-                                    <input type="search" class="form-control" name="q" id="q" placeholder="Search product ..." required>
-                                </div><!-- End .header-search-wrapper -->
-                            </form>
-                        </div><!-- End .header-search -->
-                    </div>
+                    
 
                     <div class="header-right">
                     
@@ -167,14 +150,19 @@
                                     <p>Cart</p>
                                 </a>
                             </div>
-                            <div class="wishlist" style="padding-left: 10px;">
+                            <div class="wishlist" style="position: relative; padding-left: 10px;">
                                 <a href="/loadNotification" title="notification">
                                     <div class="icon">
                                         <i class="fas fa-bell"></i>
+                                        <% if(locals.user) { %>
+                                            <span id="notificationCount" class="notification-count"><%= locals.unreadMessage ? locals.unreadMessage : '' %></span>
+                                        <% } %>
                                     </div>
                                     <p>Message</p>
                                 </a>
                             </div>
+                            
+                            
                         </div>
                     </div><!-- End .header-right -->
                     

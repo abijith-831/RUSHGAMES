@@ -374,7 +374,7 @@ const downloadInvoice = async (req, res) => {
 
     doc.pipe(res);
 
-    // Title and Header
+    
     doc.fontSize(30).font('Helvetica-Bold').text('ORDER-INVOICE', { align: 'center' });
     doc.fontSize(20).font('Helvetica').text('RUSH GAMES', { align: 'center' });
     doc.fontSize(12).font('Helvetica').text('Rush Games Pvt Ltd , KINFRA Techno Industrial Park,', { align: 'center' });
@@ -384,7 +384,7 @@ const downloadInvoice = async (req, res) => {
     doc.moveDown();
 
 
-   // Order Information
+  
    doc.fontSize(12).font('Helvetica-Bold').text(`Order ID:`, { continued: true }).font('Helvetica').text(` ${order.orderId}`, { align: 'left' });
    doc.font('Helvetica-Bold').text(`Order Date:`, { continued: true }).font('Helvetica').text(` ${new Date(order.orderDate).toLocaleDateString('en-IN')}`, { align: 'left' });
    doc.font('Helvetica-Bold').text(`Customer Name:`, { continued: true }).font('Helvetica').text(` ${order.addresses.name}`, { align: 'left' });
@@ -392,9 +392,7 @@ const downloadInvoice = async (req, res) => {
    doc.moveDown(2);
 
     
-    
 
-    // Table Header
     const tableHeader = ['Game Name', 'Quantity', 'Price', 'Total Amount', 'Status'];
     const cellWidths = [150, 60, 80, 100, 100]; 
     const startX = doc.page.margins.left;
@@ -404,10 +402,10 @@ const downloadInvoice = async (req, res) => {
     const tableHeaderTextColor = '#000000';
     const tableCellTextColor = '#000000';
 
-    // Draw table header background
+
     doc.rect(startX, startY, doc.page.width - doc.page.margins.left - doc.page.margins.right, rowHeight).fill(tableHeaderBgColor);
 
-    // Table Header Text
+
     let currentX = startX;
     tableHeader.forEach((header, index) => {
       doc.fillColor(tableHeaderTextColor).fontSize(10).font('Helvetica-Bold').text(header, currentX, startY + 5, { width: cellWidths[index], align: 'left' });
@@ -416,7 +414,7 @@ const downloadInvoice = async (req, res) => {
 
     let currentY = startY + rowHeight;
 
-    // Table Body
+ 
     const gameDetails = [
       name,
       game.quantity,
@@ -433,13 +431,12 @@ const downloadInvoice = async (req, res) => {
 
     currentY += rowHeight;
 
-    // Add page if needed
+
     if (currentY > doc.page.height - doc.page.margins.bottom) {
       doc.addPage();
       currentY = doc.page.margins.top;
     }
 
-    // Total Amount and Delivery Charge
     currentY += 30;
     if (order.deliveryCharge === 'YES') {
       game.totalAmount += 80;
@@ -474,7 +471,7 @@ const cancelOrder = async (req,res)=>{
     const game = order.games.find(item =>item.gameId.equals(gameId))
     
     const gameData = await Games.findOne({_id  : game.gameId})
-    console.log('orders'+order);
+
     if(order.discount){
       game.totalAmount = game.totalAmount - ((game.totalAmount*order.discount )/ 100)
     }
@@ -552,6 +549,7 @@ const returnOrder = async (req,res)=>{
     }
 
     const game = order.games.find(item => item.gameId.toString()===gameId)
+    
     if ( game ){
       game.Status = "Return";
       game.reason = reason;

@@ -57,7 +57,7 @@
 									<% if (cartData && cartData.length > 0) { %>  
 											
 										<% cartData.forEach(gameItem => { %>
-												
+												<%= console.log(gameItem) %>
 												<tr>
 													<td class="product-col col-lg-4">
 														<div class="product">
@@ -72,6 +72,7 @@
 														</div>
 													</td>
 													<td class="price-col"><%= gameItem.gameId.finalPrice ? gameItem.gameId.finalPrice : gameItem.price %></td>
+
 													<td class="quantity-col">
 														<div class="cart-product-quantity">
 															<input 

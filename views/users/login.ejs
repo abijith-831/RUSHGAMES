@@ -134,10 +134,10 @@
                                         <br><br>
                                         <!-- Bottom button container -->
                                         <div class="button-container">
-                                            <button type="button" class="btn btn-outline-primary-2">
+                                            <a type="button" class="btn btn-outline-primary-2" id="forgotPassword" data-toggle="modal" data-target="#forgotPasswordModal">
                                                 <span>Forgot Password?</span>
                                                 <i class="icon-long-arrow-right"></i>
-                                            </button>
+                                            </a>
                                         </div>
                                         <br>
                                         <div class="button-container">
@@ -175,8 +175,10 @@
 
 <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
-<script>
 
+
+
+<script>
         function validation(){
 
             let email = document.getElementById("register-email").value.trim();
@@ -213,6 +215,92 @@
         }
 
 </script>
+
+
+
+<!-------- verifying the forgot password email ------------ -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content bg-black text-red px-5 mt-4 mb-4">
+        <br>
+        <div class="modal-header border-bottom-red">
+            
+          <h5 class="modal-title text-center" id="forgotPasswordModalLabel">ENTER YOUR EMAIL ID</h5>
+          <button type="button" class="close text-red" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="addressForm">
+            <div class="col-md-12">
+                <div class="form-group"><br>
+                  <label for="email" class="text-red">Email</label><br><br>
+                  <input type="text" class="form-control" id="email" placeholder="Enter Your Email" required><br><br>
+                </div>
+              </div>
+            <button type="submit" class="btn btn-success btn-block" id="submitEmailBtn">Submit</button>
+            <br><br>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+
+<script>
+  document.getElementById('submitEmailBtn').addEventListener('click', function(event) {
+    event.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.(?:com)$/i;
+
+    if (!emailRegex.test(email)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Please enter a valid email address ending with ".com"'
+        });
+        return false;
+    }
+
+    let formData = { email: email };
+
+    fetch('/verifyForgotEmail', {
+        method: 'POST',
+        headers: {
+            "Content-Type": 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if(data.message === "nouser"){
+            Swal.fire({
+                    icon: 'error',
+                    title: 'ERROR',
+                    text: 'Email is Incorrect', 
+                });
+        }
+        window.location.href = `/otp?email=${data.email}`;
+    })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while processing your request. Please try again later.'
+        });
+    });
+});
+
+</script>
+
 
 <%-include('../layouts/footbar.ejs')%>
 

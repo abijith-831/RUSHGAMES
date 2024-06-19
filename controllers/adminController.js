@@ -69,11 +69,10 @@ const loadUserList = async (req,res)=>{
 // ********** FOR BLOCK & UNBLOCK USERS **********
 const userStatus = async (req,res)=>{
     try {
-                const userId = req.query.userId;
-            // console.log(userId);
+            const userId = req.query.userId;
             
             const user = await Users.findOne({_id:userId})
-            // console.log(user);
+  
             if(!user){
                 return res.status(404).json({success:false})
             }
