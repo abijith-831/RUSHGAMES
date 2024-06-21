@@ -20,6 +20,10 @@ user_route.use(express.static(path.join(__dirname,'public')))
 user_route.use(express.static(path.join(__dirname,'public/uploads')))
 
 
+user_route.use(userAuth.isNavUser);
+
+
+
 //******  USER REGISTRATION  ******
 user_route.get('/register',userAuth.isLogout,userController.loadRegister)
 user_route.post('/register',userController.registerUser)
@@ -27,6 +31,14 @@ user_route.get('/otp',userController.loadOTP)
 user_route.post('/verifyotp',userController.verifyOTP)
 user_route.get('/resendOTP',userController.resendOTP)
 
+
+
+//******  FORGOT PASSWORD SECTION ******
+user_route.post('/verifyForgotEmail',userController.verifyForgotEmail)
+user_route.get('/forgotOTP',userController.loadForgotOTPPage)
+user_route.post('/verifyForgotOTP',userController.verifyForgotOTP)
+user_route.get('/changePassword',userController.changePassword)
+user_route.post('/changePasswordSubmit',userController.changePasswordSubmit)
 
 //******   USER LOGIN AND LOGOUT ******
 user_route.get('/login' , userAuth.isLogout , userController.loadLogin)
@@ -36,8 +48,6 @@ user_route.get('/home', userAuth.isLogout , userController.loadHome)
 user_route.get('/logout', userAuth.isLogin , userController.userLogout)
 
 
-//******  FORGOT PASSWORD SECTION ******
-user_route.post('/verifyForgotEmail',userController.verifyForgotEmail)
 
 
 //******   USER PROFILE SECTIONS ******
@@ -98,19 +108,16 @@ user_route.post('/deleteAddress',profileController.deleteAddress)
 
 
 //******   FOR RENDERING OTHER PAGES ******
-user_route.get('/aboutUs',userController.loadAboutUs)
+user_route.get('/aboutUs',userAuth.isNavUser,userController.loadAboutUs)
 user_route.get('/contactUs',userController.loadContactUs)
 user_route.get('/comingSoon',userController.loadComingSoon)
 user_route.get('/comingSoonDetails',userController.loadComingSoonDetails)
 
 
 
-user_route.get('/allGames',userController.loadAllGames)
+user_route.get('/allGames',userAuth.isNavUser,userController.loadAllGames)
 user_route.post('/allGames',userController.loadAllGames)
 user_route.get('/gameDetails',userController.loadGameDetails)
-user_route.get('/sort/:criteria',userController.sortGames);
-user_route.post('/search',userController.searchName)
-user_route.post('/filterGames',userController.filterGames)
 
 
 

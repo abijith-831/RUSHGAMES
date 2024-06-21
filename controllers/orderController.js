@@ -2,6 +2,8 @@ const Users = require('../models/userModel')
 const Order = require('../models/orderModel')
 const Games = require('../models/gameModel')
 const Wallet = require('../models/walletModel')
+const Message = require('../models/messageModel')
+
 
 
 // ********** FOR RENDERING ORDER MANAGEMENNT PAGE **********
@@ -108,7 +110,17 @@ const approveRequest = async (req,res)=>{
             }
             
             await order.save()
+
         }
+        const msgHead = " Your Return Request has been Approved"
+        const msgText = `We are pleased to inform you that your return request for the game ${gameData.name} for Rs ${game.totalAmount} order ${order.orderId} has been successfully approved  `
+        const newMessage = { head: msgHead, text: msgText, createdAt: Date.now() };
+
+        await Message.updateOne(
+            { userId: userId },
+            { $push: { messages: newMessage } },
+            { upsert: true }
+        );
         res.json({success : true})
     } catch (error) {
         console.log(error);
@@ -121,15 +133,28 @@ const approveRequest = async (req,res)=>{
 // ********** FOR REJECTING THE RETURN REQUEST  ********** 
 const rejectRequest = async(req,res)=>{
     try {
+        const userId = req.session.user_id;
         const { orderId , gameId} = req.body;
         const order = await Order.findById(orderId)
 
+        const gameData = await Games.findOne({_id : gameId})
         const game = order.games.find(game=>game.gameId.toString()===gameId);
 
         if(game){
             game.approval = "Rejected";
             await order.save();
         }
+
+        const msgHead = " Your Return Request has been Rejected"
+        const msgText = `We regret to inform you that your return request for the game ${gameData.name} for Rs ${game.totalAmount} order ${order.orderId} has been reviewed and unfortunately, we are unable to approve it at this time. `
+        const newMessage = { head: msgHead, text: msgText, createdAt: Date.now() };
+
+        await Message.updateOne(
+            { userId: userId },
+            { $push: { messages: newMessage } },
+            { upsert: true }
+        );
+
         res.json ({success : true})
     } catch (error) {
         console.log(error);

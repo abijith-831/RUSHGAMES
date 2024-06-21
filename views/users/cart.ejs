@@ -1,6 +1,7 @@
 <%-include('../layouts/header.ejs')%>
 <%-include('../layouts/navbar.ejs')%>
 
+
 <style>
     /* Add this CSS to give a black border to the content containers */
 .content-container {
@@ -18,9 +19,9 @@
 
 </style>
 
-        <main class="main">
+<main class="main">
         	<div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.png')">
-        		<div class="container">
+        		<div class="container-fluid">
         			<h1 class="page-title" style="color: white;"> Cart</h1>
         		</div><!-- End .container -->
         	</div><!-- End .page-header -->
@@ -88,10 +89,16 @@
 														</div>
 
 													</td>
-													<td class="total-col" id="totalAmount-<%= gameItem.gameId._id %>" style="color: black; font-weight: bold;" >
+													
+                                                    <td class="total-col" id="totalAmount-<%= gameItem.gameId._id %>" style="color: black; font-weight: bold;">
+                                                        <% if (gameItem.quantity === 0) { %>
+                                                            0
+                                                        <% } else { %>
+                                                            <%= gameItem.gameId.finalPrice ? gameItem.gameId.finalPrice * gameItem.quantity : gameItem.price * gameItem.quantity %>
+                                                            <% finalPrice += gameItem.gameId.finalPrice ? gameItem.gameId.finalPrice * gameItem.quantity : gameItem.price * gameItem.quantity %>
+                                                        <% } %>
+                                                    </td>
 														
-														<%= gameItem.gameId.finalPrice ? gameItem.gameId.finalPrice * gameItem.quantity  : gameItem.price * gameItem.quantity %></td>
-													<% finalPrice += gameItem.gameId.finalPrice ? gameItem.gameId.finalPrice : gameItem.price %>
 													
 													<td class="remove-col">
 														<button class="btn-remove" onclick="confirmDelete('<%= gameItem.name %>' , '<%= gameItem.gameId._id %> ')">
@@ -151,7 +158,7 @@
 	                					</tbody>
 	                				</table><!-- End .table table-summary -->
 
-	                				<a href="/checkOut" class="btn btn-outline-dark btn-order btn-block" style="border-width: 2px; font-weight: bold;">PROCEED TO CHECKOUT</a>
+	                				<a href="#" id="proceedToCheckout" class="btn btn-outline-dark btn-order btn-block" style="border-width: 2px; font-weight: bold;">PROCEED TO CHECKOUT</a>
 	                			</div><!-- End .summary -->
 
 		            			<a href="/allGames" class="btn btn-outline-dark btn-block mb-3" style="border-width: 2px; font-weight: bold;"><span>CONTINUE SHOPPING</span><i class="icon-refresh"></i></a>
@@ -161,6 +168,8 @@
                 </div><!-- End .cart -->
             </div><!-- End .page-content -->
 </main><!-- End .main -->
+
+
 
 
 <!--  Ask for confirmation for deleting  using SweetAlert -->
@@ -267,6 +276,29 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 	
 	
+
+<!-- checking zero quantity games is there or not  -->
+<script>
+    document.getElementById('proceedToCheckout').addEventListener('click',function(event){
+        event.preventDefault();
+
+        const cartData = <%- JSON.stringify(cartData) %>
+
+        console.log('snfsdf'+cartData);
+
+        const zeroGame = cartData.filter(item => item.quantity ===0)
+
+        if(zeroGame && zeroGame.length > 0){
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Some games in your cart have no Stock . Remove it for Further Actions '
+            });
+        } else {
+            window.location.href = '/checkOut';
+        }
+    })
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <%-include('../layouts/footbar.ejs')%>

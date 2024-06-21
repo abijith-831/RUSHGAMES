@@ -22,6 +22,7 @@ const securePassword = async (password) => {
 };
 
 
+
 // ********** FOR LOADING HOME PAGE  **********
 const loadHome = async (req, res) => {
   try {
@@ -35,8 +36,6 @@ const loadHome = async (req, res) => {
       const messageData = await Message.findOne({ userId: user }, { messages: 1 });
 
       const unreadMessage = messageData.messages.filter(item => item.is_readed === false).length
-
-      console.log('sfsgs'+unreadMessage);
 
       const userData = await User.findById(user);
       if(userData.is_blocked){
@@ -62,9 +61,9 @@ const loadHome = async (req, res) => {
 const loadLogin = async (req, res) => {
   try {
     let errmsg = req.flash("errmsg");
-    let succmsg = req.flash("success");
+    let success = req.flash("success");
 
-    res.render("login", { errmsg, succmsg });
+    res.render("login", { errmsg, success });
   } catch (error) {
     console.log(error);
     
@@ -162,6 +161,23 @@ const verifyForgotEmail = async (req,res)=>{
 }
 
 
+
+// ********** FOR RENDERING THE FOTGOT OTP PAGE **********
+const loadForgotOTPPage = async(req,res)=>{
+  try {
+
+    const { email } = req.query
+
+    let errmsg = req.flash('errmsg')
+    res.render('forgotOTPPage' , { email : email , errmsg})
+  } catch (error) {
+    console.log(error);
+  }
+}
+ 
+
+
+// ********** VERIFYING THE FORGOT EMAIL **********
 const sendOTPVerifyForgotMail = async ({ email }, res) => {
   try {
     const transporter = nodemailer.createTransport({
@@ -196,7 +212,7 @@ const sendOTPVerifyForgotMail = async ({ email }, res) => {
     await newOTPVerification.save();
     await transporter.sendMail(mailOptions);
 
-    res.json({ success: true, message: "OTP sent", email: email });
+    res.json({ success: true, email: email });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ success: false, message: "Failed to send OTP" });
@@ -222,10 +238,11 @@ const resendOTP = async (req, res) => {
 };
 
 
+
 // ********** FOR SENDING OTP VERIFICATION EMAIL **********
 const sendOTPVerifymail = async ({ email }, res) => {
   try {
-    console.log('jknjsd');
+
     const transporter = nodemailer.createTransport({
       service: "gmail",
       host: "smtp.gmail.com",
@@ -273,6 +290,7 @@ const sendOTPVerifymail = async ({ email }, res) => {
 };
  
 
+
 // ********** FOR LOADING OTP ENTERING PAGE **********
 const loadOTP = async (req, res) => {
   try {
@@ -287,6 +305,99 @@ const loadOTP = async (req, res) => {
 };
 
 
+
+// ********** FOR VERYFYING FORGOT PASSWORD OTP **********
+const verifyForgotOTP = async (req, res) => {
+  try {
+    const email = req.body.email;
+    const otp = req.body.digit1 + req.body.digit2 + req.body.digit3 + req.body.digit4;
+
+    const userVerification = await UserOTPVerification.findOne({ email: email });
+
+    if (!userVerification) {
+      return res.render("forgotOTPPage", {
+        email,
+        errmsg: "OTP Expired. Please resend OTP and try again.",
+      });
+    }
+
+    const { otp: savedOTP } = userVerification;
+    const otpMatch = await bcrypt.compare(otp, savedOTP);
+
+    if (otpMatch) {
+      await userVerification.deleteOne({ email: email });
+      res.redirect(`/changePassword?email=${email}`);
+    } else {
+      res.render("forgotOTPPage", {
+        email,
+        errmsg: "Invalid OTP. Please try again.",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.render("otpVerification", {
+      email,
+      errmsg: "An error occurred. Please try again later.",
+    });
+  }
+};
+
+
+
+// ********** FOR RENDERING CHANGING PASSWORD PAGE **********
+const changePassword = async (req,res)=>{
+  try {
+    let errmsg = req.flash('errmsg')
+    const email = req.query.email
+
+    res.render('changePassword' , { errmsg , email})
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+ 
+
+// ********** FOR CHANGING THE NEW PASSWORD **********
+const changePasswordSubmit = async(req,res)=>{
+  try {
+    const { email ,  password , confirmPassword } = req.body
+
+    if (password !== confirmPassword) {
+      return res.render('changePassword', { email , errmsg: "Passwords do not match.",});
+    }
+
+    const user = await User.findOne({ email: email });
+
+    if (!user) {
+      return res.render('changePassword', {
+        email,
+        errmsg: "User not found.",
+      });
+    }
+
+    const isSamePassword = await bcrypt.compare(password, user.password);
+
+    if (isSamePassword) {
+      return res.render('changePassword', {
+        email,
+        errmsg: "New password cannot be the same as the old password.",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    req.flash("success", "Password changed successfully. Please login with your new password.");
+    res.redirect("/login");
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+ 
 // ********** OTP VERIFICATION FUNCTION **********
 const verifyOTP = async (req, res) => {
   try {
@@ -522,189 +633,17 @@ const loadGameDetails = async (req,res)=>{
   }
 }
 
-
-// ********** FOR SORTING GAMES BY CRITERIAS **********
-const sortGames = async(req,res)=>{
-  try {
-
-    const { criteria } = req.params;
-
-    let gameData;
-
-
-    switch (criteria) {
-      case 'priceLow-High':
-        gameData = await Games.find({is_listed : true}).sort({ price: 1 });
-        break;
-      case 'priceHigh-Low':
-        gameData = await Games.find({is_listed : true}).sort({ price: -1 });
-        break;
-      case 'nameA-Z':
-        gameData = await Games.find({is_listed : true}).sort({ name: 1 });
-        break;
-      case 'nameZ-A':
-        gameData = await Games.find({is_listed : true}).sort({ name: -1 });
-        break;
-     
-     
-      default:
-        res.status(400).json({ error: 'Invalid sorting criteria' });
-        return;
-    }
-    // console.log('game'+gameData);
-    
-    res.json({ gameData });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-}
-
-
-// ********** FOR SEARCHING GAMES BY NAME **********
-const searchName = async (req,res)=>{
-  const input = req.body.q;
-  const allGames = await Games.find({is_listed : true})
-  
-  try {
-    if(!input){
-      return res.status(400).send('Search Name is Required...!')
-    } 
-    const gamesFound = await Games.find({
-      $and : [
-        {name : {$regex : input , $options:'i' }},
-        { is_listed :true}
-      ]
-    })
-      
-   if(gamesFound === 0){
-    res.json(allGames)
-   }else{
-    res.json(gamesFound)
-   }
-    
-  } catch (error) {
-    console.log(error);
-    
-  }
-}
-
-
-// ********** FOR FILTERING GAMES BASED ON CATEGORIES **********
-const filterGames = async (req,res)=>{
-  try {
-    const {filterCategories} = req.body;
-    
-
-    const categories = await Category.find({ is_listed: true });
-
-    const page = parseInt(req.query.page)||1;
-    const limit = 6;
-    const skip = (page-1)*limit;
-
-    const allGames = await Games.find({is_listed : true})
-    let gamesFound = await Games.find({
-      $and : [
-        {category : {$in : filterCategories}},
-        {is_listed : true}
-      ]      
-    })
-
-    const gameOffers = await GameOffers.find({is_active : false})
-    const categoryOffers = await CategoryOffers.find({is_active : false})
-    
-
-    //-------------------------
-    if(gamesFound.length === 0){
-      console.log('cajbfsdf');
-      let number = await Games.find({is_listed : true})
-      const totalPages = Math.ceil(number/limit);
-
-      let prevPage = page-1;
-      let nextPage = page+1;
-      if(prevPage < 1) prevPage = 1;
-      if(nextPage > totalPages) nextPage = totalPages
-
-      
-
-
-      res.json( allGames , number , )
-
-    }else{
-      console.log('snmdd');
-      let number = gamesFound.lenngth
-      const totalPages = Math.ceil(number/limit);
-
-
-      for(let category of categories){
-        const categoryOffer = categoryOffers.find(item => item.categoryId.equals(category._id));
-  
-        if(categoryOffer){
-          await Games.updateMany(
-            {category : category._id},
-            { $set : { categoryOffer : categoryOffer.discount ?  categoryOffer.discount : null}}    
-          )
-        }
-      }
-      
-      for(let game of gamesFound){
-        const gameOffer = gameOffers.find(item => item.gameId.equals(game._id));
-        const categoryDiscount = game.categoryOffer;
-        const gameDiscount = game.gameOffer;
-        
-        let finalPrice = game.price;
-        
-  
-        if (gameDiscount && !categoryDiscount){
-          finalPrice = Math.round(game.price - (game.price * gameDiscount / 100))
-        }
-  
-        if(!gameDiscount && categoryDiscount >0){
-          finalPrice = Math.round(game.price - (game.price * categoryDiscount / 100))
-        }
-  
-        if(gameDiscount && categoryDiscount){
-          let bigDiscount = gameDiscount > categoryDiscount ? gameDiscount : categoryDiscount ;
-          finalPrice = Math.round(game.price - (game.price * bigDiscount / 100)) 
-        }  
-        
-        await Games.findByIdAndUpdate(
-          game._id,
-          {$set : { gameOffer : gameOffer ? gameOffer.discount : null , finalPrice : finalPrice}},
-          {new : true}
-        )
-        const gameCategory = await Category.findById(game.category);
-        if(gameCategory){
-          game.categoryName = gameCategory.name
-        }
-      } 
-      
-
-      let prevPage = page-1;
-      let nextPage = page+1;
-      if(prevPage < 1) prevPage = 1;
-      if(nextPage > totalPages) nextPage = totalPages
-
-      gamesFound =  gamesFound.slice(skip , skip + limit)
-      console.log('sfs'+gamesFound);
-
-      res.json(gamesFound , number , page , limit , totalPages , prevPage , nextPage)
-    }
-    
-  } catch (error) {
-    console.log(error);
-    
-  }
-}  
-
-
-
  
+
 const loadComingSoon = async (req ,res)=>{
   try {
+
+    const userId = req.session.user_id;
+        
+    const userData = await User.findOne({_id : userId})
     const comings = await Coming.find()
 
-    res.render('comingSoon',{comings})
+    res.render('comingSoon',{comings , user : userData})
   } catch (error) {
     console.log(error);
     
@@ -714,10 +653,15 @@ const loadComingSoon = async (req ,res)=>{
 
 const loadComingSoonDetails = async (req,res)=>{
   try {
+
+    const userId = req.session.user_id;
+        
+    const userData = await User.findOne({_id : userId})
+
     const gameId = req.query.id;
     const game = await Coming.findOne({_id:gameId}).populate('category')
     
-    res.render('comingSoonDetails',{game})
+    res.render('comingSoonDetails',{game , user : userData})
   } catch (error) {
     console.log(error);
     
@@ -729,9 +673,6 @@ module.exports = {
 
   loadHome,
   loadAllGames,
-  sortGames,
-  searchName,
-  filterGames,
   loadGameDetails,
 
 
@@ -740,7 +681,11 @@ module.exports = {
   verifyOTP,
   //-------
   verifyForgotEmail,
+  loadForgotOTPPage,
   sendOTPVerifyForgotMail,
+  verifyForgotOTP,
+  changePassword,
+  changePasswordSubmit,
 
 
 

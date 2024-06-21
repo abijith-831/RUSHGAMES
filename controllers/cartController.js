@@ -16,8 +16,8 @@ const loadCart = async (req, res ,next) => {
       model: 'Games'
     }).exec();
 
-    
-    
+
+     
     if (!cart || cart.games.length === 0) {
       const totalCartPrice = 0;
       res.render('cart', { user: userData, cartData: [], totalCartPrice, cartId: null, isEmpty: true , errmsg });
@@ -42,7 +42,7 @@ const loadCart = async (req, res ,next) => {
 };
 
  
-
+ 
 // ********** FOR INSERTING GAME TO THE CART **********
 const addGameToCart = async (req, res) => {
   try {
@@ -77,7 +77,12 @@ const addGameToCart = async (req, res) => {
         res.json({ success: true });
       }
       const exists = userCart.games.find((games) => String(games.gameId) === gameId);
+
       if (exists) {
+        if(exists.quantity >= game.stock){
+          return res.json({success : false , message : 'stockout'})
+        }
+       
         exists.quantity += parseInt(quantity);
         exists.totalAmount = exists.quantity * game.finalPrice;
 

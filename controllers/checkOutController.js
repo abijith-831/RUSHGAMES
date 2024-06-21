@@ -29,7 +29,9 @@ const loadCheckOut = async (req, res) => {
           Cart.findOne({userId: userId}),
           Coupon.find({is_active: false})
       ]);
-
+      
+       
+      
       const count = addresses.length > 0 ? addresses[0].addresses.length : 0;
 
       if (!cartData || cartData.games.length === 0) {
@@ -118,7 +120,7 @@ const placeOrder = async (req, res) => {
     }
     
     const cart = await Cart.findOne({ userId: userId });
-
+    
     if(coupon){
       cart.totalCartPrice = cart.totalCartPrice - (cart.totalCartPrice * coupon.discount / 100)
 

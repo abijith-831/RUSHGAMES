@@ -11,13 +11,7 @@
         box-sizing: border-box;
         font-family: "Poppins", sans-serif;
     }
-    /* body {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #4070f4;
-    } */
+
     :where(.container-2, form, .input-field, header) {
         display: flex;
         flex-direction: column;
@@ -115,20 +109,20 @@
                         </li>
                     </ul>
                     <br>
-                    <% if (errmsg) { %>
-                        <div class="alert alert-danger text-center" role="alert" style="color: red; background: white;">
-                            <%= errmsg %>
-                        </div>
-                     <%   }     %>
+                    
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="signin-2" role="tabpanel" aria-labelledby="signin-tab-2">
-                            
+                            <% if (errmsg) { %> 
+                                <div class="alert alert-danger text-center" role="alert" style="color: red; background: white;">
+                                    <%= errmsg %>
+                                </div>
+                            <% } %>
                                 
                                 <div class="container-2">
                                     
-                                    <h4>Enter OTP Code</h4>
+                                    <h4>Enter OTP Code For Changing Password</h4>
                                     <p id="errorMessage"></p>
-                                    <form action="/verifyotp" method="POST">
+                                    <form action="/verifyForgotOTP" method="POST">
 
                                         <div class="input-field">
                                             <input name="digit1"  type="text" pattern="\d" required  style="border: 2px solid black;" />
@@ -168,6 +162,7 @@
     }
 </script>
 
+
 <script>
 // ********** RESEND OTP ONLY VISIBLE AFTER 1 MINUTE **********
 const countdownElement = document.getElementById('countdown');
@@ -202,7 +197,7 @@ const countdownInterval = setInterval(updateCountdown, 1000);
                 nextInput = input.nextElementSibling,
                 prevInput = input.previousElementSibling;
 
-            // Allow only numeric characters
+
             currentInput.value = currentInput.value.replace(/\D/g, '');
 
             if (nextInput && nextInput.hasAttribute("disabled") && currentInput.value !== "") {
@@ -221,7 +216,7 @@ const countdownInterval = setInterval(updateCountdown, 1000);
         });
 
         input.addEventListener("keydown", (e) => {
-            // Allow only numeric characters and the backspace key
+    
             if (!/\d/.test(e.key) && e.key !== 'Backspace') {
                 e.preventDefault();
             }

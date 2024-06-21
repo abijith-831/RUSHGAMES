@@ -187,73 +187,63 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-            <div class="col-md-7 ml-5">
+            <div class="col-md-7">
                 <div class="card mb-3">
-                    
                     <div class="card-body">
-                       
-                         
-                        
-                        
+                        <!-- Address list -->
                         <div class="row">
-                            <div class="col-sm-12">                               
-                                       
-                                        <% addresses.forEach((item ) => { %> 
-                                                
-                                            <% item.addresses.forEach( (address , index) =>  { %>
-                                                <div class="card mb-2">
-                                                    <div class="card-body">
+                            <div class="col-sm-12">
+                                <% addresses.forEach((item) => { %>
+                                    <% item.addresses.forEach((address, index) => { %>
+                                        <div class="card mb-2">
+                                            <div class="card-body">
                                                 <h4>Address <%= index + 1 %></h4>
-                                                <p><%=address.name %> , <%=address.city %> , <%=address.state %></p>
-                                                <div class="text-right">
-                                                    
-                                                    <a id="showAddressBtn" class="btn change-btn" style="background-color: lightskyblue" data-toggle="modal" data-target="#showAddressModal"
-                                                    data-name="<%= address.name %>"
-                                                    data-mobile="<%= address.mobile %>"
-                                                    data-pincode="<%= address.pincode %>"
-                                                    data-district="<%= address.district %>"
-                                                    data-state="<%= address.state %>"
-                                                    data-city="<%= address.city %>"
-                                                    data-area="<%= address.area %>"
-                                                    data-house-no="<%= address.houseNo %>">View</a>
-                                                    
-                                                  
-                                                    <a href="/editAddress?addressId=<%=  address._id %>" class="btn change-btn edit-address-btn"  >Edit</a>
-    
-                                                    <a data-id="<%= address._id%>" class="btn change-btn delete-address-btn" style="background-color: rgb(240, 104, 104)" data-toggle="modal" data-target="#">Delete</a>
+                                                <p><%= address.name %> , <%= address.city %> , <%= address.state %></p>
+                                                <div class="row align-items-center">
+                                                    <div class="col-4">
+                                                        <a id="showAddressBtn" class="btn change-btn btn-block mb-2" style="background-color: lightskyblue" data-toggle="modal" data-target="#showAddressModal"
+                                                            data-name="<%= address.name %>"
+                                                            data-mobile="<%= address.mobile %>"
+                                                            data-pincode="<%= address.pincode %>"
+                                                            data-district="<%= address.district %>"
+                                                            data-state="<%= address.state %>"
+                                                            data-city="<%= address.city %>"
+                                                            data-area="<%= address.area %>"
+                                                            data-house-no="<%= address.houseNo %>">View</a>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <a href="/editAddress?addressId=<%= address._id %>" class="btn change-btn btn-block mb-2 edit-address-btn">Edit</a>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <a data-id="<%= address._id %>" class="btn change-btn btn-block mb-2 delete-address-btn" style="background-color: rgb(240, 104, 104)" data-toggle="modal" data-target="#">Delete</a>
+                                                    </div>
                                                 </div>
-                                              </div>
                                             </div>
-                                            <%  }) %>
-                                            
-                                        <%  })  %>
-                                            
-                                         
-                                    
+                                        </div>
+                                    <% }) %>
+                                <% }) %>
                             </div>
-                           
                         </div>
-                        <% if (count <=2) { %> 
-                            <div style="color: black;  " class="col-sm-12 d-flex justify-content-center">
-                                
-                                <a id="addAddressBtn" class="btn change-btn " data-toggle="modal" data-target="#addAddressModal">+ Add Address</a>
+                        <% if (count <= 2) { %>
+                            <div class="row">
+                                <div class="col-sm-12 d-flex justify-content-center">
+                                    <a id="addAddressBtn" class="btn change-btn" data-toggle="modal" data-target="#addAddressModal">+ Add Address</a>
+                                </div>
                             </div>
-                        <%  }else{ %>
-                            <p class="text-center " style="font-weight: bold;">You can Only Add 3 Addresses</p>
-                        <%   }  %>
-                            
-
-                        </div>
+                        <% } else { %>
+                            <p class="text-center" style="font-weight: bold;">You can Only Add 3 Addresses</p>
+                        <% } %>
                     </div>
                 </div>
+            </div>
+            
 
             </div>
         </div>
 
     </div>
-</div>
+
 
 
 

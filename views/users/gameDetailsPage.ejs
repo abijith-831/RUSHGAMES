@@ -93,9 +93,17 @@
 
                                     
 
-                                    <div class="product-price">
-                                        <%= game.finalPrice %> Rs
-                                    </div><!-- End .product-price -->
+                                    <div class="product-price"> 
+                                        <% if (game.gameOffer) { %>
+                                            <span style="text-decoration: line-through; margin-right: 20px; color: grey;"><%= game.price %> -Rs</span>
+                                            <span style="color: rgb(0, 0, 0); font-weight: bold;"><%= Math.round(game.price - (game.price * game.gameOffer / 100)) %> Rs</span>
+                                        <% } else if (game.categoryOffer) { %>
+                                            <span style="text-decoration: line-through; margin-right: 20px; color: grey;"><%= game.price %> -Rs</span>
+                                            <span style="color: rgb(5, 5, 5); font-weight: bold;"><%= Math.round(game.price - (game.price * game.categoryOffer / 100)) %> Rs</span>
+                                        <% } else { %>
+                                            <%= game.price %> -Rs
+                                        <% } %>
+                                    </div>
 
                                     <div class="product-content">
                                         <p>Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue. Morbi purus libero.</p>
@@ -118,9 +126,9 @@
                                         <%= console.log(game) %>
                                     </div>
                                     <% if (game.stock < 10) { %>
-                                        <label for="size" style="font-weight: bold; color: red;">STOCKS LEFT - <%= game.stock %></label>
+                                        <label for="size" style="font-weight: bold; color: red;">STOCKS LEFT  <%= game.stock %></label>
                                     <% }else { %>
-                                        <label for="size" style="font-weight: bold; color: rgb(8, 197, 8);">STOCKS AVAILABLE - <%= game.stock %></label>
+                                        <label for="size" style="font-weight: bold; color: rgb(8, 197, 8);">STOCKS AVAILABLE  <%= game.stock %></label>
                                     <% } %>
                                     
                                     <div class="product-details-action">

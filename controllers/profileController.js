@@ -210,50 +210,75 @@ const deleteAddress = async (req,res)=>{
 }
  
 
+
 // ********** FOR RENDERING ORDER HISTORY PAGE **********
-const loadOrderHistory = async (req,res)=>{
+const loadOrderHistory = async (req, res) => {
   try {
     const userId = req.session.user_id;
-    const userData = await User.findOne({_id:userId})
-    
-    const page = parseInt(req.query.page)||1
-    const limit = 4 ; 
-    const skip = (page-1)*limit;
-    
+    const userData = await User.findOne({ _id: userId });
 
-    let orders = await Order.find({userId : userId}).populate('games.gameId');
+    const page = parseInt(req.query.page) || 1;
+    const limit = 4;
+    const skip = (page - 1) * limit;
+
+    let orders = await Order.find({ userId: userId }).populate('games.gameId');
     let totalAmountSums = [];
-    orders.forEach(item=>{
-      const totalAmountSum   = item.games
+    orders.forEach(item => {
+      const totalAmountSum = item.games
         .filter(game => game.Status !== "Cancelled")
-        .reduce((acc,curr)=>acc+curr.totalAmount,0)
-        totalAmountSums.push(totalAmountSum)
-    })
+        .reduce((acc, curr) => acc + curr.totalAmount, 0);
+      totalAmountSums.push(totalAmountSum);
+    });
 
-    totalAmountSums = totalAmountSums.reverse()
-    orders = orders.reverse()
-    
-    const paginatedOrders = orders.slice(skip , skip + limit)
+    totalAmountSums = totalAmountSums.reverse();
+    orders = orders.reverse();
+
+    const paginatedOrders = orders.slice(skip, skip + limit);
     const orderLength = orders.length;
-    const totalPages = Math.ceil(orderLength/limit)
+    const totalPages = Math.ceil(orderLength / limit);
 
-    let prevPage = page - 1 ;
-    let nextPage = page + 1 ; 
-    if(prevPage < 1) prevPage = 1 ; 
-    if(nextPage > totalPages) nextPage = totalPages
+    let prevPage = page - 1;
+    let nextPage = page + 1;
+    if (prevPage < 1) prevPage = 1;
+    if (nextPage > totalPages) nextPage = totalPages;
 
-    res.render('orderHistory',{
-      user:userData ,
-      order:paginatedOrders ,
+   
+    let startPage, endPage;
+    if (totalPages <= 4) {
+      startPage = 1;
+      endPage = totalPages;
+    } else {
+      if (page <= 2) {
+        startPage = 1;
+        endPage = 4;
+      } else if (page >= totalPages - 1) {
+        startPage = totalPages - 3;
+        endPage = totalPages;
+      } else {
+        startPage = page - 1;
+        endPage = page + 2;
+      }
+    }
+
+    res.render('orderHistory', {
+      user: userData,
+      order: paginatedOrders,
       totalAmountSums,
       totalPages,
       orderLength,
-      prevPage,nextPage,limit,page
-    }) 
+      prevPage,
+      nextPage,
+      limit,
+      page,
+      startPage,
+      endPage 
+    });
   } catch (error) {
     console.log(error);
+    res.status(500).send('Internal Server Error');
   }
 }
+
 
 
 // ********** FOR IMPLEMENT THE RAZORPAY REPAYMENT **********

@@ -46,9 +46,11 @@
         .card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            background-color: #ded7e4;
         }
         .card-body {
             padding: 1.5rem;
+            
         }
         .badge {
             background-color: #007bff;
@@ -75,7 +77,7 @@
         }
         .swiper-container {
       width: 80%;
-      height: 730px;
+      height: 650px;
       margin: auto;
     }
     .swiper-slide img {
@@ -91,6 +93,62 @@
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
+        .swiper-container {
+    width: 100%;
+    height: auto;
+    position: relative;
+    overflow: hidden;
+    z-index: 1; /* Ensure the container is above other elements */
+}
+
+
+
+.category-box {
+    padding: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: #ded7e4;
+    transition: transform 0.2s ease;
+    text-align: center;
+}
+
+.category-box:hover {
+    transform: translateY(-10px);
+}
+
+.category-content {
+    padding: 15px;
+}
+
+.category-box p {
+    margin: 5px 0;
+}
+
+     /* Swiper Slide Animation */
+.game-box {
+    padding: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: #ded7e4;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-align: center;
+}
+
+.game-box:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.game-image {
+    width: 150px;
+    height: 150px;
+    max-width: 150px;
+    max-height: 150px;
+    margin-left: 35px;
+}
+   
 </style>
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
@@ -200,18 +258,17 @@
                                 <h1 class="font-weight-bold">TOP SELLING CATEGORIES</h1><br><br><br>
                             </div>
                             <div class="row" style="margin-left: 100px;">
-                                    <% categories.forEach ((item , index)=>{ %>
-                                        <div class="col-lg-2">
-                                            <p class="font-weight-bold">TOP <%= index +1 %></p>
-                                            
-                                            <br>
-                                            <p class="font-weight-bold" >SOLD : <%= item.categorySalesCount?item.categorySalesCount:0 %></p>
-                                            
+                                <% categories.forEach((item, index) => { %>
+                                    <div class="col-lg-2 category-box">
+                                        <div class="category-content">
+                                            <p class="font-weight-bold" style="font-size: large;">TOP <%= index + 1 %></p>
+                                            <p class="font-weight-bold">SOLD: <%= item.categorySalesCount ? item.categorySalesCount : 0 %></p>
                                             <p class="font-weight-bold"><%= item.name %></p>
                                         </div>
-                                    <% })  %>                          
+                                    </div>
+                                <% }) %>
                             </div><br><br>
-                           
+                            
 
 
                             <!-- TOP SELLING GAMES---------------------------------->
@@ -220,26 +277,20 @@
                             </div>
                             <div class="swiper-container">
                                 <div class="swiper-wrapper">
-                                    <% games.forEach ((item , index)=>{ %>
-                                        <div class="swiper-slide">
-                                            <p class="font-weight-bold">TOP <%= index +1 %></p>
-                                            <img style="width: 150px; height: 150px; max-width: 150px; max-height: 150p;"  src="<%= item.mainImage[0].path %>" alt="Image 1" >
+                                    <% games.forEach((item, index) => { %>
+                                        <div class="swiper-slide game-box">
+                                            <p class="font-weight-bold" style="font-size: large;">TOP <%= index + 1 %></p>
+                                            <img class="game-image" src="<%= item.mainImage[0].path %>" alt="Image 1">
                                             <br>
-                                            <p class="font-weight-bold" >SOLD : <%= item.gameSalesCount?item.gameSalesCount:0 %> nos</p>
-                                            
+                                            <p class="font-weight-bold">SOLD: <%= item.gameSalesCount ? item.gameSalesCount : 0 %> nos</p>
                                             <p class="font-weight-bold"><%= item.name %></p>
                                         </div>
-                                    <% })  %>
+                                    <% }) %>
                                 </div>
                                 <div class="swiper-button-next"></div>
                                 <div class="swiper-button-prev"></div>
                             </div>
-
-
-
-
-
-                              <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+                            
                               
                         </div>
 
@@ -256,7 +307,7 @@
    
 
 
-
+<!-- chart -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const sortbySelect = document.getElementById('sortby');
@@ -276,6 +327,22 @@
                 if (window.chartInstance) {
                     window.chartInstance.destroy();
                 }
+
+                const barColors = data.datasets[0].data.map((_, index) => {
+                    const colors = [
+                        "rgba(255, 99, 132, 0.6)", 
+                        "rgba(54, 162, 235, 0.6)", 
+                        "rgba(75, 192, 192, 0.6)",
+                        "rgba(153, 102, 255, 0.6)", 
+                        "rgba(255, 159, 64, 0.6)",
+                        "rgba(255, 205, 86, 0.6)",
+                        "rgba(201, 203, 207, 0.6)" 
+                    ];
+                    return colors[index % colors.length]; 
+                });
+
+                data.datasets[0].backgroundColor = barColors;
+                
                 window.chartInstance = new Chart(ctx, {
                     type: 'bar',
                     data: data,

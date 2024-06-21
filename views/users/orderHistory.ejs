@@ -157,10 +157,7 @@
 </style>
 
 
-<div
-  class="page-header text-center"
-  style="background-image: url('assets/images/page-header-bg.png'); width: 100%"
->
+<div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.png'); width: 100%">
   <div class="container">
     <h1 class="page-title text-white">Order History</h1>
   </div>
@@ -170,7 +167,7 @@
 <div class="container-fluid">
   <div class="main-body">
     <div class="row gutters-sm" style="margin-top: 50px">
-      <div class="col-md-3 mb-3">
+      <div class="col-md-3 ">
         <div class="cardborder">
           <div class="card-body">
             <div class="d-flex flex-column align-items-center text-center">
@@ -215,118 +212,97 @@
       </div>
 
 
-      <div class="col-md-8 ml-5">
-        <div class="row d-flex justify-content-center align-items-center">
-            <div class="col-lg-12 col-xl-12">
-                <div class="card" style="border-radius: 10px">
-                    <div class="card-body p-4">
-                        <% if (order.length === 0) { %> 
-                            <h4 class="text-center">You haven't Ordered Anything yet!</h4>
+      <div class="col-md-8 ">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-12">
+            <% if (order.length === 0) { %> 
+              <h4 class="text-center">You haven't ordered anything yet!</h4>
+            <% } else { %>
+              <% order.forEach((orderItem, index) => { %>
+                <div class="card shadow-sm mb-4">
+                  <div class="card-body">
+                    <% orderItem.games.forEach((game, index) => { %>
+                      <div class="row mb-3">
+                        <div class="col-4 col-md-3">
+                          <img src="<%= game.gameId.mainImage[0].path %>" class="img-fluid" style="max-height: 75px; width: auto;" alt="<%= game.gameId.name %>" />
+                        </div>
+                        <div class="col-8 col-md-3">
+                          <% if (game.Status === 'Cancelled') { %>
+                            <p class="text-muted mb-0" style="text-decoration: line-through;"><%= game.gameId.name %></p>
+                          <% } else { %>
+                            <p class="text-muted mb-0"><%= game.gameId.name %></p>
+                          <% } %>
+                        </div>
+                        <div class="col-4 col-md-2">
+                          <% if (game.Status === 'Cancelled') { %>
+                            <p class="text-muted mb-0 small" style="text-decoration: line-through;">Qty: <%= game.quantity %></p>
+                          <% } else { %>
+                            <p class="text-muted mb-0 small">Qty: <%= game.quantity %></p>
+                          <% } %>
+                        </div>
+                        <div class="col-8 col-md-2">
+                          <% if (game.Status === 'Cancelled') { %>
+                            <p class="text-muted mb-0 small" style="text-decoration: line-through;"><%= Math.floor(game.totalAmount) %></p>
+                          <% } else { %>
+                            <p class="text-muted mb-0 small"><%= Math.floor(game.totalAmount) %></p>
+                          <% } %>
+                        </div>
+                        <div class="col-12 col-md-2">
+                          <% if (game.Status === 'Cancelled') { %>
+                            <p class="text-muted mb-0" style="font-weight: bold; text-decoration: line-through;"><%= orderItem.paymentMethod %></p>
+                          <% } else { %>
+                            <p class="text-muted mb-0" style="font-weight: bold;"><%= orderItem.paymentMethod %></p>
+                          <% } %>
+                        </div>
+                      </div>
+                    <% }) %>
+                    
+                    <div class="row mt-3">
+                      <div class="col-6 col-md-3">
+                        <p class="text-muted mb-0" style="font-weight: bold;">Total Price: <%= Math.floor(orderItem.totalCartPrice) %></p>
+                      </div>
+                      <div class="col-6 col-md-3">
+                        <p class="text-muted mb-0" style="font-weight: bold;">Ordered Date: <%= new Date(orderItem.orderDate).toLocaleString('en-IN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true }) %></p>
+                      </div>
+                      <div class="col-6 col-md-3 mt-3 mt-md-0">
+                        <button class="btn btn-primary btn-block mb-2" onclick="showOrderDetailsPage('<%= orderItem.orderId %>')">Order Details</button>
+                        <% if(orderItem.paymentStatus === 'Failed') { %>
+                          <button class="btn btn-info btn-block" onclick="initiateRepayment('<%= orderItem._id %>', '<%= orderItem.totalCartPrice %>')">Re-Payment</button>
                         <% } else { %>
-                            <% order.forEach((orderItem ,  index) => { %>
-                                <div class="card shadow-0 border mb-4">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <% orderItem.games.forEach((game, index) => { %>
-                                              
-                                                <div class="col-md-3 mt-1">
-                                                    <img src="<%= game.gameId.mainImage[0].path %>" class=" " style="height: 75px; width: 75px" alt="<%= game.gameId.name %>" />
-                                                </div>
-                                                <% if (game.Status==='Cancelled') { %>
-                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                                        <p class="text-muted mb-0" style="text-decoration: line-through;"><%= game.gameId.name %></p>
-                                                    </div>
-                                                <%  }else { %>
-                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                                      <p class="text-muted mb-0"><%= game.gameId.name %></p>
-                                                    </div>
-                                                <%   }  %> 
-                                                <% if (game.Status==='Cancelled') { %> 
-                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                                        <p class="text-muted mb-0 small" style="text-decoration: line-through;">Qty: <%= game.quantity %></p>
-                                                    </div>
-                                                <%  }else { %> 
-                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                                      <p class="text-muted mb-0 small" >Qty: <%= game.quantity %></p>
-                                                    </div>
-                                                <%   }  %>    
-                                                <% if (game.Status==='Cancelled') { %> 
-                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                                        <p class="text-muted mb-0 small" style="text-decoration: line-through;"><%=Math.floor(game.totalAmount) %></p>
-                                                    </div>
-                                                <%  }else { %> 
-                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                                      <p class="text-muted mb-0 small"><%=Math.floor(game.totalAmount) %></p>
-                                                    </div>
-                                                <%   }  %>  
-                                                <% if (game.Status==='Cancelled') { %>    
-                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                                        <p class="text-muted mb-0" style="font-weight: bold; text-decoration: line-through;" ><%= orderItem.paymentMethod %></p>
-                                                    </div>
-                                                <%  }else { %> 
-                                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                                      <p class="text-muted mb-0" style="font-weight: bold;"><%= orderItem.paymentMethod %></p>
-                                                    </div>
-                                                <%   }  %> 
-                                            <% }) %>
-                                        </div> 
-                                        <div class="row mt-3" style="font-weight: bold;">
-                                              <div class="col-md-3">
-                                                <p class="text-muted mb-0" style="font-weight: bold;">Total Price: <%=Math.floor(orderItem.totalCartPrice) %></p>
-                                              </div>
-                                          
-                                          
-                                            
-                                            <div class="col-md-3">
-                                              
-                                                <p class="text-muted mb-0" style="font-weight: bold;">
-                                                  Ordered Date: <%= new Date(orderItem.orderDate).toLocaleString('en-IN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true }) %></p>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <button class="btn btn-primary" onclick="showOrderDetailsPage('<%= orderItem.orderId%>')">Order Details</button>
-                                            </div>
-                                            
-                                            <% if(orderItem.paymentStatus =='Failed') { %>
-                                              <div class="col-md-3">
-                                                <button class="btn btn-info" onclick="initiateRepayment('<%= orderItem._id %>', '<%= orderItem.totalCartPrice %>')">Re-Payment</button>
-                                              </div>
-                                            
-                                            <% }else{ %>
-
-                                              <p style="font-weight: bold; color: green;">Payment    Success</p>
-                                            <% } %>
-                                            
-                                                
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                            <% }) %>
+                          <p class="text-success mb-0">Payment Success</p>
                         <% } %>
-                        <nav aria-label="Page navigation">
-                          <ul class="pagination justify-content-center">
-                            <li class="page-item <%= prevPage === 1? 'disabled' : '' %>">
-                            <a class="page-link page-link-prev" href="?page=<%= prevPage %>" aria-label="Previous">
-                              <span aria-hidden="true"><i class="icon-long-arrow-left"></i></span>Prev
-                            </a>
-                            </li>
-                            <% for(let i = 1; i <= totalPages; i++) { %>
-                            <li class="page-item <%= page === i? 'active' : '' %>">
-                              <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                            </li>
-                            <% } %>
-                            <li class="page-item <%= nextPage > totalPages? 'disabled' : '' %>">
-                            <a class="page-link page-link-next" href="?page=<%= nextPage %>" aria-label="Next">
-                              Next <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span>
-                            </a>
-                            </li>
-                          </ul>
-                          </nav>
+                      </div>
                     </div>
+                  </div>
                 </div>
-            </div>
+              <% }) %>
+            <% } %>
+            
+            <!-- Pagination -->
+            <nav aria-label="Page navigation">
+              <ul class="pagination justify-content-center">
+                <% if (totalPages > 1) { %>
+                  <li class="page-item <%= page === 1 ? 'disabled' : '' %>">
+                    <a class="page-link page-link-prev" href="?page=<%= prevPage %>" aria-label="Previous">
+                      <span aria-hidden="true"><i class="icon-long-arrow-left"></i></span> Prev
+                    </a>
+                  </li>
+                  <% for (let i = startPage; i <= endPage; i++) { %>
+                    <li class="page-item <%= page === i ? 'active' : '' %>">
+                      <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                    </li>
+                  <% } %>
+                  <li class="page-item <%= nextPage > totalPages ? 'disabled' : '' %>">
+                    <a class="page-link page-link-next" href="?page=<%= nextPage %>" aria-label="Next">
+                      Next <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span>
+                    </a>
+                  </li>
+                <% } %>
+              </ul>
+            </nav>
+          </div>
         </div>
-    </div>
+      </div>
     
       
     </div>

@@ -166,35 +166,41 @@ input[type="radio"]:checked + label {
             			
             			<form action="/placeOrder" method = 'POST' id="orderForm" >
 		                	<div class="row">
-                                <aside class="col-lg-8 content-container ">
+                                <aside class="col-lg-9 content-container ">
                                     <div class="address-selection-box" required>
 										<h3 style="text-align: center;">Choose Your Address</h3>
 									
 										<% addresses.forEach((item) => { %>
-											<% item.addresses.forEach((address, index) => { %>
-												<div class="address-option">
-													<input type="radio" name="address" id="address<%= index + 1 %>" value="<%= address._id %>" required>
-													<label for="address<%= index + 1 %>">
-														<h4> Address <%= index + 1 %> </h4>
-														<p><%= address.name %>, <%= address.city %>, <%= address.state %></p>
-														
-
-													</label>
-													<div class="button-container">
-														<a href="/editAddress?addressId=<%=  address._id %>" class="btn change-btn" >Edit</a>
-														<a id="showAddressBtn" class="btn change-btn" style="background-color: lightskyblue" data-toggle="modal" data-target="#showAddressModal"
-														   data-name="<%= address.name %>"
-														   data-mobile="<%= address.mobile %>"
-														   data-pincode="<%= address.pincode %>"
-														   data-district="<%= address.district %>"
-														   data-state="<%= address.state %>"
-														   data-city="<%= address.city %>"
-														   data-area="<%= address.area %>"
-														   data-house-no="<%= address.houseNo %>">View</a>
+											<% item.addresses.forEach((address, index) => { %>												
+													<div class="row align-items-center">
+														<div class="col-md-6 col-12">
+															<input type="radio" name="address" id="address<%= index + 1 %>" value="<%= address._id %>" required>
+															<label for="address<%= index + 1 %>">
+																<h4> Address <%= index + 1 %> </h4>
+																<p><%= address.name %>, <%= address.city %>, <%= address.state %></p>
+															</label>
+														</div>
+														<div class="col-md-3 col-6">
+															<div class="button-container">
+																<a href="/editAddress?addressId=<%=  address._id %>" class="btn change-btn" >Edit</a>
+																
+															</div>
+														</div>
+														<div class="col-md-3 col-6">
+															<div class="button-container">
+																
+																<a id="showAddressBtn" class="btn change-btn" style="background-color: lightskyblue" data-toggle="modal" data-target="#showAddressModal"
+																   data-name="<%= address.name %>"
+																   data-mobile="<%= address.mobile %>"
+																   data-pincode="<%= address.pincode %>"
+																   data-district="<%= address.district %>"
+																   data-state="<%= address.state %>"
+																   data-city="<%= address.city %>"
+																   data-area="<%= address.area %>"
+																   data-house-no="<%= address.houseNo %>">View</a>
+															</div>
+														</div>
 													</div>
-													
-												</div>
-												
 											<% }) %>
 										<% }) %>
 									</div>
@@ -231,7 +237,7 @@ input[type="radio"]:checked + label {
                                 </aside>
                                 
 		 
-		                		<aside class="col-lg-3  ml-5">
+		                		<aside class="col-lg-3 ">
 		                			<div class="summary content-container">
 		                				<h3 class="summary-title">Your Order</h3>
 

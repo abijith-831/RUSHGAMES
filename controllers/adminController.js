@@ -94,7 +94,6 @@ const userStatus = async (req,res)=>{
 
 
 // ********** FOR RENDERING SALES REPORT PAGE **********
-
 const loadSalesReport = async (req, res) => {
     try {
 
@@ -232,13 +231,11 @@ const filterSalesReport = async (req,res)=>{
             },
         };
  
-        
         let sortOption = {};
         if (sort) {
             sortOption = {[sort]: 1}; 
         }
-       
-       
+        
         const orders = await Order.find(query).sort(sortOption).populate('games.gameId').populate('userId')
         
         let sumPrice = 0;

@@ -229,15 +229,15 @@ p {
               </div>
             </div>
           </div>
-          <div class="col-md-8 ml-5">
+          <div class="col-md-8">
             <div class="card mb-3">
               <div class="card-body">
                 <div class="row">
                   <div class="col-sm-12">                               
                     <div class="wrapper">
-                      <div class="card px-4">
+                      <div class="card ">
                         <br>
-                        <div class="debit-card mb-3">
+                        <div class="debit-card">
                           <div class="d-flex flex-column h-100">
                             <label class="d-block">
                               <div class="d-flex position-relative">
@@ -266,12 +266,20 @@ p {
                           </div>
                         </div>
                         <br>
+
                         <% if (wallet) { %>
-                          <div class="button-group">
-                            <a class="btn change-btn" style="background-color: rgb(102, 212, 111)" data-toggle="modal" data-target="#addMoneyModal">+ ADD MONEY</a>
-                            <a class="btn change-btn edit-address-btn" style="background-color: rgb(240, 104, 104)" data-toggle="modal" data-target="#withdrawMoneyModal">WITHDRAW</a>
-                            <a class="btn change-btn delete-address-btn"  data-toggle="modal" data-target="#transactionModal">TRANSACTIONS</a>
+                          <div class="row align-items-center">
+                            <div class="col-md-4 col-6 mb-3">
+                              <a class="btn change-btn" style="background-color: rgb(102, 212, 111)" data-toggle="modal" data-target="#addMoneyModal">+ ADD MONEY</a>
+                            </div>
+                            <div class="col-md-4 col-6 mb-3">
+                              <a class="btn change-btn edit-address-btn" style="background-color: rgb(240, 104, 104)" data-toggle="modal" data-target="#withdrawMoneyModal">WITHDRAW</a>
+                            </div>
+                            <div class="col-md-4  col-12 d-flex justify-content-center  mb-3">
+                              <a class="btn change-btn delete-address-btn"  data-toggle="modal" data-target="#transactionModal">TRANSACTIONS</a>
+                            </div>
                           </div>
+                       
                         <%  }else{ %>
                           <div class="button-group">
                             <a id="addMoneyBtn" class="btn change-btn" style="background-color: rgb(102, 212, 111)" data-toggle="modal" data-target="#addMoneyModal">+ ADD MONEY</a>

@@ -20,7 +20,10 @@ const loadGamesList = async (req, res) => {
     const page = parseInt(req.query.page)||1;
     const limit = 5;
     const skip = (page-1)*limit;
-    const games = await Games.find().skip(skip).limit(limit)
+
+    let games = await Games.find()
+    games = games.reverse().slice(skip , skip+limit)
+
     for (let game of games) {
       const category = await Category.findById(game.category);
       if (category) {
@@ -155,6 +158,7 @@ const loadEditGames = async (req,res)=>{
 }
 
 
+
 // ********** FOR MODIFYING GAME DETAILS **********
 const editGames = async (req, res) => {
   try {
@@ -176,15 +180,17 @@ const editGames = async (req, res) => {
               return res.redirect(`/admin/editGames?gameId=${gameId}`);
           }
 
-
           const gameNames = games.map(x => x.name).filter(name => name !== currentGame.name);
           if (gameNames.includes(newName)) {
               req.flash('errmsg', "Game Already Exists...");
               return res.redirect(`/admin/editGames?gameId=${gameId}`);
           }
 
-
+          // Handling main image removal
           let mainImage = currentGame.mainImage;
+          if (req.body.removeMainImage === 'true') {
+              mainImage = null;
+          }
           if (req.files && req.files['mainImage'] && req.files['mainImage'].length > 0) {
               const mainImageFile = req.files['mainImage'][0];
               mainImage = {
@@ -193,14 +199,19 @@ const editGames = async (req, res) => {
               };
           }
 
-
+          // Handling screenshot images removal and update
           let screenshotImages = currentGame.screenshotImages;
+          if (req.body.removeScreenshotImages) {
+              const indicesToRemove = Array.isArray(req.body.removeScreenshotImages) ? req.body.removeScreenshotImages.map(Number) : [Number(req.body.removeScreenshotImages)];
+              screenshotImages = screenshotImages.filter((_, index) => !indicesToRemove.includes(index));
+          }
           if (req.files && req.files['screenshotImages'] && req.files['screenshotImages'].length > 0) {
               const screenshotFiles = req.files['screenshotImages'];
-              screenshotImages = screenshotFiles.map(file => ({
+              const newScreenshots = screenshotFiles.map(file => ({
                   filename: file.filename,
                   path: '/uploads/' + file.filename
               }));
+              screenshotImages = [...screenshotImages, ...newScreenshots];
           }
 
           await Games.findByIdAndUpdate(gameId, {
@@ -223,6 +234,7 @@ const editGames = async (req, res) => {
       res.redirect(`/admin/editGames?gameId=${req.body.gameId}`);
   }
 };
+
 
 
 
@@ -254,6 +266,8 @@ const gameStatus = async (req,res)=>{
 
 const loadComingSoon = async (req,res)=>{
   try {
+    
+
     const categories = await Category.find()
     const comings = await ComingSoon.find()
     for (let game of comings) {
