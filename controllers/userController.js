@@ -650,7 +650,7 @@ const loadComingSoon = async (req ,res)=>{
   }
 }
 
-
+ 
 const loadComingSoonDetails = async (req,res)=>{
   try {
 
