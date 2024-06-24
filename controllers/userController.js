@@ -27,15 +27,15 @@ const securePassword = async (password) => {
 const loadHome = async (req, res) => {
   try {
     let user = req.session.user_id;
-    const categories = await Category.find();
-
-    
+    const categories = await Category.find();  
 
  
     if(user){
       const messageData = await Message.findOne({ userId: user }, { messages: 1 });
-
-      const unreadMessage = messageData.messages.filter(item => item.is_readed === false).length
+      let unreadMessage = 0
+      if(messageData){
+        let  unreadMessage = messageData.messages.filter(item => item.is_readed === false).length
+      }
 
       const userData = await User.findById(user);
       if(userData.is_blocked){
@@ -90,8 +90,6 @@ const registerUser = async (req, res) => {
         is_blocked: false,
       });
 
-     
-
       await newUser.save();
 
       sendOTPVerifymail(newUser, res);
@@ -107,42 +105,42 @@ const registerUser = async (req, res) => {
 const verifyLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-
+    
     const userData = await User.findOne({ email: email });
     if (userData) {
+      
       const passwordMatch = await bcrypt.compare(password, userData.password);
-
       if (passwordMatch) {
-        if (userData.is_verified) {
-          if (!userData.is_blocked) {
-            req.session.user_id = userData._id;
-                
-            res.redirect("/home?verified = true");
+        
+        if (!userData.is_blocked) {
+          
+          if (!userData.is_verified) {
+            sendOTPVerifymail(userData, res);
           } else {
-            req.flash(
-              "errmsg",
-              "You are Blocked By the Admin . Please Contact the Admin"
-            );
-            res.redirect("/login");
+
+            req.session.user_id = userData._id;
+            res.redirect("/home?verified=true");
           }
         } else {
-          sendOTPVerifymail(userData, res);
+
+          req.flash("errmsg", "You are Blocked By the Admin. Please Contact the Admin");
+          res.redirect("/login");
         }
       } else {
-        // console.log("wrong");
+;
         req.flash("errmsg", "Email or Password is Incorrect...!!!");
         res.redirect("/login");
       }
-      
+    } else {
+
+      req.flash("errmsg", "Email or Password is Incorrect...!!!");
+      res.redirect("/login");
     }
-    req.flash("errmsg", "Email or Password is Incorrect...!!!");
-        res.redirect("/login");
   } catch (error) {
-    console.log(error);
-    
+    req.flash("errmsg", "An error occurred. Please try again later.");
+    res.redirect("/login");
   }
 };
-
 
 
 // ********** VERIFYING THE FORGOT PASSWORD EAMIL **********
@@ -403,8 +401,8 @@ const verifyOTP = async (req, res) => {
   try {
     const email = req.body.email;
     const otp = req.body.digit1 + req.body.digit2 + req.body.digit3 + req.body.digit4;
-      
-    const userVerification = await UserOTPVerification.findOne({email: email});
+      console.log('typed otp : '+otp);
+    const userVerification = await UserOTPVerification.findOne({email: email}).sort({createtAt : -1})
       
     if (!userVerification) {
       res.render("otpVerification", {
@@ -414,7 +412,9 @@ const verifyOTP = async (req, res) => {
     }
     const { otp: savedOTP } = userVerification;
     const otpMatch = await bcrypt.compare(otp, savedOTP);
+    
     if (otpMatch) {
+
       const userData = await User.findOne({ email: email });
 
       if (userData) {
@@ -424,7 +424,7 @@ const verifyOTP = async (req, res) => {
         );
       }
       const user = await User.findOne({ email: email });
-      await userVerification.deleteOne({ email: email });
+      await userVerification.deleteOne({ email: email })
 
       if (user.is_verified) {
         if (!user.is_blocked) {
@@ -613,6 +613,7 @@ const loadAllGames = async (req, res) => {
 };
 
 
+
  
 // ********** FOR RENDERING GAME DETAILS PAGE **********
 const loadGameDetails = async (req,res)=>{
@@ -650,7 +651,7 @@ const loadComingSoon = async (req ,res)=>{
   }
 }
 
- 
+  
 const loadComingSoonDetails = async (req,res)=>{
   try {
 
@@ -667,7 +668,7 @@ const loadComingSoonDetails = async (req,res)=>{
     
   }
 }
-
+ 
 
 module.exports = { 
 

@@ -8,7 +8,7 @@ const nocache = require('nocache')
 const path = require('path')
 const flash=require('express-flash')
 const session = require('express-session')
-// const googleAuth = require('./googleAuth')
+const googleAuth = require('./googleAuth')
 
 
 app.use(session({
@@ -46,7 +46,8 @@ app.use('/',userRoute)
 const adminRoute = require('./Routes/adminRoute')
 app.use('/admin',adminRoute)
 
-// app.use('/',googleAuth)
+app.use('/',googleAuth)
+
 
 // connecting database
 mongoose.connect(process.env.MONGODB_URL)
