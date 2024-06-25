@@ -117,24 +117,22 @@ const verifyLogin = async (req, res) => {
           
           if (!userData.is_verified) {
             sendOTPVerifymail(userData, res);
+            return res.json({ success: false, error: "Please verify your email." });
           } else {
 
             req.session.user_id = userData._id;
-            res.redirect("/home?verified=true");
+            return res.json({ success: true, message: "Login successful!" });
           }
         } else {
 
-          req.flash("errmsg", "You are Blocked By the Admin. Please Contact the Admin");
-          res.redirect("/login");
+          return res.json({ success: false, error: "You are blocked by the admin. Please contact the admin." });
         }
       } else {
-        req.flash("errmsg", "Email or Password is Incorrect...!!!");
-        res.redirect("/login");
+        return res.json({ success: false, error: "Email or password is incorrect." });
       }
     } else {
 
-      req.flash("errmsg", "Email or Password is Incorrect...!!!");
-      res.redirect("/login");
+      return res.json({ success: false, error: "Email or password is incorrect." });
     }
   } catch (error) {
     req.flash("errmsg", "An error occurred. Please try again later.");

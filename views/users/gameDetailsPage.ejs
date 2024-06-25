@@ -101,7 +101,7 @@
                                             <span style="text-decoration: line-through; margin-right: 20px; color: grey;"><%= game.price %> -Rs</span>
                                             <span style="color: rgb(5, 5, 5); font-weight: bold;"><%= Math.round(game.price - (game.price * game.categoryOffer / 100)) %> Rs</span>
                                         <% } else { %>
-                                            <%= game.price %> -Rs
+                                            <%= game.price %>-Rs
                                         <% } %>
                                     </div>
 
@@ -137,7 +137,7 @@
                                                 <a href="#" class="btn-product btn-wishlist btn btn-outline-primary-2 btn-block" onclick="addToWishlist('<%= gameItem.gameId.id %>')" title="Wishlist"><span>Add to Wishlist</span></a>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-sm-12">
-                                                <a href="#" class="btn-product btn-wishlist btn btn-outline-primary-2 btn-block" onclick="addToCart('<%= gameItem.gameId.id %>', document.getElementById('qty').value)" title="Cart"><span>ADD TO CART</span></a>
+                                                <a href="#" class="btn-product btn-wishlist btn btn-outline-primary-2 btn-block" onclick="addToCart('<%= gameItem.gameId.id %>', document.getElementById('qty').value, <%= game.stock %>,'<%= game.name %>')" title="Cart"><span>ADD TO CART</span></a>
                                             </div>
                                         </div>
                                     </div>
@@ -370,7 +370,7 @@
 
 
 
-
+<!-- IMAGE ZOOM FUCNTIONALITY    -->
 <script>
     //lense zoom
     // $(document).ready(function(){
@@ -398,6 +398,7 @@ $('.popup-image').magnificPopup({
             }
         });
 </script>
+
 
 
 <!-- ADDING TO WISHLIST -->
@@ -444,9 +445,21 @@ $('.popup-image').magnificPopup({
 
 <!-- ADDING TO CART -->
 <script>
-    function addToCart(gameId , quantity) {
+    function addToCart(gameId, quantity, stock , name) {
+        const qty = parseInt(quantity);
+        console.log(name+'uicsf');
+        if (qty <= 0 || qty > stock) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: `Oops ! Sorry... ${name} is Currently Out of Stock`,
+                showConfirmButton: false,
+                timer: 1500
+            });
+            return;
+        }
 
-        fetch(`/addToCart?gameId=${gameId}&quantity=${quantity}`, { method: 'POST' })
+        fetch(`/addToCart?gameId=${gameId}&quantity=${qty}`, { method: 'POST' })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -459,10 +472,9 @@ $('.popup-image').magnificPopup({
                     }).then(() => {
                         window.location.reload();
                     });
-                }else if(data.message === 'nouser'){
-                    window.location.href = '/login'
-                }
-                 else {
+                } else if (data.message === 'nouser') {
+                    window.location.href = '/login';
+                } else {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error!',
@@ -473,19 +485,18 @@ $('.popup-image').magnificPopup({
                 }
             })
             .catch(error => {
-              
                 console.error('Error:', error);
-                
                 Swal.fire({
                     icon: 'error',
                     title: 'Error!',
-                    text: 'login first to Add game to Cart',
+                    text: 'An error occurred while adding game to cart.',
                     showConfirmButton: false,
                     timer: 1500
                 });
             });
     }
 </script>
+
 
 
          

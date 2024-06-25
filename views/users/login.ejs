@@ -1,6 +1,9 @@
 <%-include('../layouts/header.ejs')%>
 <%-include('../layouts/navbar.ejs')%>
 
+
+
+
 <style>
     .text-red {
         color: red;
@@ -64,6 +67,9 @@
 
 </style>
 
+
+
+
 <div class="page-wrapper">
     <main class="main">
 
@@ -81,18 +87,9 @@
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
-                                <form method="post" action="/loginSubmit" onsubmit="return validation()">
+                                <form method="post" action="/loginSubmit" id="loginForm" onsubmit="return validation()">
                                     
-                                    <% if (errmsg) { %> 
-                                        <div class="alert alert-danger text-center" role="alert" style="color: red; background: white;">
-                                            <%= errmsg %>
-                                        </div>
-                                    <% } %>
-                                    <% if (success) { %> 
-                                        <div class="alert alert-danger text-center" role="alert" style="color: rgb(29, 126, 5); background: white;">
-                                            <%= success %>
-                                        </div>
-                                    <% } %>
+                                    
                                         
                                     <div class="form-group">
                                         <label for="register-email">Your email address *</label>
@@ -168,46 +165,133 @@
 
 
 
-
-
-
 <script>
-        function validation(){
+    function validation() {
+        let email = document.getElementById("register-email").value.trim();
+        let password = document.getElementById("register-password").value.trim();
 
-            let email = document.getElementById("register-email").value.trim();
-            let password = document.getElementById("register-password").value.trim();
+        let emailRegex = /^[^\s@]+@[^\s@]+\.(?:com)$/i;
+        let passwordRegex = /^.{5,}$/;
 
-            let emailRegex = /^[^\s@]+@[^\s@]+\.(?:com)$/i;
-            let passwordRegex = /^.{5,}$/;
+        let errorEmail = document.getElementById("errorEmail");
+        let errorPassword = document.getElementById("errorPassword");
 
-            let errorEmail = document.getElementById("errorEmail");
-            let errorPassword = document.getElementById("errorPassword");
+        errorEmail.innerText = "";
+        errorPassword.innerText = "";
 
-            errorEmail.innerText = "";
-            errorPassword.innerText = "";
-
-                // ****** VALIDATE EMAIL ******
-                if (email === "") {
-                    errorEmail.innerText = "Email cannot be empty";
-                    return false;
-                } else if (!emailRegex.test(email)) {
-                    errorEmail.innerText = "Please enter a valid email address ending with .com";
-                    return false;
-                }
-
-                // ****** VALIDATE PASSWORD ******
-                if (password === "") {
-                    errorPassword.innerText = "Password cannot be empty";
-                    return false;
-                } else if (!passwordRegex.test(password)) {
-                    errorPassword.innerText = "Password must be at least 5 characters long";
-                    return false;
-                }
-
-                return true;
+        // ****** VALIDATE EMAIL ******
+        if (email === "") {
+            errorEmail.innerText = "Email cannot be empty";
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: "Email cannot be empty",
+                showConfirmButton: false,
+                timer: 1500
+            });
+            return false;
+        } else if (!emailRegex.test(email)) {
+            errorEmail.innerText = "Please enter a valid email address ending with .com";
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: "Please enter a valid email address ending with .com",
+                showConfirmButton: false,
+                timer: 1500
+            });
+            return false;
         }
 
+        // ****** VALIDATE PASSWORD ******
+        if (password === "") {
+            errorPassword.innerText = "Password cannot be empty";
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: "Password cannot be empty",
+                showConfirmButton: false,
+                timer: 1500
+            });
+            return false;
+        } else if (!passwordRegex.test(password)) {
+            errorPassword.innerText = "Password must be at least 5 characters long";
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: "Password must be at least 5 characters long",
+                showConfirmButton: false,
+                timer: 1500
+            });
+            return false;
+        }
+
+        return true;
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        if (!validation()) {
+            return
+        }
+
+        const email = document.getElementById('register-email').value;
+        const password = document.getElementById('register-password').value;
+
+        fetch('/loginSubmit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: email, password: password })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Login successful!',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.href = '/'
+                })
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: data.error || 'Login failed!',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                if (data.errors) {
+                    if (data.errors.email) {
+                        document.getElementById('errorEmail').textContent = data.errors.email;
+                    } else {
+                        document.getElementById('errorEmail').textContent = '';
+                    }
+                    if (data.errors.password) {
+                        document.getElementById('errorPassword').textContent = data.errors.password;
+                    } else {
+                        document.getElementById('errorPassword').textContent = '';
+                    }
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'An error occurred while logging in.',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        });
+    });
 </script>
+
 
 
 
