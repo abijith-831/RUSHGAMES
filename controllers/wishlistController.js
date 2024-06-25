@@ -89,6 +89,7 @@ const removeFromWishlist = async (req,res)=>{
 }
 
 
+
 // ********** FOR ADDING GAME TO THE CART AND REMOVE FROM THE WISHLIST **********
 const addToCartAndRemove = async (req, res) => {
     try {
@@ -159,18 +160,18 @@ const loadNotification = async (req, res) => {
         const userData = await User.findOne({ _id: userId });
 
         const messageData = await Message.findOne({ userId: userId }, { messages: 1 });
-        
-        console.log('fsfs'+messageData);
 
-        const messages = messageData.messages.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        
+        let messages = null 
 
-        for(const item of messages){
-            item.is_readed = true
+        if (messageData && messageData.messages.length > 0) {
+            messages = messageData.messages.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            for (const item of messages) {
+                item.is_readed = true;
+            }
+            await messageData.save();
         }
-        await messageData.save()
 
-        
         res.render('notification', { user: userData, messages });
     } catch (error) {
         console.error(error);

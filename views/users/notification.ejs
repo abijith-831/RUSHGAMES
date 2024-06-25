@@ -19,7 +19,40 @@
     background-color: #e5f7f0;
     border-color: #d8f7eb;
 }
+
+
+
+
+.no-notifications {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      text-align: center;
+    }
+
+
+
+    .message {
+      margin-top: 1rem;
+      font-size: 1.5rem;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-30px);
+      }
+      60% {
+        transform: translateY(-15px);
+      }
+    }
 </style>
+
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css" integrity="sha256-NAxhqDvtY0l4xn+YVa6WjAcmd94NNfttjNsDmNatFVc=" crossorigin="anonymous" />
 
 
@@ -33,24 +66,36 @@
                     <h6 class="m-0">Recent</h6>
                 </div>
 
-                <% messages.forEach((item , index ) => { %>
+
+                <% if (messages && messages>0){ %>
+                    <% messages.forEach((item , index ) => { %>
                     
-                    <div class="box-body p-0">
-                        <div class="p-3 d-flex align-items-center bg-light border-bottom osahan-post-header">
-                            <div class="font-weight-bold mr-3">
-                                <div class="text-truncate " style="font-size: 17px;"><%= index+1 %> . <%= item.head %> </div><br>    
-                                <div class="small text-success" style="font-size: 12px;"><%= item.text %></div>
+                        <div class="box-body p-0">
+                            <div class="p-3 d-flex align-items-center bg-light border-bottom osahan-post-header">
+                                <div class="font-weight-bold mr-3">
+                                    <div class="text-truncate " style="font-size: 17px;"><%= index+1 %> . <%= item.head %> </div><br>    
+                                    <div class="small text-success" style="font-size: 12px;"><%= item.text %></div>
+                                </div>
+                                <span class="ml-auto mb-auto">                           
+                                    <br />
+                                    <div class="text-right text-muted pt-1"><%= new Date(item.createdAt).toLocaleString('en-IN',{year :'numeric',month : '2-digit',day:'2-digit' , hour : '2-digit',minute : '2-digit'}) %></div>
+                                </span>
                             </div>
-                            <span class="ml-auto mb-auto">                           
-                                <br />
-                                <div class="text-right text-muted pt-1"><%= new Date(item.createdAt).toLocaleString('en-IN',{year :'numeric',month : '2-digit',day:'2-digit' , hour : '2-digit',minute : '2-digit'}) %></div>
-                            </span>
+                            
                         </div>
-                        
+                    <% }) %>
+                <% } else{ %>
+                    <div class="no-notifications">
+                        <div class="icon">
+                          <i class="far fa-bell-slash"></i>
+                        </div>
+                        <div class="message">
+                          <h1>No Notifications Yet</h1>
+                        </div>
                     </div>
-                <% }) %>
-                
-           
+                   
+                <% } %>
+
         </div>
     </div>
 </div>

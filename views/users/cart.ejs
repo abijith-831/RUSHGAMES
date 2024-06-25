@@ -81,11 +81,14 @@
 															class="form-control quantity-input" 
 															value="<%= gameItem.quantity %>" 
 															min="1" 
-															max='<%= gameItem.gameId.stock  %>' 
+															max='<%= gameItem.gameId.stock%>' 
 															step="1" data-decimals="0" 
 															required
 															id="<%= gameItem.gameId._id %>"
-															data-cartid="<%= cartId %>">
+															data-cartid="<%= cartId %>"
+                                                            readonly
+                                                            onkeydown="return false">
+                                                           
 														</div>
 
 													</td>

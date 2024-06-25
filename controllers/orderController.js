@@ -24,6 +24,7 @@ const loadOrderHistory = async (req,res)=>{
 
         const paginatedOrders = orders.reverse().slice(skip,skip+limit)
 
+        console.log('hjnjh'+paginatedOrders);
         res.render('orderMgmt',{orders:paginatedOrders,
             page , limit , prevPage , nextPage , totalPages
         })

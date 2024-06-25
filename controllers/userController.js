@@ -101,6 +101,7 @@ const registerUser = async (req, res) => {
 };
 
 
+
 // ********** VERIFYING THE USER LOGIN DETAILS **********
 const verifyLogin = async (req, res) => {
   try {
@@ -127,7 +128,6 @@ const verifyLogin = async (req, res) => {
           res.redirect("/login");
         }
       } else {
-;
         req.flash("errmsg", "Email or Password is Incorrect...!!!");
         res.redirect("/login");
       }

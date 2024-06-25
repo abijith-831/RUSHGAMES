@@ -3,14 +3,17 @@ const axios = require('axios')
 const User = require('./models/userModel')
 const app = express()
 
+
 const CLIENT_ID = '433824331-abbdk6cfo4spcrs1c53tseob040ajsfh.apps.googleusercontent.com';
 const CLIENT_SECRET = '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';
-const REDIRECT_URI = 'http://localhost:7000/auth/google/callback';
+const REDIRECT_URI = 'https://rushgamez.online/auth/google/callback';
+
 
 app.get('/auth/google',(req,res)=>{
     const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=profile email`;
     res.redirect(url)
 });
+
 
 app.get('/auth/google/callback',async (req,res)=>{
     const {code} = req.query;
