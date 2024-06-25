@@ -16,7 +16,7 @@ const loadCart = async (req, res ,next) => {
       model: 'Games'
     }).exec();
 
-
+ 
      
     if (!cart || cart.games.length === 0) {
       const totalCartPrice = 0;
@@ -46,6 +46,7 @@ const loadCart = async (req, res ,next) => {
 // ********** FOR INSERTING GAME TO THE CART **********
 const addGameToCart = async (req, res) => {
   try {
+
     if (req.session.user_id) {
       const gameId = req.query.gameId.trim();
       const quantity = req.query.quantity;

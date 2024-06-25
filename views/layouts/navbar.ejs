@@ -85,6 +85,10 @@
     width: 30px; 
     height: 40px;
 }
+a.active {
+    font-weight: bold;
+}
+
 </style>
 
 
@@ -170,16 +174,15 @@
             </div><!-- End .header-middle -->
 
             <div class="header-middle" style="background-color: rgb(56, 54, 54); width: 100%;"> 
-               
-                <nav style="width: 100%; display: flex; justify-content: space-around; padding: 0 0px" >
-                    <a href="/" class="active">Home</a>
+                <nav style="width: 100%; display: flex; justify-content: space-around; padding: 0 0px">
+                    <a href="/">Home</a>
                     <a href="/allGames">Games</a>
                     <a href="/comingSoon">Coming Soon</a>
                     <a href="/aboutUs">About</a>
                     <a href="/contactUs">Contact</a>
                 </nav>
-                
             </div>
+            
         </header>
 </div>
 
@@ -211,6 +214,21 @@
 
 </script>
 
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll("nav a");
+
+    navLinks.forEach(link => {
+        if (link.getAttribute("href") === currentPath) {
+            link.classList.add("active");
+        }
+    });
+});
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
