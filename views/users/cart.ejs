@@ -72,7 +72,7 @@
 															
 														</div>
 													</td>
-													<td class="price-col"><%= gameItem.gameId.finalPrice ? gameItem.gameId.finalPrice : gameItem.price %></td>
+													<td class="price-col">₹ <%= gameItem.gameId.finalPrice ? gameItem.gameId.finalPrice : gameItem.price %></td>
 
 													<td class="quantity-col">
 														<div class="cart-product-quantity">
@@ -97,8 +97,8 @@
                                                         <% if (gameItem.quantity === 0) { %>
                                                             0
                                                         <% } else { %>
-                                                            <%= gameItem.gameId.finalPrice ? gameItem.gameId.finalPrice * gameItem.quantity : gameItem.price * gameItem.quantity %>
-                                                            <% finalPrice += gameItem.gameId.finalPrice ? gameItem.gameId.finalPrice * gameItem.quantity : gameItem.price * gameItem.quantity %>
+                                                            ₹  <%= gameItem.gameId.finalPrice ? gameItem.gameId.finalPrice * gameItem.quantity : gameItem.price * gameItem.quantity %>
+                                                             <% finalPrice += gameItem.gameId.finalPrice ? gameItem.gameId.finalPrice * gameItem.quantity : gameItem.price * gameItem.quantity %>
                                                         <% } %>
                                                     </td>
 														
@@ -138,7 +138,7 @@
 	                					<tbody>
 	                						<tr class="summary-subtotal">
 	                							<td>Price:</td>
-	                							<td id="totalCartPrice"><%= totalCartPrice %> Rs</td>
+	                							<td id="totalCartPrice">₹    <%= totalCartPrice %></td>
 	                						</tr><!-- End .summary-subtotal -->
 	                						<tr class="summary-shipping">
 	                							<td>Delivery:</td>
@@ -156,7 +156,7 @@
 
 	                						<tr class="summary-total">
 	                							<td>Total:</td>
-	                							<td id="cartTotal"><%= totalCartPrice %> Rs</td>
+	                							<td id="cartTotal">₹       <%= totalCartPrice %></td>
 	                						</tr><!-- End .summary-total -->
 	                					</tbody>
 	                				</table><!-- End .table table-summary -->

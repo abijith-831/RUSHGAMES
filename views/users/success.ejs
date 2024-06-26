@@ -122,7 +122,7 @@
                         <p class="card-text">Thank you for your purchase. Your payment has been processed successfully.</p>
                         <p class="card-text"><strong>Order ID:</strong> # <%= order.orderId %></p>
                         <p class="card-text"><strong>Order Date:</strong> <%= new Date(order.orderDate).toLocaleString('en-IN',{year : 'numeric',month:'2-digit',day :'2-digit',hour:'2-digit',minute: '2-digit'})  %> </p>
-                        <p class="card-text"><strong>Total Amount:</strong> <%=Math.floor(order.totalCartPrice) %> Rs</p>
+                        <p class="card-text"><strong>Total Amount:</strong>₹   <%=Math.floor(order.totalCartPrice) %></p>
                         <a href="/orderHistory" class="btn btn-primary mx-5">Go to Order History</a>
                         <a href="/allGames" class="btn btn-secondary">Continue Shopping</a>
                     </div>

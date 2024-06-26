@@ -30,6 +30,8 @@ const loadWishlist = async (req,res)=>{
 // ********** FOR ADDING GAME TO THE WISHLIST **********
 const addToWishlist = async (req,res)=>{
     try {
+
+        
         if(req.session.user_id){
             const userId = req.session.user_id;
             const gameId = req.query.gameId;
@@ -59,8 +61,8 @@ const addToWishlist = async (req,res)=>{
             }
             res.json({success : true})
         }else{
-            console.log('error');
-            res.status(500).json({ success: false, error: 'Please Login to Add Games to Wishlist' });
+            
+            res.status(500).json({ success: false, message: 'nouser' });
         }
     } catch (error) {
         console.log(error);
@@ -171,7 +173,7 @@ const loadNotification = async (req, res) => {
             }
             await messageData.save();
         }
-
+        console.log('fg'+messages);
         res.render('notification', { user: userData, messages });
     } catch (error) {
         console.error(error);

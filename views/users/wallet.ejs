@@ -251,7 +251,7 @@ p {
                                 <div class="input">
                                   <h5>Balance</h5>
                                   <% if (wallet) { %>
-                                    <h5><%= Math.floor(wallet.balance) %> Rs</h5>
+                                    <h5>₹  <%= Math.floor(wallet.balance) %> </h5>
                                   <%  }else{ %>
                                     <h5>Empty</h5>
                                   <% } %>
@@ -563,9 +563,9 @@ p {
                 <tr>
                   <th scope="row"><%= index+1 %></th>
                   <% if (item.transactionType === 'debit') { %>
-                    <td>-<%= Math.floor(item.amount) %></td>
+                    <td>- ₹<%= Math.floor(item.amount) %></td>
                   <%  }else { %>
-                    <td><%= Math.floor(item.amount) %></td>
+                    <td> ₹<%= Math.floor(item.amount) %></td>
                   <%  }  %>
                   
                   <td><%= new Date(item.date).toLocaleString('en-IN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true }) %></td>
@@ -576,7 +576,7 @@ p {
                     <td style="color: green;"><%= item.transactionType %></td>
                   <%  }  %>
                   
-                  <td><%=Math.floor(item.currBalance) %></td>
+                  <td>₹ <%=Math.floor(item.currBalance) %></td>
                 </tr>
   
               <%   })  %>
@@ -588,9 +588,9 @@ p {
       <div class="row">
         <div class="col-lg-6">
           <% if (wallet) { %>
-            <h5 class="text-right">Balance: <%= Math.floor(wallet.balance) %></h5>
+            <h5 class="text-right">Balance: ₹ <%= Math.floor(wallet.balance) %></h5>
           <% }else{ %>
-            <h5 class="text-right">Balance: </h5>
+            <h5 class="text-right">Balance:  </h5>
           <%  } %>
           
         </div>

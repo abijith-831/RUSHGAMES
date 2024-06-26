@@ -46,7 +46,7 @@ const loadCart = async (req, res ,next) => {
 // ********** FOR INSERTING GAME TO THE CART **********
 const addGameToCart = async (req, res) => {
   try {
-
+    
     if (req.session.user_id) {
       const gameId = req.query.gameId.trim();
       const quantity = req.query.quantity;

@@ -254,7 +254,7 @@ input[type="radio"]:checked + label {
 												<% cartData.games.forEach((item, index) => { %>
 													<tr>
 														<td><a href="#"><%= gameDetails[index].name %></a></td>
-														<td><%= (item.price * item.quantity).toFixed(2) %> Rs</td>
+														<td>₹   <%= (item.price * item.quantity).toFixed(2) %> </td>
 													</tr>
 													
 												<% }); %>
@@ -263,7 +263,7 @@ input[type="radio"]:checked + label {
 												
 												<tr class="summary-subtotal">
 													<td>Subtotal:</td>
-													<td id="subtotal-price"><%= cartData.totalCartPrice.toFixed(2) %> Rs</td>
+													<td id="subtotal-price">₹  <%= cartData.totalCartPrice.toFixed(2) %> </td>
 												</tr>
 
 												<tr id="discount-row">
@@ -272,18 +272,18 @@ input[type="radio"]:checked + label {
 												</tr>
 												<tr id="deducted-price-row">
 													<td>Deducted Price:</td>
-													<td id="deducted-price"><%= cartData.discountedPrice ? cartData.discountedPrice : 0 %> Rs</td>
+													<td id="deducted-price">₹  <%= cartData.discountedPrice ? cartData.discountedPrice : 0 %></td>
 												</tr>
 												<tr id="delivery-charge-row">
 													<td>Delivery Charge:</td>
-													<td id="delivery-charge-value"><%= cartData.deliveryCharge? cartData.deliveryCharge : 0 %> Rs</td>
+													<td id="delivery-charge-value">₹  <%= cartData.deliveryCharge? cartData.deliveryCharge : 0 %> </td>
 												</tr>
 												
 												<tr class="summary-total">
 													<td>Total : </td>
 													<td id="total-price">
-														<%= Number(cartData.discountedPrice? Number(cartData.discountedPrice.toFixed(2)) : cartData.totalCartPrice.toFixed(2)) + 
-														   Number(cartData.deliveryCharge) %> Rs
+														₹ <%= Number(cartData.discountedPrice? Number(cartData.discountedPrice.toFixed(2)) : cartData.totalCartPrice.toFixed(2)) + 
+														   Number(cartData.deliveryCharge) %>
 													</td>
 												</tr>
 												
@@ -918,7 +918,7 @@ function verifyPayment(payment, order, addressId) {
 
 <!-- Plugins JS File -->
 <script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>`
 <script src="assets/js/jquery.hoverIntent.min.js"></script>
 <script src="assets/js/jquery.waypoints.min.js"></script>
 <script src="assets/js/superfish.min.js"></script>

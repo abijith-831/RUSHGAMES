@@ -101,11 +101,11 @@
                                             <%   }  %>  
                                             <% if (game.Status==='Cancelled') { %>
                                                 <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
-                                                    <p class="text-muted mb-0 " style="text-decoration: line-through;"><%= game.totalAmount %></p>
+                                                    <p class="text-muted mb-0 " style="text-decoration: line-through;">₹ <%= game.totalAmount %></p>
                                                 </div>                                            
                                             <%  }else { %>
                                                 <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
-                                                    <p class="text-muted mb-0 "><%= game.totalAmount %></p>
+                                                    <p class="text-muted mb-0 ">₹ <%= game.totalAmount %></p>
                                                 </div> 
                                             <%   }  %> 
                                             <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
@@ -150,13 +150,13 @@
                                         <% if (game.Status==='Cancelled') { %>
                                             <div class="row mt-3" style="font-weight: bold; ">
                                                 <div class="col-md-4">
-                                                    <p class="text-muted mb-0" style="font-weight: bold; text-decoration: line-through;  ">Total Price: <%=Math.floor(game.totalAmount) %></p>
+                                                    <p class="text-muted mb-0" style="font-weight: bold; text-decoration: line-through;  ">Total Price: ₹ <%=Math.floor(game.totalAmount) %></p>
                                                 </div>                                                                                     
                                             </div>
                                         <%  }else { %>
                                             <div class="row mt-3" style="font-weight: bold; ">
                                                 <div class="col-md-4">
-                                                    <p class="text-muted mb-0" style="font-weight: bold;  ">Total Price: <%= Math.floor(game.totalAmount) %></p>
+                                                    <p class="text-muted mb-0" style="font-weight: bold;  ">Total Price: ₹<%= Math.floor(game.totalAmount) %></p>
                                                 </div>                                                                                     
                                             </div>
                                         <%   }  %>
@@ -166,11 +166,11 @@
                         <% } %>
                         <div class="row mt-3" style="font-weight: bold;">
                             <div class="col-md-3">
-                                <p class="text-muted mb-0" style="font-weight: bold;">Total Cart Price: <%= Math.floor(order.totalCartPrice) %></p>
+                                <p class="text-muted mb-0" style="font-weight: bold;">Total Cart Price:  ₹  <%= Math.floor(order.totalCartPrice) %></p>
                             </div> 
                             <% if (order.totalCartPrice < 2500) { %>
                                 <div class="col-md-3">
-                                    <p class="text-muted mb-0" style="font-weight: bold;">Delivery Charge: 80 Rs</p>
+                                    <p class="text-muted mb-0" style="font-weight: bold;">Delivery Charge: ₹   80 </p>
                                 </div> 
                             <% } %>
                                                       

@@ -95,13 +95,13 @@
 
                                     <div class="product-price"> 
                                         <% if (game.gameOffer) { %>
-                                            <span style="text-decoration: line-through; margin-right: 20px; color: grey;"><%= game.price %> -Rs</span>
-                                            <span style="color: rgb(0, 0, 0); font-weight: bold;"><%= Math.round(game.price - (game.price * game.gameOffer / 100)) %> Rs</span>
+                                            <span style="text-decoration: line-through; margin-right: 20px; color: grey;">₹  <%= game.price %> </span>
+                                            <span style="color: rgb(0, 0, 0); font-weight: bold;">₹  <%= Math.round(game.price - (game.price * game.gameOffer / 100)) %> </span>
                                         <% } else if (game.categoryOffer) { %>
-                                            <span style="text-decoration: line-through; margin-right: 20px; color: grey;"><%= game.price %> -Rs</span>
-                                            <span style="color: rgb(5, 5, 5); font-weight: bold;"><%= Math.round(game.price - (game.price * game.categoryOffer / 100)) %> Rs</span>
+                                            <span style="text-decoration: line-through; margin-right: 20px; color: grey;">₹  <%= game.price %> </span>
+                                            <span style="color: rgb(5, 5, 5); font-weight: bold;">₹  <%= Math.round(game.price - (game.price * game.categoryOffer / 100)) %> </span>
                                         <% } else { %>
-                                            <%= game.price %>-Rs
+                                            ₹   <%= game.price %>
                                         <% } %>
                                     </div>
 
@@ -123,7 +123,7 @@
                                             </div>
                                             
                                         </div><!-- End .details-action-col -->
-                                        <%= console.log(game) %>
+                                        
                                     </div>
                                     <% if (game.stock < 10) { %>
                                         <label for="size" style="font-weight: bold; color: red;">STOCKS LEFT  <%= game.stock %></label>
@@ -256,7 +256,7 @@
                                     </div><!-- End .product-cat -->
                                     <h3 class="product-title"><a href="product.html">CALL OF DUTY  <br>GHOSTS</a></h3><!-- End .product-title -->
                                     <div class="product-price">
-                                        1000 RS
+                                        ₹   1000
                                     </div><!-- End .product-price -->
                                    
                                    
@@ -287,7 +287,7 @@
                                     </div><!-- End .product-cat -->
                                     <h3 class="product-title"><a href="product.html">FAR CRY 5</a></h3><!-- End .product-title -->
                                     <div class="product-price">
-                                        <span class="out-price">1200 Rs</span>
+                                        <span class="out-price">₹   1200 </span>
                                     </div><!-- End .product-price -->
                                     
                                 </div><!-- End .product-body -->
@@ -317,7 +317,7 @@
                                     </div><!-- End .product-cat -->
                                     <h3 class="product-title"><a href="product.html">TOM CLANCY'S  <br>RAINBOW SIX : SIEGE</BR></a></h3><!-- End .product-title -->
                                     <div class="product-price">
-                                        1100 Rs
+                                        ₹    1100
                                     </div><!-- End .product-price -->
                                     
     
@@ -348,7 +348,7 @@
                                     </div><!-- End .product-cat -->
                                     <h3 class="product-title"><a href="product.html">HALO 5 <br> GUARDIANS</a></h3><!-- End .product-title -->
                                     <div class="product-price">
-                                        1560 Rs
+                                        ₹   1560
                                     </div><!-- End .product-price -->
                                     
                                 </div><!-- End .product-body -->
@@ -398,7 +398,7 @@ $('.popup-image').magnificPopup({
             }
         });
 </script>
-
+ 
 
 
 <!-- ADDING TO WISHLIST -->
@@ -418,7 +418,18 @@ $('.popup-image').magnificPopup({
                     }).then(() => {
                         window.location.reload();
                     });
-			}else{
+			}else if(data.message === "nouser"){
+                Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Please Login first to Add game to Wishlist',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(()=>{
+                        window.location.href = '/login'
+                    })
+            }
+            else{
 				Swal.fire({
                         icon: 'error',
                         title: 'Error!',
@@ -433,11 +444,11 @@ $('.popup-image').magnificPopup({
                 Swal.fire({
                     icon: 'error',
                     title: 'Error!',
-                    text: 'login first to Add game to Wishlist',
+                    text: 'Please Login first to Add game to Wishlist',
                     showConfirmButton: false,
                     timer: 1500
                 });
-            });
+            })
 	}
 </script>
 
@@ -447,7 +458,7 @@ $('.popup-image').magnificPopup({
 <script>
     function addToCart(gameId, quantity, stock , name) {
         const qty = parseInt(quantity);
-        console.log(name+'uicsf');
+
         if (qty <= 0 || qty > stock) {
             Swal.fire({
                 icon: 'error',
@@ -472,9 +483,7 @@ $('.popup-image').magnificPopup({
                     }).then(() => {
                         window.location.reload();
                     });
-                } else if (data.message === 'nouser') {
-                    window.location.href = '/login';
-                } else {
+                }  else {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error!',
@@ -489,10 +498,12 @@ $('.popup-image').magnificPopup({
                 Swal.fire({
                     icon: 'error',
                     title: 'Error!',
-                    text: 'An error occurred while adding game to cart.',
+                    text: 'Please Login first to Add game to Cart',
                     showConfirmButton: false,
                     timer: 1500
-                });
+                }).then(() => {
+                    window.location.href = '/login';
+                })
             });
     }
 </script>

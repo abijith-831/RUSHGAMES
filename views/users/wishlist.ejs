@@ -1,6 +1,8 @@
 <%-include('../layouts/header.ejs')%>
 <%-include('../layouts/navbar.ejs')%>
 
+
+
 <style>
     .page-content {
     border: 2px solid black; 
@@ -91,6 +93,8 @@
 
 </style>
 
+
+
 <body>
     <div class="page-wrapper">
         
@@ -133,7 +137,7 @@
 												</h3>
 											</div><!-- End .product -->
 										</td>
-										<td class="price-col" style="font-weight: bold;"><%= gameItem.gameId.finalPrice %> Rs </td>
+										<td class="price-col" style="font-weight: bold;">₹  <%= gameItem.gameId.finalPrice %> </td>
 										<!--<td class="stock-col" style="font-weight: bold;"><span class="in-stock">In stock</span></td>-->
 										<td class="action-col">
 											<button onclick="addToCartAndRemove('<%= gameItem.gameId.id %>')" class="btn btn-block btn-outline-primary-2"><i class="icon-cart-plus"></i>Add to Cart</button>

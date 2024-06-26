@@ -125,7 +125,7 @@
                 			<div class="toolbox">
                 				<div class="toolbox-left">
                 					<div class="toolbox-info text-black font-weight-bold">
-                						Showing <span>6 of <%= number.length %></span> Products
+                						Showing <span>6 of <%= number %></span> Products
                 					</div>
                 				</div>
 								<div class="toolbox-center">
@@ -204,13 +204,13 @@
 													<h3 class="product-title"><a href="/gameDetails?id=<%= game._id %>"><%= game.name %></a></h3><!-- End .product-title -->
 													<div class="product-price"> 
 														<% if (game.gameOffer) { %>
-															<span style="text-decoration: line-through; margin-right: 20px; color: grey;"><%= game.price %> -Rs</span>
-															<span style="color: rgb(0, 0, 0); font-weight: bold;"><%= Math.round(game.price - (game.price * game.gameOffer / 100)) %> Rs</span>
+															<span style="text-decoration: line-through; margin-right: 20px; color: grey;">₹     <%= game.price %></span>
+															<span style="color: rgb(0, 0, 0); font-weight: bold;">₹     <%= Math.round(game.price - (game.price * game.gameOffer / 100)) %></span>
 														<% } else if (game.categoryOffer) { %>
-															<span style="text-decoration: line-through; margin-right: 20px; color: grey;"><%= game.price %> -Rs</span>
-															<span style="color: rgb(5, 5, 5); font-weight: bold;"><%= Math.round(game.price - (game.price * game.categoryOffer / 100)) %> Rs</span>
+															<span style="text-decoration: line-through; margin-right: 20px; color: grey;">₹    <%= game.price %></span>
+															<span style="color: rgb(5, 5, 5); font-weight: bold;"> ₹    <%= Math.round(game.price - (game.price * game.categoryOffer / 100)) %></span>
 														<% } else { %>
-															<%= game.price %> -Rs
+															₹     <%= game.price %> 
 														<% } %>
 													</div>
 												</div>
