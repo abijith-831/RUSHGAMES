@@ -525,7 +525,7 @@ const loadAllGames = async (req, res) => {
         );
       }
     }));
-
+ 
 
     await Promise.all(allGames.map(async (game) => {
       const gameOffer = gameOffers.find(item => item.gameId.equals(game._id));

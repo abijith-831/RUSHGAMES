@@ -10,7 +10,7 @@ const gameOfferSchema = new mongoose.Schema ({
     discount : {
         type : Number , 
         required : true
-    },
+    }, 
     startDate : {
         type : Date ,
         default : ()=> Date.now()

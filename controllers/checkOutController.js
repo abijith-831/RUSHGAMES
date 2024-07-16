@@ -126,7 +126,7 @@ const placeOrder = async (req, res) => {
 
       await cart.save()
     }
-
+ 
 
     if(cart.deliveryCharge){
       cart.totalCartPrice += cart.deliveryCharge;
@@ -256,7 +256,7 @@ const placeOrder = async (req, res) => {
       }
 
           
-      generateRazorpay(orderInstance._id, adjustedAmount).then(async (response) => {
+        generateRazorpay(orderInstance._id, adjustedAmount).then(async (response) => {
        
         res.json({ Razorpay: response , newMessages});
       });
@@ -368,7 +368,7 @@ const giveCoupon = async (userId , totalCartPrice)=>{
         
       }
     }
-    console.log('sfnjsn'+addedCoupons);
+    
     return addedCoupons
   } catch (error) {
     console.log(error);

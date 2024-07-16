@@ -475,7 +475,7 @@ const downloadInvoice = async (req, res) => {
     doc.font('Helvetica').text(game.totalAmount.toFixed(2), startX + 200, currentY);
 
     doc.end();
-
+ 
   } catch (error) {
     console.error('An error occurred while generating the PDF:', error);
     res.status(500).send('An error occurred while generating the PDF.');
@@ -494,7 +494,7 @@ const cancelOrder = async (req,res)=>{
     const { reason,orderId,gameId } = req.body;
     const order = await Order.findOne({_id:orderId })
     const game = order.games.find(item =>item.gameId.equals(gameId))
-    
+     
     const gameData = await Games.findOne({_id  : game.gameId})
 
     if(order.discount){

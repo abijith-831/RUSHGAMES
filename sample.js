@@ -1586,3 +1586,72 @@
 //       }  
 // }
 // console.log(arr);
+
+
+// let nums = [4,2,5,7]
+// let odd = []
+//     let even = []
+//     let arr = []
+//     for(let i=0;i<nums.length;i++){
+//         if(nums[i]%2==0){
+//             even.push(nums[i])
+//         }else{
+//             odd.push(nums[i])
+//         }
+//     }
+
+//     console.log(odd);
+//     console.log(even);
+//     let count = odd.length + even.length
+//     console.log(count);
+//     for(let i=0;i<odd.length;i++){
+//         arr.push(even[i])
+//         arr.push(odd[i])
+//     }
+//     console.log(arr)
+
+
+// let para = "Bob hit a ball, the hit BALL flew far after it was hit."
+
+// let arr = para.split(' ')
+// console.log(arr.sort())
+// 2000
+// let word = "abcdefd"
+// let ch = "d"
+// let index 
+// let arr =  word.split('')
+// console.log(arr);
+
+// for(let i =0;i<arr.length;i++){
+//     if(arr[i]===ch){
+//         index = i
+//         break
+//     }
+// }
+// console.log(index);
+// for(let i=0;i<index;i++){
+//     word.splice(0,1)
+// }
+// let c= 5
+// for(let i=0;i<c;i++){
+//     if((i*i)+((i+1)*(i+1))=== c){
+//         console.log(true);
+//         break
+//     }else{
+//         console.log(false);
+//         break
+//     }
+// }
+
+function fib(n){
+    const a = [0,1]
+    for(let i=2;i<n;i++){
+        a[i] = a[i-1] + a[i-2]
+        console.log(a[i]);
+    }
+    return a
+}
+
+console.log(fib(7));
+console.log(fib(3));
+console.log(fib(7));
