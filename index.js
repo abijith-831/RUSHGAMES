@@ -50,7 +50,8 @@ app.use('/',googleAuth)
 
 
 // connecting database
-mongoose.connect(process.env.MONGODB_URL)
+// mongoose.connect(process.env.MONGODB_URL)
+mongoose.connect('mongodb+srv://abhijithasokan831:LdleFyRSceZ7EPUz@rushgamez.ani0zld.mongodb.net/?retryWrites=true&w=majority&appName=rushgamez')
 .then(()=>{
     console.log("Mongodb Connected");
 }).catch((err)=>{
