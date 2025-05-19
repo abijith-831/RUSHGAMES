@@ -12,7 +12,8 @@ const googleAuth = require('./googleAuth')
 
 
 app.use(session({
-    secret:process.env.SESSION_SECRET,
+    // secret:process.env.SESSION_SECRET,
+    secret :'AIzaSyBMVIEY--RIGTPOSOiAPr_otL0ZBMulKeU',
     resave: false,
     saveUninitialized: true,
 }))
