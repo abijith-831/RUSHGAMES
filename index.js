@@ -46,7 +46,7 @@ app.use('/',userRoute)
 const adminRoute = require('./Routes/adminRoute')
 app.use('/admin',adminRoute)
 
-app.use('/',googleAuth)
+// app.use('/',googleAuth)
 
 
 // connecting database
