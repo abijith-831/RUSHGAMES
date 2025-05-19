@@ -33,7 +33,7 @@ app.set('view engine','ejs')
 
 const errorHandler = require('./middleware/errorHandler')
 
-app.use(errorHandler)
+
 
 //FOR USER ROUTES
 const userRoute = require('./Routes/userRoute')
@@ -46,7 +46,15 @@ app.use('/',userRoute)
 const adminRoute = require('./Routes/adminRoute')
 app.use('/admin',adminRoute)
 
-// app.use('/',googleAuth)
+app.use('/',googleAuth)
+
+// 404 fallback (no need to render a view)
+app.use((req, res) => {
+    res.status(404).send('Page Not Found');
+});
+
+
+app.use(errorHandler)
 
 
 // connecting database
